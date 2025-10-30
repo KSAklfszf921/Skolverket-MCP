@@ -33,6 +33,9 @@ RUN npm ci --only=production --ignore-scripts
 # Kopiera byggda filer från builder stage
 COPY --from=builder /app/dist ./dist
 
+# Kopiera public directory med social media images
+COPY public ./public
+
 # Skapa logs directory
 RUN mkdir -p logs
 
