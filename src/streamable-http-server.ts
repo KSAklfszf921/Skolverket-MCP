@@ -1035,11 +1035,8 @@ app.get('/', (req, res) => {
         <span class="status-badge active" style="margin-left: 8px;">● Online</span>
       </div>
       <div class="nav-right">
-        <a href="#quick-start" class="nav-link">Snabbstart</a>
-        <a href="#api" class="nav-link">API</a>
-        <a href="#faq" class="nav-link">FAQ</a>
         <a href="/health" class="nav-link">Status</a>
-        <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank" class="github-btn">
+        <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank" class="github-btn">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
           </svg>
@@ -1054,7 +1051,6 @@ app.get('/', (req, res) => {
       <h1>Skolverket MCP Server</h1>
       <p class="subtitle">Model Context Protocol Server för Skolverkets öppna API:er</p>
       <div class="status-bar">
-        <span class="status-badge active">● Online</span>
         <span class="status-badge">Version 2.1.0</span>
         <span class="status-badge">29 verktyg</span>
         <span class="status-badge">HTTP Transport</span>
@@ -1077,35 +1073,82 @@ app.get('/', (req, res) => {
     </div>
   </div>
 
-  <!-- Dynamiska GitHub Docs Sektioner -->
-  <div class="container" style="margin-top: 40px;">
-    <div class="section">
-      <h2>📖 Dokumentation (Live från GitHub)</h2>
-      <p style="color: #6e6e73; margin-bottom: 24px;">
-        Följande dokumentation hämtas direkt från GitHub-repot och uppdateras automatiskt:
-      </p>
-
-      <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
-        <button onclick="loadDoc('README')" class="doc-btn active" id="btn-README">README</button>
-        <button onclick="loadDoc('INSTALLATION')" class="doc-btn" id="btn-INSTALLATION">Installation</button>
-        <button onclick="loadDoc('API')" class="doc-btn" id="btn-API">API</button>
-        <button onclick="loadDoc('EXAMPLES')" class="doc-btn" id="btn-EXAMPLES">Exempel</button>
-        <button onclick="loadDoc('CHANGES')" class="doc-btn" id="btn-CHANGES">Ändringslogg</button>
-      </div>
-
-      <div id="github-content" style="background: white; border-radius: 8px; padding: 24px; border: 1px solid #e5e5e7;">
-        <div style="text-align: center; padding: 40px; color: #6e6e73;">
-          <div class="spinner"></div>
-          <p style="margin-top: 16px;">Laddar dokumentation från GitHub...</p>
+  <!-- Sticky Documentation Navigation -->
+  <div class="doc-nav-sticky" id="doc-nav">
+    <div class="container">
+      <div class="doc-nav-content">
+        <div class="doc-tabs">
+          <button onclick="loadDoc('README')" class="doc-btn active" id="btn-README">
+            <span class="doc-icon">📄</span> README
+          </button>
+          <button onclick="loadDoc('INSTALLATION')" class="doc-btn" id="btn-INSTALLATION">
+            <span class="doc-icon">⚙️</span> Installation
+          </button>
+          <button onclick="loadDoc('API')" class="doc-btn" id="btn-API">
+            <span class="doc-icon">📚</span> API
+          </button>
+          <button onclick="loadDoc('EXAMPLES')" class="doc-btn" id="btn-EXAMPLES">
+            <span class="doc-icon">💡</span> Exempel
+          </button>
+          <button onclick="loadDoc('CHANGES')" class="doc-btn" id="btn-CHANGES">
+            <span class="doc-icon">📝</span> Ändringslogg
+          </button>
+        </div>
+        <div class="doc-actions">
+          <input type="text" id="doc-search" placeholder="Sök i dokumentation..." class="search-input">
+          <button onclick="toggleTOC()" class="toc-toggle" id="toc-toggle">
+            <span>☰</span> Innehåll
+          </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar" id="progress-bar"></div>
+
+  <!-- Dynamiska GitHub Docs Sektioner -->
+  <div class="container" style="margin-top: 24px;">
+    <div class="doc-layout">
+      <!-- Table of Contents Sidebar -->
+      <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+          <h3>Innehållsförteckning</h3>
+          <button onclick="toggleTOC()" class="toc-close">✕</button>
+        </div>
+        <div class="toc-content" id="toc-content">
+          <p style="color: #6e6e73; font-size: 14px;">Laddar innehållsförteckning...</p>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="doc-main">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb" id="breadcrumb">
+          <a href="#" onclick="scrollToTop(); return false;">Hem</a>
+          <span class="breadcrumb-sep">›</span>
+          <span id="breadcrumb-current">README</span>
+        </div>
+
+        <!-- Last Updated -->
+        <div class="last-updated" id="last-updated"></div>
+
+        <div class="section">
+          <div id="github-content">
+            <div style="text-align: center; padding: 40px; color: #6e6e73;">
+              <div class="spinner"></div>
+              <p style="margin-top: 16px;">Laddar dokumentation från GitHub...</p>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   </div>
 
   <div class="footer">
     <p>
       Skolverket MCP Server v2.1.0 · Skapad av Isak Skogstad<br>
-      <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank">GitHub</a> ·
+      <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank">GitHub</a> ·
       <a href="/health">Health Check</a> ·
       <a href="https://modelcontextprotocol.io" target="_blank">Om MCP</a>
     </p>
@@ -1115,7 +1158,93 @@ app.get('/', (req, res) => {
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
   <style>
+    /* Sticky Documentation Navigation */
+    .doc-nav-sticky {
+      position: sticky;
+      top: 65px;
+      background: white;
+      border-bottom: 1px solid #e5e5e7;
+      padding: 16px 0;
+      z-index: 90;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .doc-nav-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .doc-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .doc-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    /* Documentation Buttons */
     .doc-btn {
+      background: #f5f5f7;
+      border: 1px solid #e5e5e7;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+    .doc-btn:hover {
+      background: #e5e5e7;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .doc-btn.active {
+      background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+      color: white;
+      border-color: #0066cc;
+      box-shadow: 0 4px 12px rgba(0,102,204,0.3);
+    }
+    .doc-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -17px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid #0066cc;
+    }
+    .doc-icon {
+      font-size: 16px;
+    }
+
+    /* Search Input */
+    .search-input {
+      padding: 8px 12px;
+      border: 1px solid #e5e5e7;
+      border-radius: 8px;
+      font-size: 14px;
+      width: 200px;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: #0066cc;
+      box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+    }
+
+    /* TOC Toggle Button */
+    .toc-toggle {
       background: #f5f5f7;
       border: 1px solid #e5e5e7;
       padding: 8px 16px;
@@ -1124,15 +1253,145 @@ app.get('/', (req, res) => {
       font-size: 14px;
       font-weight: 500;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .doc-btn:hover {
+    .toc-toggle:hover {
       background: #e5e5e7;
     }
-    .doc-btn.active {
-      background: #1d1d1f;
-      color: white;
-      border-color: #1d1d1f;
+
+    /* Progress Bar */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #0066cc 0%, #00a8ff 100%);
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.1s ease;
     }
+
+    /* Documentation Layout */
+    .doc-layout {
+      display: flex;
+      gap: 24px;
+      position: relative;
+    }
+
+    /* TOC Sidebar */
+    .toc-sidebar {
+      position: sticky;
+      top: 180px;
+      width: 250px;
+      max-height: calc(100vh - 200px);
+      overflow-y: auto;
+      background: white;
+      border: 1px solid #e5e5e7;
+      border-radius: 12px;
+      padding: 20px;
+      flex-shrink: 0;
+      display: none;
+    }
+    .toc-sidebar.visible {
+      display: block;
+    }
+    .toc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e5e7;
+    }
+    .toc-header h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .toc-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #6e6e73;
+      padding: 4px 8px;
+    }
+    .toc-close:hover {
+      color: #1d1d1f;
+    }
+    .toc-content {
+      font-size: 14px;
+    }
+    .toc-content a {
+      display: block;
+      padding: 6px 0;
+      color: #1d1d1f;
+      text-decoration: none;
+      transition: all 0.2s;
+      padding-left: 0;
+    }
+    .toc-content a:hover {
+      color: #0066cc;
+      padding-left: 8px;
+    }
+    .toc-content a.toc-h2 {
+      font-weight: 500;
+      margin-top: 8px;
+    }
+    .toc-content a.toc-h3 {
+      font-size: 13px;
+      color: #6e6e73;
+      padding-left: 16px;
+    }
+    .toc-content a.toc-h3:hover {
+      padding-left: 24px;
+    }
+
+    /* Main Content */
+    .doc-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #6e6e73;
+      margin-bottom: 16px;
+      padding: 12px 0;
+    }
+    .breadcrumb a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+    .breadcrumb-sep {
+      color: #e5e5e7;
+    }
+    #breadcrumb-current {
+      color: #1d1d1f;
+      font-weight: 500;
+    }
+
+    /* Last Updated */
+    .last-updated {
+      font-size: 13px;
+      color: #6e6e73;
+      padding: 8px 12px;
+      background: #f5f5f7;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    /* Spinner */
     .spinner {
       width: 40px;
       height: 40px;
@@ -1145,9 +1404,12 @@ app.get('/', (req, res) => {
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    /* GitHub Content Styles */
     #github-content h1, #github-content h2, #github-content h3 {
       margin-top: 24px;
       margin-bottom: 12px;
+      scroll-margin-top: 180px;
     }
     #github-content h1 { font-size: 32px; font-weight: 600; }
     #github-content h2 { font-size: 24px; font-weight: 600; }
@@ -1202,10 +1464,41 @@ app.get('/', (req, res) => {
     #github-content a:hover {
       text-decoration: underline;
     }
+    .search-highlight {
+      background: #ffeb3b;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .doc-nav-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .doc-tabs {
+        justify-content: center;
+      }
+      .search-input {
+        width: 100%;
+      }
+      .toc-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-height: 100vh;
+        z-index: 1000;
+        border-radius: 0;
+      }
+    }
   </style>
 
   <script>
-    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/KSAklfszf921/skolverket-mcp/master/';
+    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/KSAklfszf921/Skolverket-MCP/master/';
+    const GITHUB_API_BASE = 'https://api.github.com/repos/KSAklfszf921/Skolverket-MCP/commits';
 
     const docs = {
       'README': 'README.md',
@@ -1215,51 +1508,251 @@ app.get('/', (req, res) => {
       'CHANGES': 'CHANGES.md'
     };
 
+    const docTitles = {
+      'README': 'README',
+      'INSTALLATION': 'Installation',
+      'API': 'API Referens',
+      'EXAMPLES': 'Exempel',
+      'CHANGES': 'Ändringslogg'
+    };
+
+    let currentDoc = 'README';
+    let currentMarkdown = '';
+
+    // Scroll progress tracking
+    window.addEventListener('scroll', updateProgressBar);
+
+    function updateProgressBar() {
+      const progressBar = document.querySelector('.progress-bar');
+      if (!progressBar) return;
+
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight - windowHeight;
+      const scrolled = window.scrollY;
+      const progress = (scrolled / documentHeight) * 100;
+
+      progressBar.style.width = Math.min(progress, 100) + '%';
+    }
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleTOC() {
+      const sidebar = document.getElementById('toc-sidebar');
+      sidebar.classList.toggle('active');
+    }
+
+    function updateBreadcrumb(docName) {
+      const breadcrumbCurrent = document.getElementById('breadcrumb-current');
+      breadcrumbCurrent.textContent = docTitles[docName] || docName;
+    }
+
+    function generateTOC(html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+      const headings = doc.querySelectorAll('h2, h3');
+
+      const tocContent = document.getElementById('toc-content');
+
+      if (headings.length === 0) {
+        tocContent.innerHTML = '<p style="color: #6e6e73; font-size: 14px; padding: 12px;">Inga rubriker hittades</p>';
+        return;
+      }
+
+      let tocHtml = '<ul class="toc-list">';
+
+      headings.forEach((heading, index) => {
+        const text = heading.textContent.trim();
+        const level = heading.tagName.toLowerCase();
+        const id = 'heading-' + index;
+
+        // Add ID to heading for navigation
+        heading.id = id;
+
+        const indent = level === 'h3' ? 'style="padding-left: 20px;"' : '';
+        tocHtml += \`
+          <li \${indent}>
+            <a href="#\${id}" onclick="document.getElementById('\${id}').scrollIntoView({ behavior: 'smooth' }); return false;">
+              \${text}
+            </a>
+          </li>
+        \`;
+      });
+
+      tocHtml += '</ul>';
+      tocContent.innerHTML = tocHtml;
+    }
+
+    async function fetchLastUpdated(filePath) {
+      try {
+        const response = await fetch(\`\${GITHUB_API_BASE}?path=\${filePath}&page=1&per_page=1\`);
+        if (!response.ok) return null;
+
+        const commits = await response.json();
+        if (commits.length === 0) return null;
+
+        const lastCommit = commits[0];
+        const date = new Date(lastCommit.commit.author.date);
+
+        return {
+          date: date.toLocaleDateString('sv-SE'),
+          time: date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }),
+          author: lastCommit.commit.author.name,
+          message: lastCommit.commit.message.split('\\n')[0]
+        };
+      } catch (error) {
+        console.error('Failed to fetch last updated:', error);
+        return null;
+      }
+    }
+
+    function setupSearch() {
+      const searchInput = document.getElementById('doc-search');
+      const contentDiv = document.getElementById('github-content');
+
+      let searchTimeout;
+
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+          const searchTerm = e.target.value.toLowerCase().trim();
+
+          if (!searchTerm) {
+            // Restore original content
+            contentDiv.innerHTML = marked.parse(currentMarkdown);
+            generateTOC(contentDiv.innerHTML);
+            return;
+          }
+
+          // Parse markdown and filter content
+          const html = marked.parse(currentMarkdown);
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Highlight matching text
+          const walker = document.createTreeWalker(
+            doc.body,
+            NodeFilter.SHOW_TEXT,
+            null
+          );
+
+          let node;
+          const nodesToHighlight = [];
+
+          while (node = walker.nextNode()) {
+            if (node.textContent.toLowerCase().includes(searchTerm)) {
+              nodesToHighlight.push(node);
+            }
+          }
+
+          nodesToHighlight.forEach(textNode => {
+            const text = textNode.textContent;
+            const regex = new RegExp(\`(\${searchTerm})\`, 'gi');
+            const highlightedText = text.replace(regex, '<mark style="background: #ffd54f; padding: 2px 4px; border-radius: 2px;">$1</mark>');
+
+            const span = document.createElement('span');
+            span.innerHTML = highlightedText;
+            textNode.parentNode.replaceChild(span, textNode);
+          });
+
+          contentDiv.innerHTML = doc.body.innerHTML;
+
+          // Show search result count
+          const matchCount = nodesToHighlight.length;
+          if (matchCount === 0) {
+            contentDiv.innerHTML = \`
+              <div style="text-align: center; padding: 40px; color: #6e6e73;">
+                <p style="font-size: 18px; font-weight: 500;">🔍 Inga resultat</p>
+                <p style="margin-top: 8px;">Inga matchningar för "\${searchTerm}"</p>
+              </div>
+            \` + contentDiv.innerHTML;
+          }
+        }, 300);
+      });
+    }
+
     async function loadDoc(docName) {
       const contentDiv = document.getElementById('github-content');
       const buttons = document.querySelectorAll('.doc-btn');
+      const lastUpdatedDiv = document.getElementById('last-updated');
+
+      currentDoc = docName;
 
       // Update active button
       buttons.forEach(btn => btn.classList.remove('active'));
       document.getElementById('btn-' + docName).classList.add('active');
 
+      // Update breadcrumb
+      updateBreadcrumb(docName);
+
+      // Clear search
+      const searchInput = document.getElementById('doc-search');
+      searchInput.value = '';
+
       // Show loading spinner
       contentDiv.innerHTML = \`
         <div style="text-align: center; padding: 40px; color: #6e6e73;">
           <div class="spinner"></div>
-          <p style="margin-top: 16px;">Laddar \${docName}...</p>
+          <p style="margin-top: 16px;">Laddar \${docTitles[docName]}...</p>
         </div>
       \`;
+
+      lastUpdatedDiv.innerHTML = '';
+      document.getElementById('toc-content').innerHTML = '<p style="color: #6e6e73; font-size: 14px;">Laddar innehållsförteckning...</p>';
 
       try {
         const response = await fetch(GITHUB_RAW_BASE + docs[docName]);
         if (!response.ok) throw new Error('Failed to fetch');
 
         const markdown = await response.text();
+        currentMarkdown = markdown;
         const html = marked.parse(markdown);
 
         contentDiv.innerHTML = html;
 
+        // Generate Table of Contents
+        generateTOC(contentDiv.innerHTML);
+
+        // Fetch and display last updated info
+        const lastUpdated = await fetchLastUpdated(docs[docName]);
+        if (lastUpdated) {
+          lastUpdatedDiv.innerHTML = \`
+            <span>📅 Senast uppdaterad: \${lastUpdated.date} \${lastUpdated.time}</span>
+            <span style="margin-left: 12px;">👤 \${lastUpdated.author}</span>
+          \`;
+          lastUpdatedDiv.title = lastUpdated.message;
+        }
+
         // Smooth scroll to content
         contentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Reset progress bar
+        updateProgressBar();
       } catch (error) {
         contentDiv.innerHTML = \`
           <div style="text-align: center; padding: 40px;">
             <p style="color: #d32f2f; font-weight: 500;">❌ Kunde inte ladda dokumentation</p>
             <p style="color: #6e6e73; margin-top: 8px;">Kontrollera att GitHub är tillgängligt eller besök
-              <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank" style="color: #0066cc;">repot direkt</a>
+              <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank" style="color: #0066cc;">repot direkt</a>
             </p>
           </div>
         \`;
+        document.getElementById('toc-content').innerHTML = '<p style="color: #6e6e73; font-size: 14px;">Ingen innehållsförteckning tillgänglig</p>';
       }
     }
 
-    // Load README by default when page loads
+    // Initialize when page loads
     if (typeof marked !== 'undefined') {
       loadDoc('README');
+      setupSearch();
     } else {
       // Retry after marked.js loads
-      setTimeout(() => loadDoc('README'), 100);
+      setTimeout(() => {
+        loadDoc('README');
+        setupSearch();
+      }, 100);
     }
   </script>
 </body>
