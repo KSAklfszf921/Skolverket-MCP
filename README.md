@@ -45,12 +45,19 @@ ChatGPT stöder endast HTTP/SSE (använd live-servern ovan)
 
 ### Claude Desktop
 
-**Alternativ 1: Live-Server**
-```
-Claude Desktop stöder endast stdio (använd lokal installation nedan)
+**Alternativ 1: Live-Server (HTTP Transport)**
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "transport": "http",
+      "url": "https://skolverket-mcp.onrender.com/mcp"
+    }
+  }
+}
 ```
 
-**Alternativ 2: Lokal Installation**
+**Alternativ 2: Lokal Installation (stdio)**
 ```json
 {
   "mcpServers": {
