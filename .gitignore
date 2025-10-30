@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-package-lock.json
+# package-lock.json removed - needed for Docker builds
 
 # Build output
 dist/
