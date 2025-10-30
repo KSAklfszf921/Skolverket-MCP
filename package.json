@@ -1,0 +1,39 @@
+{
+  "name": "skolverket-syllabus-mcp",
+  "version": "1.0.0",
+  "description": "MCP server för Skolverkets Läroplan API - ger LLMs tillgång till läroplaner, kurser, ämnen och program",
+  "main": "dist/index.js",
+  "type": "module",
+  "bin": {
+    "skolverket-syllabus-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "skolverket",
+    "läroplan",
+    "utbildning",
+    "education",
+    "sweden",
+    "curriculum",
+    "model-context-protocol"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "axios": "^1.7.9",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

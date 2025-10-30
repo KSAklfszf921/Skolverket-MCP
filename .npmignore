@@ -1,0 +1,27 @@
+# Source files
+src/
+tsconfig.json
+
+# Development files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Tests
+tests/
+coverage/
+
+# Documentation
+docs/
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+
+# OS files
+.DS_Store
+Thumbs.db
