@@ -1053,19 +1053,21 @@ app.get('/', (req, res) => {
       <!-- ChatGPT -->
       <div class="guide">
         <div class="guide-title">
-          <span>🤖</span> ChatGPT (OpenAI)
+          <span>🤖</span> ChatGPT (OpenAI) - Developer Mode
         </div>
         <div class="guide-steps">
           <ol>
-            <li>Öppna <strong>ChatGPT</strong> och gå till inställningar</li>
-            <li>Välj <strong>"Customize ChatGPT"</strong> → <strong>"Actions"</strong></li>
-            <li>Klicka på <strong>"Create new action"</strong></li>
-            <li>Lägg till server URL: <code>${req.protocol}://${req.get('host')}/mcp</code></li>
-            <li>Välj <strong>POST</strong> method och <strong>Server-Sent Events</strong></li>
-            <li>Spara och aktivera action</li>
+            <li>Öppna <strong>ChatGPT</strong> (kräver Pro, Plus, Business, Enterprise eller Education)</li>
+            <li>Gå till <strong>Settings</strong> (⚙️)</li>
+            <li>Navigera till <strong>Connectors</strong> → <strong>Advanced</strong> → <strong>Developer Mode</strong></li>
+            <li>Klicka på <strong>"Add MCP Server"</strong></li>
+            <li>Ange Server URL: <code>${req.protocol}://${req.get('host')}/mcp</code></li>
+            <li>Välj transport: <strong>HTTP with SSE</strong></li>
+            <li>Spara och aktivera connector</li>
           </ol>
-          <p style="margin-top: 12px; font-style: italic;">
-            ChatGPT kan nu använda Skolverkets API:er för att svara på frågor om svenska läroplaner.
+          <p style="margin-top: 12px; font-style: italic; color: #d32f2f;">
+            <strong>OBS:</strong> Developer Mode är "powerful but dangerous" - ChatGPT kan utföra riktiga write-operationer.
+            Granska alltid verktygsanrop innan de körs.
           </p>
         </div>
       </div>
@@ -1076,17 +1078,34 @@ app.get('/', (req, res) => {
           <span>⚡</span> Claude Code (Anthropic)
         </div>
         <div class="guide-steps">
+          <p style="margin-bottom: 12px;"><strong>Metod 1: CLI (Rekommenderat)</strong></p>
           <ol>
-            <li>Öppna din <code>~/.claude/config.json</code></li>
+            <li>Öppna terminalen och kör:
+              <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">claude mcp add --transport http skolverket ${req.protocol}://${req.get('host')}/mcp</pre>
+            </li>
+            <li>Starta om Claude Code</li>
+            <li>Verifiera med: <code>claude mcp list</code></li>
+          </ol>
+
+          <p style="margin: 16px 0 12px;"><strong>Metod 2: Manuell konfiguration</strong></p>
+          <ol>
+            <li>Öppna konfigurationsfilen:
+              <ul style="list-style: disc; margin-left: 20px; margin-top: 8px;">
+                <li>macOS: <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+                <li>Windows: <code>%APPDATA%\\Claude\\claude_desktop_config.json</code></li>
+              </ul>
+            </li>
             <li>Lägg till under <code>"mcpServers"</code>:
               <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">"skolverket": {
   "url": "${req.protocol}://${req.get('host')}/mcp",
-  "transport": "sse"
+  "transport": "http"
 }</pre>
             </li>
             <li>Starta om Claude Code</li>
-            <li>Servern är nu tillgänglig för alla konversationer</li>
           </ol>
+          <p style="margin-top: 12px; font-size: 14px; color: #86868b;">
+            <strong>OBS:</strong> SSE transport är deprecated, använd HTTP istället.
+          </p>
         </div>
       </div>
 
@@ -1124,7 +1143,36 @@ app.get('/', (req, res) => {
         </div>
       </div>
 
-      <!-- Generisk MCP-klient -->
+      <!-- OpenAI Codex CLI -->
+      <div class="guide">
+        <div class="guide-title">
+          <span>🛠️</span> OpenAI Codex CLI
+        </div>
+        <div class="guide-steps">
+          <ol>
+            <li>Installera Codex CLI (kräver Rust):
+              <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">curl -fsSL https://raw.githubusercontent.com/openai/codex/main/install.sh | sh</pre>
+            </li>
+            <li>Konfigurera MCP-servern:
+              <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">codex mcp add skolverket \\
+  --url ${req.protocol}://${req.get('host')}/mcp \\
+  --transport http</pre>
+            </li>
+            <li>Alternativt, redigera <code>~/.codex/config.toml</code>:
+              <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">[mcp.skolverket]
+url = "${req.protocol}://${req.get('host')}/mcp"
+transport = "http"</pre>
+            </li>
+            <li>Starta Codex: <code>codex</code></li>
+            <li>Servern är nu tillgänglig i din coding agent</li>
+          </ol>
+          <p style="margin-top: 12px; font-style: italic;">
+            Codex CLI är en lightweight coding agent som körs i terminalen och kan använda MCP-servrar för att utöka sina funktioner.
+          </p>
+        </div>
+      </div>
+
+      <!-- MCP Inspector -->
       <div class="guide">
         <div class="guide-title">
           <span>🔧</span> MCP Inspector (Testverktyg)
