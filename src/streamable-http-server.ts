@@ -1369,7 +1369,7 @@ app.get('/', (req, res) => {
         // Restore original content if search was active
         if (currentMarkdown) {
           document.getElementById('github-content').innerHTML = marked.parse(currentMarkdown);
-          generateTOC(document.getElementById('github-content').innerHTML);
+          generateTOC();
         }
       }
     }
@@ -1388,11 +1388,9 @@ app.get('/', (req, res) => {
       }
     }
 
-    function generateTOC(html) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const headings = doc.querySelectorAll('h2, h3');
-
+    function generateTOC() {
+      const contentDiv = document.getElementById('github-content');
+      const headings = contentDiv.querySelectorAll('h2, h3');
       const tocContent = document.getElementById('toc-content');
 
       if (headings.length === 0) {
@@ -1407,13 +1405,13 @@ app.get('/', (req, res) => {
         const level = heading.tagName.toLowerCase();
         const id = 'heading-' + index;
 
-        // Add ID to heading for navigation
+        // Add ID to actual heading in content
         heading.id = id;
 
         const indent = level === 'h3' ? 'style="padding-left: 20px;"' : '';
         tocHtml += \`
           <li \${indent}>
-            <a href="#\${id}" onclick="document.getElementById('\${id}').scrollIntoView({ behavior: 'smooth' }); toggleTOC(); return false;">
+            <a href="#\${id}" onclick="scrollToHeading('\${id}'); return false;">
               \${text}
             </a>
           </li>
@@ -1422,6 +1420,26 @@ app.get('/', (req, res) => {
 
       tocHtml += '</ul>';
       tocContent.innerHTML = tocHtml;
+    }
+
+    function scrollToHeading(id) {
+      const element = document.getElementById(id);
+      if (element) {
+        // Close TOC modal if open
+        const modal = document.getElementById('toc-modal');
+        if (modal.classList.contains('active')) {
+          modal.classList.remove('active');
+        }
+        // Scroll to element with offset for sticky header
+        const headerHeight = 140; // Header + nav height
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - headerHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
 
     function setupSearch() {
@@ -1439,7 +1457,7 @@ app.get('/', (req, res) => {
           if (!searchTerm) {
             // Restore original content
             contentDiv.innerHTML = marked.parse(currentMarkdown);
-            generateTOC(contentDiv.innerHTML);
+            generateTOC();
             return;
           }
 
@@ -1525,7 +1543,7 @@ app.get('/', (req, res) => {
         contentDiv.innerHTML = html;
 
         // Generate Table of Contents
-        generateTOC(contentDiv.innerHTML);
+        generateTOC();
 
         // Smooth scroll to content
         window.scrollTo({ top: 0, behavior: 'smooth' });
