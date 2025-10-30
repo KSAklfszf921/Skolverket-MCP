@@ -910,8 +910,8 @@ app.post('/mcp', async (req, res) => {
   try {
     // Create a new transport for this request
     const transport = new StreamableHTTPServerTransport({
-      sessionIdGenerator: undefined,
-      enableJsonResponse: true
+      sessionIdGenerator: undefined
+      // enableJsonResponse removed to allow SSE streaming
     });
 
     // Close transport when response closes
