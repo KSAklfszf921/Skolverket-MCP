@@ -1,14 +1,15 @@
-# Skolverket MCP Server
+<img width="700" height="220" alt="Skolverket MCP logo" src="https://github.com/user-attachments/assets/74563bdb-eea4-4276-a58c-ec89b11806ed" />
 
+
+# Skolverket MCP Server
 En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger AI-assistenter tillgång till **alla Skolverkets öppna API:er** – Läroplan API, Skolenhetsregistret och Planned Educations API.
 
 Gör det möjligt för ChatGPT, Claude och andra LLM-system att hämta information om svenska läroplaner, kurser, ämnen, gymnasieprogram, skolenheter, samt vuxenutbildningar (YH, SFI, Komvux).
 
 **Skapad av:** [Isak Skogstad](mailto:isak.skogstad@me.com) • [X/Twitter](https://x.com/isakskogstad)
 
----
-
 ## Live-Server
+
 
 Servern körs live och kan användas direkt utan installation:
 
@@ -282,33 +283,8 @@ Hittat en bugg eller har en idé? Öppna gärna ett [issue på GitHub](https://g
 
 **Kontakt:** [isak.skogstad@me.com](mailto:isak.skogstad@me.com) • [X/Twitter](https://x.com/isakskogstad)
 
-## Versionshistorik
-
-### Version 2.1.0 (30 oktober 2025)
-- **API Terminology Fixes** – Korrigerade alla API-parametrar enligt Skolverkets officiella specifikationer
-  - Läroplan API: Uppdaterade timespan-värden till `LATEST`, `FUTURE`, `EXPIRED`, `MODIFIED`
-  - Skolenhetsregistret: Korrigerade base URL och API endpoints (v2)
-  - Skolenhetsregistret: Fixade response parsing och lade till `PLANERAD` status
-  - Se [CHANGES.md](CHANGES.md) för detaljerad changelog
-- Lade till Resources-support (4 statiska URI:er)
-- Lade till Prompts-support (5 guidade arbetsflöden)
-- Implementerade strukturerad logging, cachning, rate limiting och validering
-- HTTP/SSE Server för ChatGPT och Claude Code
-- Live-hostad på Render.com
-
-### Version 2.0.0 (20 januari 2025)
-- Integration med Skolenhetsregistret och Planned Educations API
-- Refaktorerad kodstruktur med modulär uppbyggnad
-
-### Version 1.0.0 (20 januari 2025)
-- Första versionen med 17 verktyg för Läroplan API
-
 ## Licens och attribution
 
 MIT License – se [LICENSE](LICENSE) för detaljer.
 
-Data hämtas från Skolverkets öppna API:er. Denna server är inte officiellt associerad med eller godkänd av Skolverket.
-
----
-
-Projektet skapades för att göra svensk utbildningsdata mer tillgänglig för AI-assistenter och forskare. Bidrag välkomnas!
+Data hämtas från Skolverkets öppna API:er. Denna server är inte officiellt associerad av Skolverket. Projektet skapades för att göra svensk utbildningsdata mer tillgänglig för AI-assistenter och forskare. Bidrag välkomnas!
