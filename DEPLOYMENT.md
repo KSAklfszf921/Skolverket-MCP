@@ -77,33 +77,100 @@ I Railway dashboard:
 2. Den ser ut som: `https://skolverket-mcp-production.up.railway.app`
 3. Testa: `curl https://din-url.railway.app/health`
 
-## ☁️ Deploya till Render
+## ☁️ Deploya till Render (GRATIS - Rekommenderat!)
 
-Render erbjuder också gratis hosting.
+Render erbjuder generös gratis hosting perfekt för detta projekt.
 
 ### Steg 1: Skapa Render-konto
 
 1. Gå till [render.com](https://render.com)
-2. Logga in med GitHub
+2. Klicka **"Get Started"** eller **"Sign Up"**
+3. Välj **"Sign in with GitHub"**
+4. Godkänn Render access till dina GitHub repos
 
-### Steg 2: Skapa Web Service
+### Steg 2: Deploya automatiskt med render.yaml
 
-1. Klicka "New +" → "Web Service"
-2. Välj `skolverket-syllabus-mcp` repo
-3. Konfigurera:
-   - **Name**: `skolverket-mcp`
-   - **Environment**: `Docker`
-   - **Plan**: `Free`
-4. Klicka "Create Web Service"
+**Detta projekt har redan en `render.yaml` fil som gör deployment automatisk!**
 
-### Steg 3: Konfigurera miljövariabler
+1. I Render dashboard, klicka **"New +"** → **"Blueprint"**
+2. Välj **"Connect a Repository"**
+3. Sök efter och välj `KSAklfszf921/skolverket-mcp` (eller ditt repo-namn)
+4. Render hittar automatiskt `render.yaml` filen
+5. Klicka **"Apply"**
+6. Vänta medan Render:
+   - Bygger Docker image (~2-3 minuter)
+   - Startar servern
+   - Ger dig en publik URL
 
-Under "Environment":
+### Steg 3: Få din publika URL
+
+När deployment är klar:
+
+1. Gå till din service i Render dashboard
+2. Du hittar URL:en högst upp, typ:
+   ```
+   https://skolverket-mcp.onrender.com
+   ```
+3. Testa: Öppna `https://din-url.onrender.com/health` i webbläsaren
+
+### Steg 4: Testa att det fungerar
+
+```bash
+# Health check
+curl https://din-url.onrender.com/health
+
+# Lista alla verktyg
+curl https://din-url.onrender.com/tools
+
+# Testa health_check verktyget
+curl -X POST https://din-url.onrender.com/execute \
+  -H "Content-Type: application/json" \
+  -d '{"tool": "health_check", "arguments": {"includeApiTests": true}}'
 ```
-LOG_LEVEL=info
-SKOLVERKET_API_TIMEOUT_MS=30000
-SKOLVERKET_MAX_RETRIES=3
-```
+
+### Steg 5: Konfigurera miljövariabler (valfritt)
+
+Om du behöver ändra inställningar:
+
+1. Gå till din service → **"Environment"** tab
+2. Lägg till variabler:
+   ```
+   LOG_LEVEL=info
+   SKOLVERKET_API_TIMEOUT_MS=30000
+   SKOLVERKET_MAX_RETRIES=3
+   ```
+3. Klicka **"Save Changes"** (servern startar om automatiskt)
+
+### ⚠️ Viktig info om Render Free Tier
+
+**Begränsningar:**
+- Servern spinnar ner efter **15 minuter** utan trafik
+- Första requesten efter nedspinning tar **~30-60 sekunder**
+- Därefter fungerar allt normalt
+
+**Tips för att hantera nedspinning:**
+- Perfekt för allgot.se - första AI-frågan tar lite längre, sedan snabbt
+- Om du vill hålla den igång: sätt upp en cron job som pingar `/health` var 10:e minut
+- Eller uppgradera till Render paid plan ($7/mån för always-on)
+
+### Automatiska Updates
+
+Render är konfigurerad för **auto-deploy**:
+- Varje gång du pushar till `master` på GitHub
+- Render bygger och deployar automatiskt
+- Ingen manual intervention behövs
+
+### Övervaka din service
+
+**Logs:**
+1. Gå till din service i Render
+2. Klicka **"Logs"** tab
+3. Se real-time logs från servern
+
+**Metrics:**
+- Render visar CPU/Memory usage
+- Response times
+- Request counts
 
 ## 🐳 Deploya med Docker
 

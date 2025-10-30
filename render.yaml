@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: skolverket-mcp
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: LOG_LEVEL
+        value: info
+      - key: SKOLVERKET_API_TIMEOUT_MS
+        value: 30000
+      - key: SKOLVERKET_MAX_RETRIES
+        value: 3
+    healthCheckPath: /health
+    autoDeploy: true
