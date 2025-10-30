@@ -27,8 +27,8 @@ WORKDIR /app
 # Kopiera package files
 COPY package*.json ./
 
-# Installera BARA production dependencies
-RUN npm ci --only=production
+# Installera BARA production dependencies (skippa prepare script)
+RUN npm ci --only=production --ignore-scripts
 
 # Kopiera byggda filer från builder stage
 COPY --from=builder /app/dist ./dist
