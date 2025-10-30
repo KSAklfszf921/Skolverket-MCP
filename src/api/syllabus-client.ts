@@ -96,35 +96,55 @@ export class SyllabusApiClient extends BaseApiClient {
     return this.get<VersionsResponse>(`/v1/curriculums/${code}/versions`);
   }
 
-  // Värdesamlingar (Value Store)
+  // Värdesamlingar (Value Store) - använder caching för statiska värden
   async getSchoolTypes(): Promise<SchoolType[]> {
-    const response = await this.get<{ schoolTypes: SchoolType[] }>('/v1/valuestore/schooltypes');
+    const response = await this.getCached<{ schoolTypes: SchoolType[] }>(
+      '/v1/valuestore/schooltypes',
+      undefined,
+      86400000 // 24 timmar cache
+    );
     return response.schoolTypes || [];
   }
 
   async getExpiredSchoolTypes(): Promise<SchoolType[]> {
-    const response = await this.get<{ schoolTypes: SchoolType[] }>('/v1/valuestore/schooltypes/expired');
+    const response = await this.getCached<{ schoolTypes: SchoolType[] }>(
+      '/v1/valuestore/schooltypes/expired',
+      undefined,
+      86400000 // 24 timmar cache
+    );
     return response.schoolTypes || [];
   }
 
   async getTypesOfSyllabus(): Promise<TypeOfSyllabus[]> {
-    const response = await this.get<{ typesOfSyllabus: TypeOfSyllabus[] }>('/v1/valuestore/typeofsyllabus');
+    const response = await this.getCached<{ typesOfSyllabus: TypeOfSyllabus[] }>(
+      '/v1/valuestore/typeofsyllabus',
+      undefined,
+      86400000 // 24 timmar cache
+    );
     return response.typesOfSyllabus || [];
   }
 
   async getSubjectAndCourseCodes(): Promise<SubjectAndCourseCode[]> {
-    const response = await this.get<{ codes: SubjectAndCourseCode[] }>('/v1/valuestore/subjectandcoursecodes');
+    const response = await this.getCached<{ codes: SubjectAndCourseCode[] }>(
+      '/v1/valuestore/subjectandcoursecodes',
+      undefined,
+      86400000 // 24 timmar cache
+    );
     return response.codes || [];
   }
 
   async getStudyPathCodes(params: StudyPathSearchParams = {}): Promise<StudyPathCode[]> {
-    const response = await this.get<{ studyPaths: StudyPathCode[] }>('/v1/valuestore/studypathcodes', params);
+    const response = await this.getCached<{ studyPaths: StudyPathCode[] }>(
+      '/v1/valuestore/studypathcodes',
+      params,
+      86400000 // 24 timmar cache
+    );
     return response.studyPaths || [];
   }
 
-  // API-information
+  // API-information - caching i 1 timme
   async getApiInfo(): Promise<ApiInfo> {
-    return this.get<ApiInfo>('/v1/api-info');
+    return this.getCached<ApiInfo>('/v1/api-info', undefined, 3600000);
   }
 }
 

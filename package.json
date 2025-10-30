@@ -1,7 +1,7 @@
 {
   "name": "skolverket-mcp",
-  "version": "2.0.0",
-  "description": "Komplett MCP server för Skolverkets öppna API:er - läroplaner, skolenheter, utbildningstillfällen, statistik och mer",
+  "version": "2.1.0",
+  "description": "Komplett MCP server för Skolverkets öppna API:er med resources, prompts, caching, logging och mer",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
@@ -34,6 +34,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
     "axios": "^1.7.9",
+    "p-limit": "^7.2.0",
+    "winston": "^3.18.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {

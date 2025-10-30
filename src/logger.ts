@@ -1,0 +1,89 @@
+/**
+ * Strukturerad logging för Skolverket MCP Server
+ * VIKTIGT: Använder endast stderr, ALDRIG stdout (MCP-krav)
+ */
+
+import winston from 'winston';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Log level från miljövariabel eller default till 'info'
+const logLevel = process.env.LOG_LEVEL || 'info';
+
+// Skapa logger
+export const logger = winston.createLogger({
+  level: logLevel,
+  format: winston.format.combine(
+    winston.format.timestamp({
+      format: 'YYYY-MM-DD HH:mm:ss'
+    }),
+    winston.format.errors({ stack: true }),
+    winston.format.splat(),
+    winston.format.json()
+  ),
+  defaultMeta: {
+    service: 'skolverket-mcp',
+    version: '2.1.0'
+  },
+  transports: [
+    // Error log - endast errors
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'error.log'),
+      level: 'error',
+      maxsize: 5242880, // 5MB
+      maxFiles: 5
+    }),
+    // Combined log - alla nivåer
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'combined.log'),
+      maxsize: 5242880, // 5MB
+      maxFiles: 5
+    }),
+    // Console output - ENDAST till stderr
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.printf(({ level, message, timestamp, ...meta }) => {
+          let msg = `${timestamp} [${level}]: ${message}`;
+          if (Object.keys(meta).length > 0) {
+            msg += ` ${JSON.stringify(meta)}`;
+          }
+          return msg;
+        })
+      ),
+      stderrLevels: ['error', 'warn', 'info', 'debug'], // ALLT till stderr
+    })
+  ],
+  // Hantera uncaught exceptions
+  exceptionHandlers: [
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'exceptions.log')
+    })
+  ],
+  // Hantera unhandled rejections
+  rejectionHandlers: [
+    new winston.transports.File({
+      filename: path.join(process.cwd(), 'logs', 'rejections.log')
+    })
+  ]
+});
+
+// Skapa logs-mappen om den inte finns
+import fs from 'fs';
+const logsDir = path.join(process.cwd(), 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// Export hjälpfunktioner
+export const log = {
+  error: (message: string, meta?: any) => logger.error(message, meta),
+  warn: (message: string, meta?: any) => logger.warn(message, meta),
+  info: (message: string, meta?: any) => logger.info(message, meta),
+  debug: (message: string, meta?: any) => logger.debug(message, meta),
+};
+
+export default logger;

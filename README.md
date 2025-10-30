@@ -4,6 +4,28 @@ En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som g
 
 ## 🌟 Funktioner
 
+### 🔧 MCP Capabilities (Ny i v2.1.0)
+
+#### 🛠️ Tools (27 verktyg)
+- **17 verktyg** för Läroplan API
+- **4 verktyg** för Skolenhetsregistret
+- **6 verktyg** för Planned Educations API
+
+#### 📚 Resources (4 resurser) - Ny i v2.1.0
+Statiska datakällor för snabb kontextinläsning:
+- `skolverket://api/info` - API-information och metadata
+- `skolverket://school-types` - Kompletta skoltyper (aktiva + utgångna)
+- `skolverket://types-of-syllabus` - Läroplanstyper och kategorier
+- `skolverket://subject-course-codes` - Alla ämnes- och kurskoder
+
+#### 💡 Prompts (5 guider) - Ny i v2.1.0
+Guidade arbetsflöden för vanliga uppgifter:
+- `analyze_course` - Steg-för-steg kursanalys
+- `compare_curriculum_versions` - Jämför läroplansversioner
+- `find_adult_education` - Hitta vuxenutbildningar
+- `plan_study_path` - Studievägledning för elever
+- `teacher_course_planning` - Kursplanering för lärare
+
 ### 📚 Läroplan API (Syllabus API)
 - Sök och hämta läroplaner (LGR11, GY11, etc.)
 - Ämnen och kurser med kunskapskrav
@@ -21,12 +43,6 @@ En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som g
 - **Statistik**: Skolstatistik per enhet och kommun
 - **Kvalitetsdata**: Inspektionsrapporter och skolenkäter
 - **Stöddata**: Utbildningsområden och inriktningar
-
-## 📊 Totalt 27 Verktyg
-
-- **17 verktyg** för Läroplan API
-- **4 verktyg** för Skolenhetsregistret
-- **6 verktyg** för Planned Educations API
 
 ## Installation
 
@@ -229,9 +245,13 @@ Resultat: Lista över nedlagda skolenheter
 ```
 skolverket-mcp/
 ├── src/
-│   ├── index.ts                    # Huvudserver (27 verktyg)
+│   ├── index.ts                    # Huvudserver med Resources & Prompts
+│   ├── errors.ts                   # Custom error classes (ny i v2.1.0)
+│   ├── logger.ts                   # Winston logging (ny i v2.1.0)
+│   ├── cache.ts                    # In-memory cache (ny i v2.1.0)
+│   ├── validator.ts                # Zod validation (ny i v2.1.0)
 │   ├── api/
-│   │   ├── base-client.ts          # Delad HTTP-klient
+│   │   ├── base-client.ts          # HTTP-klient med rate limiting & caching
 │   │   ├── syllabus-client.ts      # Läroplan API
 │   │   ├── school-units-client.ts  # Skolenheter API
 │   │   └── planned-education-client.ts # Planned Educations API
@@ -244,6 +264,11 @@ skolverket-mcp/
 │       ├── school-units.ts         # Skolenhetstyper
 │       └── planned-education.ts    # Utbildningstyper
 ├── dist/                           # Kompilerad JavaScript
+├── logs/                           # Log-filer (ny i v2.1.0)
+│   ├── combined.log                # Alla loggar
+│   ├── error.log                   # Endast errors
+│   ├── exceptions.log              # Uncaught exceptions
+│   └── rejections.log              # Unhandled promise rejections
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -253,8 +278,43 @@ skolverket-mcp/
 
 - `@modelcontextprotocol/sdk` - MCP SDK
 - `axios` - HTTP-klient
-- `zod` - Schema-validering
+- `zod` - Schema-validering och runtime validation
+- `winston` - Strukturerad logging (ny i v2.1.0)
+- `p-limit` - Rate limiting och concurrency control (ny i v2.1.0)
 - TypeScript - Type-säkerhet
+
+### Nya Funktioner i v2.1.0
+
+#### 🔍 Strukturerad Logging
+- Winston-baserad logging med filrotation
+- Separata loggar för errors och kombinerad output
+- Automatisk loggning av alla API-anrop
+- Debug-läge med detaljerad information
+
+#### 💾 Intelligent Caching
+- In-memory cache med TTL (Time To Live)
+- Automatisk cache-rensning var 5:e minut
+- Statisk data cachas i 24 timmar
+- Cache-statistik tillgänglig via logger
+
+#### 🚦 Rate Limiting
+- Max 5 samtidiga API-anrop per klient
+- Automatisk kö-hantering med p-limit
+- Förhindrar API rate limiting
+- Optimerad prestanda
+
+#### ✅ Runtime Validation
+- Zod-baserad input-validering
+- Tydliga felmeddelanden på svenska
+- Återanvändbara valideringsscheman
+- Type-safe validering
+
+#### 🎯 Custom Error Handling
+- Hierarkisk error-struktur
+- SkolverketApiError för API-fel
+- ValidationError för input-fel
+- ResourceNotFoundError för saknade resurser
+- RateLimitError med retry-information
 
 ### API-dokumentation
 
@@ -295,22 +355,32 @@ Servern använder följande Skolverket API:er:
 - Skolenkätsdata
 - Inspektionsrapporter
 
-## 🆕 Version 2.0.0 - Nyheter
+## 🆕 Version 2.1.0 - Nyheter
 
-### Nya API:er
-✅ **Skolenhetsregistret API** - Fullständig integration
-✅ **Planned Educations API** - Vuxenutbildning och statistik
+### 🎯 Nya MCP Capabilities
+✅ **Resources** - 4 statiska resurser för snabb kontextinläsning
+✅ **Prompts** - 5 guidade arbetsflöden för vanliga uppgifter
+✅ **Förbättrade Tools** - Alla 27 verktyg har utökade beskrivningar med use cases
 
-### Nya Verktyg
-- 4 verktyg för skolenhetsregistret
-- 6 verktyg för planned educations
-- Totalt **27 verktyg** (från 17 i v1.0.0)
+### 🔧 Nya Funktioner
+✅ **Strukturerad Logging** - Winston-baserad logging med filrotation
+✅ **Intelligent Caching** - In-memory cache med TTL och automatisk rensning
+✅ **Rate Limiting** - Max 5 samtidiga API-anrop med p-limit
+✅ **Runtime Validation** - Zod-baserad input-validering med svenska felmeddelanden
+✅ **Custom Error Handling** - Hierarkisk error-struktur för bättre felhantering
 
-### Förbättringar
-- Modulariserad kodstruktur
-- Delad base HTTP-klient
-- Bättre felhantering
-- Utökad TypeScript-typning
+### 📚 Resources
+- `skolverket://api/info` - API-information
+- `skolverket://school-types` - Skoltyper
+- `skolverket://types-of-syllabus` - Läroplanstyper
+- `skolverket://subject-course-codes` - Ämnes- och kurskoder
+
+### 💡 Prompts
+- `analyze_course` - Kursanalys
+- `compare_curriculum_versions` - Versionsjämförelse
+- `find_adult_education` - Hitta vuxenutbildningar
+- `plan_study_path` - Studievägledning
+- `teacher_course_planning` - Kursplanering
 
 ## Utveckling
 
@@ -361,6 +431,18 @@ För bugrapporter och feature requests, öppna ett issue på GitHub:
 https://github.com/KSAklfszf921/skolverket-syllabus-mcp/issues
 
 ## Changelog
+
+### v2.1.0 (2025-10-30)
+- ✨ **KRITISKT**: Resources-support med 4 statiska URI:er
+- ✨ **KRITISKT**: Prompts-support med 5 guidade arbetsflöden
+- ✨ **VIKTIGT**: Strukturerad logging med Winston (filrotation, JSON-format)
+- ✨ **VIKTIGT**: Intelligent caching med TTL och automatisk rensning
+- ✨ **VIKTIGT**: Rate limiting med p-limit (max 5 samtidiga anrop)
+- ✨ **VIKTIGT**: Runtime validation med Zod och svenska felmeddelanden
+- ✨ **VIKTIGT**: Custom error classes (SkolverketApiError, ValidationError, etc.)
+- 🔧 Förbättrade tool-beskrivningar med ANVÄNDNINGSFALL, RETURNERAR, EXEMPEL
+- 🔧 Uppdaterad capabilities declaration (tools, resources, prompts, logging)
+- 📝 Omfattande dokumentation av alla nya funktioner
 
 ### v2.0.0 (2025-01-20)
 - ✨ Ny: Integration med Skolenhetsregistret API
