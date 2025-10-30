@@ -10,8 +10,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Installera ALLA dependencies (inklusive dev för att bygga)
-RUN npm ci
+# Installera ALLA dependencies (skippa prepare script tills vi har source code)
+RUN npm ci --ignore-scripts
 
 # Kopiera source code
 COPY src ./src
