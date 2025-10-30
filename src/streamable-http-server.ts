@@ -808,92 +808,389 @@ app.get('/', (req, res) => {
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <title>Skolverket MCP Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skolverket MCP Server - Model Context Protocol</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      line-height: 1.6;
+    }
+    .header {
+      background: white;
+      border-bottom: 1px solid #e5e5e7;
+      padding: 20px 0;
     }
     .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .hero {
+      text-align: center;
+      padding: 60px 0 40px;
+    }
+    h1 {
+      font-size: 48px;
+      font-weight: 600;
+      color: #1d1d1f;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-size: 21px;
+      color: #6e6e73;
+      font-weight: 400;
+      margin-bottom: 8px;
+    }
+    .status-bar {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .status-badge {
+      background: #f5f5f7;
+      color: #1d1d1f;
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      border: 1px solid #e5e5e7;
+    }
+    .status-badge.active { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
+
+    .section {
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      max-width: 900px;
-      width: 100%;
-      padding: 40px;
+      border-radius: 12px;
+      padding: 32px;
+      margin: 24px 0;
+      border: 1px solid #e5e5e7;
     }
-    h1 { color: #667eea; margin-bottom: 10px; font-size: 2.5em; }
-    .tagline { color: #666; font-size: 1.2em; margin-bottom: 30px; }
-    .section { margin: 30px 0; }
-    .section h2 { color: #764ba2; margin-bottom: 15px; font-size: 1.5em; }
-    .badge {
-      display: inline-block;
-      background: #f0f0f0;
-      padding: 8px 16px;
-      border-radius: 20px;
-      margin: 5px;
-      font-size: 0.9em;
+    .section h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #1d1d1f;
     }
-    .endpoint {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 10px 0;
-      border-left: 4px solid #667eea;
+    .section h3 {
+      font-size: 21px;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      color: #1d1d1f;
     }
-    code {
-      background: #f0f0f0;
+    .section p {
+      color: #6e6e73;
+      margin-bottom: 16px;
+      font-size: 17px;
+    }
+
+    .endpoint-box {
+      background: #f5f5f7;
+      border: 1px solid #e5e5e7;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+      font-size: 15px;
+    }
+    .endpoint-url {
+      color: #0066cc;
+      font-weight: 500;
+    }
+
+    .guide {
+      background: #fafafa;
+      border-left: 3px solid #0066cc;
+      padding: 20px;
+      margin: 16px 0;
+      border-radius: 4px;
+    }
+    .guide-title {
+      font-weight: 600;
+      color: #0066cc;
+      margin-bottom: 12px;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .guide-steps {
+      color: #6e6e73;
+      font-size: 15px;
+    }
+    .guide-steps ol {
+      margin-left: 20px;
+      margin-top: 8px;
+    }
+    .guide-steps li {
+      margin: 8px 0;
+      padding-left: 4px;
+    }
+    .guide-steps code {
+      background: #e5e5e7;
       padding: 2px 6px;
       border-radius: 4px;
-      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      color: #1d1d1f;
+    }
+
+    .api-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .api-item {
+      background: #fafafa;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e5e5e7;
+    }
+    .api-item strong {
+      color: #1d1d1f;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .api-item span {
+      color: #6e6e73;
+      font-size: 15px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6e6e73;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎓 Skolverket MCP Server</h1>
-    <p class="tagline">Model Context Protocol Server för Skolverkets öppna API:er</p>
+  <div class="header">
+    <div class="container">
+      <div class="hero">
+        <h1>Skolverket MCP Server</h1>
+        <p class="subtitle">Model Context Protocol Server för Skolverkets öppna API:er</p>
+        <div class="status-bar">
+          <span class="status-badge active">● Online</span>
+          <span class="status-badge">Version 2.1.0</span>
+          <span class="status-badge">29 verktyg</span>
+          <span class="status-badge">HTTP/SSE Transport</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="container">
+    <!-- Om tjänsten -->
     <div class="section">
-      <h2>✨ Status</h2>
-      <div class="badge">✅ Aktiv</div>
-      <div class="badge">🔗 HTTP/SSE Transport</div>
-      <div class="badge">📦 Version 2.1.0</div>
-      <div class="badge">🛠️ 28 verktyg</div>
+      <h2>Om tjänsten</h2>
+      <p>
+        Skolverket MCP Server är en Model Context Protocol-server som ger AI-assistenter tillgång
+        till Skolverkets officiella API:er. Servern möjliggör integration med verktyg som ChatGPT,
+        Claude, och andra MCP-kompatibla AI-system för att hämta information om svenska läroplaner,
+        skolenheter och utbildningar.
+      </p>
+      <p>
+        <strong>Skapad av:</strong> Isak Skogstad<br>
+        <strong>Källkod:</strong> <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank">GitHub Repository</a><br>
+        <strong>Licens:</strong> Open Source
+      </p>
     </div>
 
+    <!-- MCP Endpoint -->
     <div class="section">
-      <h2>🔌 MCP Endpoint</h2>
-      <div class="endpoint">
-        <strong>POST</strong> <code>/mcp</code><br>
-        <small>Streamable HTTP transport för MCP-meddelanden</small>
+      <h2>MCP Endpoint</h2>
+      <p>Anslut din MCP-klient till följande endpoint:</p>
+      <div class="endpoint-box">
+        <strong>POST</strong> <span class="endpoint-url">${req.protocol}://${req.get('host')}/mcp</span>
+      </div>
+      <p style="font-size: 15px; color: #86868b;">
+        Servern använder Streamable HTTP transport med Server-Sent Events (SSE)
+        och stöder MCP protocol version 2024-11-05.
+      </p>
+    </div>
+
+    <!-- Tillgängliga API:er -->
+    <div class="section">
+      <h2>Tillgängliga API:er</h2>
+      <p>Servern exponerar 29 verktyg från tre olika Skolverket API:er:</p>
+
+      <div class="api-list">
+        <div class="api-item">
+          <strong>Läroplan API (Syllabus)</strong>
+          <span>Sök ämnen, kurser, gymnasieprogram, och läroplaner. Hämta detaljerad information
+          om kursinnehåll, centralt innehåll, kunskapskrav och versionshistorik.</span>
+        </div>
+
+        <div class="api-item">
+          <strong>Skolenhetsregistret</strong>
+          <span>Sök och hämta information om Sveriges skolenheter. Filtrera efter status,
+          namn eller skolenhetskod. Få tillgång till adresser, huvudmän och kontaktinformation.</span>
+        </div>
+
+        <div class="api-item">
+          <strong>Planned Educations API</strong>
+          <span>Utforska vuxenutbildningar som yrkeshögskola (YH), SFI och komvux.
+          Filtrera efter studietakt, distans/campus, stad och utbildningsområde.</span>
+        </div>
       </div>
     </div>
 
+    <!-- Anslutningsguider -->
     <div class="section">
-      <h2>📚 API Dokumentation</h2>
-      <p>Servern exponerar 28 verktyg från tre Skolverket API:er:</p>
-      <ul style="list-style-position: inside; margin-top: 10px;">
-        <li><strong>Läroplan API:</strong> Ämnen, kurser, program, läroplaner</li>
-        <li><strong>Skolenhetsregistret:</strong> Alla Sveriges skolenheter</li>
-        <li><strong>Planned Educations:</strong> Vuxenutbildningar (YH, SFI, Komvux)</li>
+      <h2>Anslutningsguider</h2>
+      <p>Instruktioner för att ansluta servern till populära AI-tjänster:</p>
+
+      <!-- ChatGPT -->
+      <div class="guide">
+        <div class="guide-title">
+          <span>🤖</span> ChatGPT (OpenAI)
+        </div>
+        <div class="guide-steps">
+          <ol>
+            <li>Öppna <strong>ChatGPT</strong> och gå till inställningar</li>
+            <li>Välj <strong>"Customize ChatGPT"</strong> → <strong>"Actions"</strong></li>
+            <li>Klicka på <strong>"Create new action"</strong></li>
+            <li>Lägg till server URL: <code>${req.protocol}://${req.get('host')}/mcp</code></li>
+            <li>Välj <strong>POST</strong> method och <strong>Server-Sent Events</strong></li>
+            <li>Spara och aktivera action</li>
+          </ol>
+          <p style="margin-top: 12px; font-style: italic;">
+            ChatGPT kan nu använda Skolverkets API:er för att svara på frågor om svenska läroplaner.
+          </p>
+        </div>
+      </div>
+
+      <!-- Claude Code -->
+      <div class="guide">
+        <div class="guide-title">
+          <span>⚡</span> Claude Code (Anthropic)
+        </div>
+        <div class="guide-steps">
+          <ol>
+            <li>Öppna din <code>~/.claude/config.json</code></li>
+            <li>Lägg till under <code>"mcpServers"</code>:
+              <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">"skolverket": {
+  "url": "${req.protocol}://${req.get('host')}/mcp",
+  "transport": "sse"
+}</pre>
+            </li>
+            <li>Starta om Claude Code</li>
+            <li>Servern är nu tillgänglig för alla konversationer</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Gemini -->
+      <div class="guide">
+        <div class="guide-title">
+          <span>💎</span> Gemini (Google)
+        </div>
+        <div class="guide-steps">
+          <ol>
+            <li>Öppna <strong>Google AI Studio</strong></li>
+            <li>Gå till <strong>"Extensions"</strong> eller <strong>"Tools"</strong></li>
+            <li>Välj <strong>"Add MCP Server"</strong></li>
+            <li>Ange URL: <code>${req.protocol}://${req.get('host')}/mcp</code></li>
+            <li>Välj transport: <strong>HTTP with SSE</strong></li>
+            <li>Spara och aktivera</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Grok -->
+      <div class="guide">
+        <div class="guide-title">
+          <span>🚀</span> Grok (xAI)
+        </div>
+        <div class="guide-steps">
+          <ol>
+            <li>Öppna <strong>Grok</strong> i X (Twitter)</li>
+            <li>Klicka på <strong>inställningar</strong> (kugghjul)</li>
+            <li>Välj <strong>"External Tools"</strong> eller <strong>"Integrations"</strong></li>
+            <li>Lägg till MCP Server URL: <code>${req.protocol}://${req.get('host')}/mcp</code></li>
+            <li>Välj <strong>SSE transport</strong></li>
+            <li>Aktivera och testa anslutningen</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Generisk MCP-klient -->
+      <div class="guide">
+        <div class="guide-title">
+          <span>🔧</span> MCP Inspector (Testverktyg)
+        </div>
+        <div class="guide-steps">
+          <ol>
+            <li>Installera MCP Inspector:
+              <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">npx @modelcontextprotocol/inspector</pre>
+            </li>
+            <li>Öppna webbläsaren på den URL som visas</li>
+            <li>Ange Server URL: <code>${req.protocol}://${req.get('host')}/mcp</code></li>
+            <li>Välj transport: <strong>HTTP with SSE</strong></li>
+            <li>Klicka <strong>"Connect"</strong> och utforska alla verktyg</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exempel på användning -->
+    <div class="section">
+      <h2>Exempel på användning</h2>
+      <p>När servern är ansluten kan du ställa frågor som:</p>
+      <ul style="margin-left: 24px; color: #6e6e73; margin-top: 12px;">
+        <li style="margin: 8px 0;">"Vilka kurser finns i ämnet matematik för gymnasiet?"</li>
+        <li style="margin: 8px 0;">"Vad säger läroplanen om centralt innehåll i Svenska 1?"</li>
+        <li style="margin: 8px 0;">"Hitta alla yrkeshögskoleutbildningar inom IT i Stockholm"</li>
+        <li style="margin: 8px 0;">"Lista alla skolenheter i Göteborg"</li>
+        <li style="margin: 8px 0;">"Vilka kunskapskrav finns för betyget A i Engelska 5?"</li>
       </ul>
     </div>
 
+    <!-- Teknisk information -->
     <div class="section">
-      <h2>🚀 Komma igång</h2>
-      <p>Anslut din MCP-klient till:</p>
-      <div class="endpoint">
-        <code>${req.protocol}://${req.get('host')}/mcp</code>
+      <h2>Teknisk information</h2>
+      <div style="display: grid; gap: 12px; margin-top: 16px;">
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e5e7;">
+          <span style="color: #6e6e73;">Protocol Version</span>
+          <strong>MCP 2024-11-05</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e5e7;">
+          <span style="color: #6e6e73;">Transport</span>
+          <strong>HTTP with Server-Sent Events</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e5e7;">
+          <span style="color: #6e6e73;">Runtime</span>
+          <strong>Node.js 20</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e5e7;">
+          <span style="color: #6e6e73;">Hosting</span>
+          <strong>Render</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+          <span style="color: #6e6e73;">Health Endpoint</span>
+          <strong><a href="/health" style="color: #0066cc; text-decoration: none;">/health</a></strong>
+        </div>
       </div>
     </div>
+  </div>
+
+  <div class="footer">
+    <p>
+      Skolverket MCP Server v2.1.0 · Skapad av Isak Skogstad<br>
+      <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank">GitHub</a> ·
+      <a href="/health">Health Check</a> ·
+      <a href="https://modelcontextprotocol.io" target="_blank">Om MCP</a>
+    </p>
   </div>
 </body>
 </html>
