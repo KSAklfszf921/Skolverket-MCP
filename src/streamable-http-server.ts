@@ -1421,6 +1421,31 @@ transport = "http"</pre>
     </div>
   </div>
 
+  <!-- Dynamiska GitHub Docs Sektioner -->
+  <div class="container" style="margin-top: 40px;">
+    <div class="section">
+      <h2>📖 Dokumentation (Live från GitHub)</h2>
+      <p style="color: #6e6e73; margin-bottom: 24px;">
+        Följande dokumentation hämtas direkt från GitHub-repot och uppdateras automatiskt:
+      </p>
+
+      <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+        <button onclick="loadDoc('README')" class="doc-btn active" id="btn-README">README</button>
+        <button onclick="loadDoc('INSTALLATION')" class="doc-btn" id="btn-INSTALLATION">Installation</button>
+        <button onclick="loadDoc('API')" class="doc-btn" id="btn-API">API</button>
+        <button onclick="loadDoc('EXAMPLES')" class="doc-btn" id="btn-EXAMPLES">Exempel</button>
+        <button onclick="loadDoc('CHANGES')" class="doc-btn" id="btn-CHANGES">Ändringslogg</button>
+      </div>
+
+      <div id="github-content" style="background: white; border-radius: 8px; padding: 24px; border: 1px solid #e5e5e7;">
+        <div style="text-align: center; padding: 40px; color: #6e6e73;">
+          <div class="spinner"></div>
+          <p style="margin-top: 16px;">Laddar dokumentation från GitHub...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="footer">
     <p>
       Skolverket MCP Server v2.1.0 · Skapad av Isak Skogstad<br>
@@ -1429,6 +1454,158 @@ transport = "http"</pre>
       <a href="https://modelcontextprotocol.io" target="_blank">Om MCP</a>
     </p>
   </div>
+
+  <!-- Marked.js från CDN för markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+    .doc-btn {
+      background: #f5f5f7;
+      border: 1px solid #e5e5e7;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .doc-btn:hover {
+      background: #e5e5e7;
+    }
+    .doc-btn.active {
+      background: #1d1d1f;
+      color: white;
+      border-color: #1d1d1f;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      margin: 0 auto;
+      border: 3px solid #f5f5f7;
+      border-top-color: #0066cc;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #github-content h1, #github-content h2, #github-content h3 {
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+    #github-content h1 { font-size: 32px; font-weight: 600; }
+    #github-content h2 { font-size: 24px; font-weight: 600; }
+    #github-content h3 { font-size: 19px; font-weight: 600; }
+    #github-content p { margin-bottom: 16px; line-height: 1.6; color: #1d1d1f; }
+    #github-content pre {
+      background: #1d1d1f;
+      color: #f5f5f7;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 16px 0;
+    }
+    #github-content code {
+      background: #f5f5f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 90%;
+    }
+    #github-content pre code {
+      background: transparent;
+      padding: 0;
+    }
+    #github-content ul, #github-content ol {
+      margin: 16px 0 16px 24px;
+      line-height: 1.8;
+    }
+    #github-content blockquote {
+      border-left: 4px solid #e5e5e7;
+      padding-left: 16px;
+      margin: 16px 0;
+      color: #6e6e73;
+    }
+    #github-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    #github-content th, #github-content td {
+      border: 1px solid #e5e5e7;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    #github-content th {
+      background: #f5f5f7;
+      font-weight: 600;
+    }
+    #github-content a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    #github-content a:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <script>
+    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/KSAklfszf921/skolverket-mcp/master/';
+
+    const docs = {
+      'README': 'README.md',
+      'INSTALLATION': 'INSTALLATION.md',
+      'API': 'docs/API.md',
+      'EXAMPLES': 'docs/EXAMPLES.md',
+      'CHANGES': 'CHANGES.md'
+    };
+
+    async function loadDoc(docName) {
+      const contentDiv = document.getElementById('github-content');
+      const buttons = document.querySelectorAll('.doc-btn');
+
+      // Update active button
+      buttons.forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-' + docName).classList.add('active');
+
+      // Show loading spinner
+      contentDiv.innerHTML = \`
+        <div style="text-align: center; padding: 40px; color: #6e6e73;">
+          <div class="spinner"></div>
+          <p style="margin-top: 16px;">Laddar \${docName}...</p>
+        </div>
+      \`;
+
+      try {
+        const response = await fetch(GITHUB_RAW_BASE + docs[docName]);
+        if (!response.ok) throw new Error('Failed to fetch');
+
+        const markdown = await response.text();
+        const html = marked.parse(markdown);
+
+        contentDiv.innerHTML = html;
+
+        // Smooth scroll to content
+        contentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } catch (error) {
+        contentDiv.innerHTML = \`
+          <div style="text-align: center; padding: 40px;">
+            <p style="color: #d32f2f; font-weight: 500;">❌ Kunde inte ladda dokumentation</p>
+            <p style="color: #6e6e73; margin-top: 8px;">Kontrollera att GitHub är tillgängligt eller besök
+              <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank" style="color: #0066cc;">repot direkt</a>
+            </p>
+          </div>
+        \`;
+      }
+    }
+
+    // Load README by default when page loads
+    if (typeof marked !== 'undefined') {
+      loadDoc('README');
+    } else {
+      // Retry after marked.js loads
+      setTimeout(() => loadDoc('README'), 100);
+    }
+  </script>
 </body>
 </html>
   `);
