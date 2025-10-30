@@ -809,7 +809,26 @@ app.get('/', (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skolverket MCP Server - Model Context Protocol</title>
+  <title>Skolverket MCP Server - Model Context Protocol för svenska läroplaner</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="MCP server för Skolverkets API:er. Anslut ChatGPT, Claude, och andra AI-assistenter till svenska läroplaner, skolenheter och utbildningar.">
+  <meta name="keywords" content="skolverket, mcp, model context protocol, läroplan, chatgpt, claude, ai, utbildning, sweden">
+  <meta name="author" content="Isak Skogstad">
+
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="${req.protocol}://${req.get('host')}/">
+  <meta property="og:title" content="Skolverket MCP Server - AI-tillgång till svenska läroplaner">
+  <meta property="og:description" content="Anslut ChatGPT, Claude och andra AI-assistenter till Skolverkets officiella API:er. 29 verktyg för läroplaner, skolenheter och vuxenutbildning.">
+  <meta property="og:image" content="${req.protocol}://${req.get('host')}/og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Skolverket MCP Server">
+  <meta name="twitter:description" content="MCP server för Skolverkets API:er. 29 verktyg för AI-assistenter.">
+  <meta name="twitter:image" content="${req.protocol}://${req.get('host')}/og-image.png">
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -822,7 +841,42 @@ app.get('/', (req, res) => {
       background: white;
       border-bottom: 1px solid #e5e5e7;
       padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 8px; }
+    .nav-right { display: flex; gap: 16px; }
+    .nav-link {
+      color: #1d1d1f;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .nav-link:hover { background: #f5f5f7; }
+    .github-btn {
+      background: #1d1d1f;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .github-btn:hover { background: #424245; }
     .container {
       max-width: 980px;
       margin: 0 auto;
@@ -975,16 +1029,35 @@ app.get('/', (req, res) => {
 </head>
 <body>
   <div class="header">
-    <div class="container">
-      <div class="hero">
-        <h1>Skolverket MCP Server</h1>
-        <p class="subtitle">Model Context Protocol Server för Skolverkets öppna API:er</p>
-        <div class="status-bar">
-          <span class="status-badge active">● Online</span>
-          <span class="status-badge">Version 2.1.0</span>
-          <span class="status-badge">29 verktyg</span>
-          <span class="status-badge">HTTP/SSE Transport</span>
-        </div>
+    <div class="nav">
+      <div class="nav-left">
+        <span style="font-size: 18px; font-weight: 600;">Skolverket MCP</span>
+        <span class="status-badge active" style="margin-left: 8px;">● Online</span>
+      </div>
+      <div class="nav-right">
+        <a href="#quick-start" class="nav-link">Snabbstart</a>
+        <a href="#api" class="nav-link">API</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+        <a href="/health" class="nav-link">Status</a>
+        <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank" class="github-btn">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hero">
+      <h1>Skolverket MCP Server</h1>
+      <p class="subtitle">Model Context Protocol Server för Skolverkets öppna API:er</p>
+      <div class="status-bar">
+        <span class="status-badge">Version 2.1.0</span>
+        <span class="status-badge">29 verktyg</span>
+        <span class="status-badge">HTTP Transport</span>
+        <span class="status-badge">Render Starter</span>
       </div>
     </div>
   </div>
@@ -994,16 +1067,38 @@ app.get('/', (req, res) => {
     <div class="section">
       <h2>Om tjänsten</h2>
       <p>
-        Skolverket MCP Server är en Model Context Protocol-server som ger AI-assistenter tillgång
-        till Skolverkets officiella API:er. Servern möjliggör integration med verktyg som ChatGPT,
-        Claude, och andra MCP-kompatibla AI-system för att hämta information om svenska läroplaner,
+        Skolverket MCP Server ger AI-assistenter tillgång till Skolverkets officiella API:er.
+        Integration med ChatGPT, Claude och andra MCP-kompatibla system för att hämta svenska läroplaner,
         skolenheter och utbildningar.
       </p>
-      <p>
-        <strong>Skapad av:</strong> Isak Skogstad<br>
-        <strong>Källkod:</strong> <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank">GitHub Repository</a><br>
-        <strong>Licens:</strong> Open Source
+      <p style="font-size: 15px; color: #6e6e73; margin-top: 12px;">
+        <strong>Skapad av:</strong> Isak Skogstad (<a href="mailto:isak.skogstad@me.com">isak.skogstad@me.com</a>)<br>
+        <strong>Källkod:</strong> <a href="https://github.com/KSAklfszf921/skolverket-mcp" target="_blank">GitHub</a> ·
+        <strong>Hosting:</strong> <a href="https://render.com" target="_blank">Render.com (Starter)</a><br>
+        <strong>Licens:</strong> MIT Open Source
       </p>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="section" id="quick-start">
+      <h2>⚡ Quick Start (30 sekunder)</h2>
+      <div style="background: #f5f5f7; padding: 20px; border-radius: 8px; border-left: 3px solid #0066cc;">
+        <h3 style="margin-top: 0;">För ChatGPT (Plus/Pro/Enterprise)</h3>
+        <ol style="margin: 12px 0 0 20px; color: #6e6e73;">
+          <li>Öppna <strong>Settings</strong> → <strong>Connectors</strong> → <strong>Developer Mode</strong></li>
+          <li>Add MCP Server: <code style="background: #e5e5e7; padding: 2px 6px; border-radius: 4px;">${req.protocol}://${req.get('host')}/mcp</code></li>
+          <li>Transport: <strong>HTTP with SSE</strong></li>
+        </ol>
+        <p style="margin: 12px 0 0; font-size: 14px; color: #d32f2f; font-style: italic;">
+          ⚠️ Developer Mode är "powerful but dangerous" - granska alltid verktygsanrop!
+        </p>
+      </div>
+
+      <div style="background: #f5f5f7; padding: 20px; border-radius: 8px; border-left: 3px solid #0066cc; margin-top: 16px;">
+        <h3 style="margin-top: 0;">För Claude Code (CLI)</h3>
+        <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 13px;">claude mcp add --transport http skolverket ${req.protocol}://${req.get('host')}/mcp</pre>
+        <p style="margin: 8px 0 0; font-size: 14px; color: #86868b;">Starta om Claude Code och kör <code style="background: #e5e5e7; padding: 2px 6px; border-radius: 4px;">claude mcp list</code> för att verifiera.</p>
+      </div>
     </div>
 
     <!-- MCP Endpoint -->
@@ -1019,30 +1114,124 @@ app.get('/', (req, res) => {
       </p>
     </div>
 
-    <!-- Tillgängliga API:er -->
-    <div class="section">
-      <h2>Tillgängliga API:er</h2>
-      <p>Servern exponerar 29 verktyg från tre olika Skolverket API:er:</p>
+    <!-- API Dokumentation -->
+    <div class="section" id="api">
+      <h2>📚 API-dokumentation (29 verktyg)</h2>
+      <p>Servern ger tillgång till tre Skolverkets API:er:</p>
 
       <div class="api-list">
         <div class="api-item">
-          <strong>Läroplan API (Syllabus)</strong>
-          <span>Sök ämnen, kurser, gymnasieprogram, och läroplaner. Hämta detaljerad information
-          om kursinnehåll, centralt innehåll, kunskapskrav och versionshistorik.</span>
+          <strong>📖 Läroplan API (17 verktyg)</strong>
+          <span>Ämnen, kurser, gymnasieprogram, läroplaner, kunskapskrav, centralt innehåll, versionshistorik</span>
         </div>
-
         <div class="api-item">
-          <strong>Skolenhetsregistret</strong>
-          <span>Sök och hämta information om Sveriges skolenheter. Filtrera efter status,
-          namn eller skolenhetskod. Få tillgång till adresser, huvudmän och kontaktinformation.</span>
+          <strong>🏫 Skolenhetsregistret (4 verktyg)</strong>
+          <span>Sök skolenheter, filtrera efter status, hämta detaljer, adresser och huvudmän</span>
         </div>
-
         <div class="api-item">
-          <strong>Planned Educations API</strong>
-          <span>Utforska vuxenutbildningar som yrkeshögskola (YH), SFI och komvux.
-          Filtrera efter studietakt, distans/campus, stad och utbildningsområde.</span>
+          <strong>🎓 Planned Educations (6 verktyg)</strong>
+          <span>Yrkeshögskola (YH), SFI, Komvux, filtrera efter studietakt och distans</span>
+        </div>
+        <div class="api-item">
+          <strong>🔧 Diagnostik (1 verktyg)</strong>
+          <span>Health check för att testa API-anslutningar och systemstatus</span>
+        </div>
+        <div class="api-item">
+          <strong>📚 Resources (4 st)</strong>
+          <span>Statisk data: API-info, skoltyper, läroplanstyper, utbildningsområden</span>
+        </div>
+        <div class="api-item">
+          <strong>💡 Prompts (5 st)</strong>
+          <span>Guidade workflows: kursanalys, versionsjämförelse, studievägledning</span>
         </div>
       </div>
+
+      <details style="margin-top: 16px;">
+        <summary style="cursor: pointer; font-weight: 600; color: #0066cc; margin-bottom: 8px;">Visa alla 29 verktyg →</summary>
+        <div style="font-size: 14px; color: #6e6e73; line-height: 1.8; margin-left: 16px;">
+          <strong>Läroplan API:</strong> search_subjects, get_subject_details, get_subject_versions, search_courses, get_course_details, get_course_versions, search_programs, get_program_details, get_program_versions, search_curriculums, get_curriculum_details, get_curriculum_versions, get_school_types, get_types_of_syllabus, get_subject_and_course_codes, get_study_path_codes, get_api_info<br><br>
+          <strong>Skolenheter:</strong> search_school_units, get_school_unit_details, get_school_units_by_status, search_school_units_by_name<br><br>
+          <strong>Vuxenutbildning:</strong> search_adult_education, get_adult_education_details, filter_adult_education_by_distance, filter_adult_education_by_pace, get_education_areas, get_directions<br><br>
+          <strong>Diagnostik:</strong> health_check
+        </div>
+      </details>
+    </div>
+
+    <!-- FAQ -->
+    <div class="section" id="faq">
+      <h2>❓ FAQ (Vanliga frågor)</h2>
+
+      <details style="margin: 12px 0;">
+        <summary style="cursor: pointer; font-weight: 600; color: #1d1d1f; padding: 8px 0;">Vad är Render Starter-planen och vilka begränsningar finns?</summary>
+        <p style="margin: 8px 0 0 16px; color: #6e6e73; font-size: 15px;">
+          Servern körs på Render.com Starter-plan ($7/månad) med följande specifikationer:<br>
+          • <strong>RAM:</strong> 512 MB<br>
+          • <strong>CPU:</strong> 0.1 vCPU (shared)<br>
+          • <strong>Bandbredd:</strong> 100 GB/månad<br>
+          • <strong>Sleep:</strong> Ingen automatisk sleep<br>
+          • <strong>Uptime:</strong> 99.9% SLA<br>
+          • <strong>Region:</strong> Frankfurt (EU)<br><br>
+          <em>Servern kan hantera ~1000 requests/minut. Vid högre belastning, överväg att köra egen instans.</em>
+        </p>
+      </details>
+
+      <details style="margin: 12px 0;">
+        <summary style="cursor: pointer; font-weight: 600; color: #1d1d1f; padding: 8px 0;">Vilka rate limits och tekniska begränsningar finns?</summary>
+        <p style="margin: 8px 0 0 16px; color: #6e6e73; font-size: 15px;">
+          • <strong>API timeout:</strong> 30 sekunder per request<br>
+          • <strong>Max retries:</strong> 3 automatiska omförsök<br>
+          • <strong>Concurrent requests:</strong> Max 5 samtidiga anrop<br>
+          • <strong>Cache:</strong> Aktiverad (24h för statisk data)<br>
+          • <strong>Skolverkets API:</strong> Inga officiella rate limits dokumenterade<br><br>
+          <em>Servern har inbyggd rate limiting och retry-logik för optimal prestanda.</em>
+        </p>
+      </details>
+
+      <details style="margin: 12px 0;">
+        <summary style="cursor: pointer; font-weight: 600; color: #1d1d1f; padding: 8px 0;">Hur ser jag server status och uptime?</summary>
+        <p style="margin: 8px 0 0 16px; color: #6e6e73; font-size: 15px;">
+          Besök <a href="/health" style="color: #0066cc;">/health</a> för real-time health check.<br>
+          För Render.com deployment status: <a href="https://dashboard.render.com/web/srv-d41pc29r0fns739dmnk0" target="_blank" style="color: #0066cc;">Render Dashboard</a><br><br>
+          <em>Health endpoint visar version, status och transport-information.</em>
+        </p>
+      </details>
+
+      <details style="margin: 12px 0;">
+        <summary style="cursor: pointer; font-weight: 600; color: #1d1d1f; padding: 8px 0;">Kan jag köra servern lokalt eller på egen hosting?</summary>
+        <p style="margin: 8px 0 0 16px; color: #6e6e73; font-size: 15px;">
+          Ja! Servern är open source (MIT-licens). För lokal körning:<br>
+          <pre style="background: #1d1d1f; color: #f5f5f7; padding: 12px; border-radius: 6px; margin-top: 8px; overflow-x: auto; font-size: 13px;">git clone https://github.com/KSAklfszf921/skolverket-mcp.git
+cd skolverket-mcp
+npm install
+npm run build
+npm run start:streamable</pre>
+          <em>Kräver Node.js 20+. Se <a href="https://github.com/KSAklfszf921/skolverket-mcp#readme" target="_blank" style="color: #0066cc;">README</a> för detaljerad dokumentation.</em>
+        </p>
+      </details>
+
+      <details style="margin: 12px 0;">
+        <summary style="cursor: pointer; font-weight: 600; color: #1d1d1f; padding: 8px 0;">Hur rapporterar jag buggar eller begär nya funktioner?</summary>
+        <p style="margin: 8px 0 0 16px; color: #6e6e73; font-size: 15px;">
+          Öppna ett issue på <a href="https://github.com/KSAklfszf921/skolverket-mcp/issues" target="_blank" style="color: #0066cc;">GitHub Issues</a><br>
+          Eller kontakta: <a href="mailto:isak.skogstad@me.com" style="color: #0066cc;">isak.skogstad@me.com</a><br><br>
+          <em>Bidrag är välkomna! Se <a href="https://github.com/KSAklfszf921/skolverket-mcp/blob/master/CONTRIBUTING.md" target="_blank" style="color: #0066cc;">bidragsguide</a>.</em>
+        </p>
+      </details>
+
+      <details style="margin: 12px 0;">
+        <summary style="cursor: pointer; font-weight: 600; color: #1d1d1f; padding: 8px 0;">Vilka AI-plattformar stöds?</summary>
+        <p style="margin: 8px 0 0 16px; color: #6e6e73; font-size: 15px;">
+          Servern är kompatibel med alla MCP-stödda plattformar:<br>
+          • ✅ ChatGPT (Plus, Pro, Business, Enterprise, Education)<br>
+          • ✅ Claude Code (via CLI)<br>
+          • ✅ Claude Desktop (med HTTP transport)<br>
+          • ✅ MCP Inspector (testverktyg)<br>
+          • ✅ Gemini (Google AI Studio)<br>
+          • ✅ Grok (xAI)<br>
+          • ✅ Alla andra MCP-kompatibla klienter<br><br>
+          <em>Se anslutningsguider nedan för specifika instruktioner.</em>
+        </p>
+      </details>
     </div>
 
     <!-- Anslutningsguider -->
