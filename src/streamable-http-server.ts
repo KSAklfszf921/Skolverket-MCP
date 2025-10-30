@@ -815,29 +815,29 @@ app.get('/', (req, res) => {
   <title>Skolverket MCP Server - Model Context Protocol för svenska läroplaner</title>
 
   <!-- SEO Meta Tags -->
-  <meta name="description" content="MCP server för Skolverkets API:er. Anslut ChatGPT, Claude, och andra AI-assistenter till svenska läroplaner, skolenheter och utbildningar.">
-  <meta name="keywords" content="skolverket, mcp, model context protocol, läroplan, chatgpt, claude, ai, utbildning, sweden">
+  <meta name="description" content="MCP server for Swedish National Agency for Education (Skolverket) open data. Tuned for LLMs to query, parse, and integrate info, data, and stats from three public API endpoints.">
+  <meta name="keywords" content="skolverket, mcp, model context protocol, läroplan, curriculum, chatgpt, claude, ai, education, sweden, swedish">
   <meta name="author" content="Isak Skogstad">
 
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://${req.get('host')}/">
-  <meta property="og:title" content="Skolverket MCP Server - AI-tillgång till svenska läroplaner">
-  <meta property="og:description" content="Anslut ChatGPT, Claude och andra AI-assistenter till Skolverkets officiella API:er. 29 verktyg för läroplaner, skolenheter och vuxenutbildning.">
+  <meta property="og:title" content="Skolverket MCP Server - AI Access to Swedish Education Data">
+  <meta property="og:description" content="MCP server for Swedish National Agency for Education (Skolverket) open data. Tuned for LLMs to query, parse, and integrate info, data, and stats from three public API endpoints.">
   <meta property="og:image" content="https://${req.get('host')}/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Skolverket MCP - AI-tillgång till svenska läroplaner via Model Context Protocol">
+  <meta property="og:image:alt" content="Skolverket MCP - AI access to Swedish education data via Model Context Protocol">
   <meta property="og:site_name" content="Skolverket MCP Server">
-  <meta property="og:locale" content="sv_SE">
+  <meta property="og:locale" content="en_US">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@skolverket">
-  <meta name="twitter:title" content="Skolverket MCP Server - AI-tillgång till svenska läroplaner">
-  <meta name="twitter:description" content="Anslut ChatGPT, Claude och andra AI-assistenter till Skolverkets officiella API:er. 29 verktyg för läroplaner, skolenheter och vuxenutbildning.">
+  <meta name="twitter:site" content="@isakskogstad">
+  <meta name="twitter:title" content="Skolverket MCP Server - AI Access to Swedish Education Data">
+  <meta name="twitter:description" content="MCP server for Swedish National Agency for Education (Skolverket) open data. Tuned for LLMs to query, parse, and integrate info, data, and stats from three public API endpoints.">
   <meta name="twitter:image" content="https://${req.get('host')}/og-image-twitter.png">
-  <meta name="twitter:image:alt" content="Skolverket MCP - AI-tillgång till svenska läroplaner">
+  <meta name="twitter:image:alt" content="Skolverket MCP - AI access to Swedish education data">
 
   <!-- LinkedIn specific -->
   <meta property="og:image:secure_url" content="https://${req.get('host')}/og-image.png">

@@ -1,11 +1,11 @@
 {
-  "name": "skolverket-mcp",
+  "name": "Skolverket-MCP",
   "version": "2.1.0",
   "description": "MCP server för alla Skolverkets öppna API:er - Läroplan API, Skolenhetsregistret och Planned Educations API",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "skolverket-mcp": "./dist/index.js"
+    "Skolverket-MCP": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
