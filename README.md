@@ -101,12 +101,14 @@ ChatGPT stöder endast HTTP/SSE (använd live-servern ovan)
 
 ### OpenAI Codex (CLI)
 
-**Alternativ 1: Live-Server**
-```
-OpenAI Codex stöder endast stdio (använd lokal installation nedan)
+**Alternativ 1: Live-Server (HTTP)**
+```toml
+# Lägg till i ~/.codex/config.toml:
+[mcp.skolverket]
+url = "https://skolverket-mcp.onrender.com/mcp"
 ```
 
-**Alternativ 2: Lokal Installation**
+**Alternativ 2: Lokal Installation (stdio)**
 ```json
 {
   "mcpServers": {
@@ -122,12 +124,19 @@ OpenAI Codex stöder endast stdio (använd lokal installation nedan)
 
 ### Cline (VS Code Extension)
 
-**Alternativ 1: Live-Server**
-```
-Cline stöder endast stdio (använd lokal installation nedan)
+**Alternativ 1: Live-Server (HTTP)**
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "transportType": "http",
+      "url": "https://skolverket-mcp.onrender.com/mcp"
+    }
+  }
+}
 ```
 
-**Alternativ 2: Lokal Installation**
+**Alternativ 2: Lokal Installation (stdio)**
 ```json
 {
   "mcpServers": {
@@ -141,14 +150,26 @@ Cline stöder endast stdio (använd lokal installation nedan)
 
 ---
 
-### Gemini (Google AI Studio)
+### Gemini CLI (Google AI Studio)
 
-**Alternativ 1: Live-Server**
+**Alternativ 1: Live-Server (HTTP)**
+```bash
+# Kommando:
+gemini mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
+
+# Eller i config:
 ```
-Gemini stöder endast stdio (använd lokal installation nedan)
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "httpUrl": "https://skolverket-mcp.onrender.com/mcp"
+    }
+  }
+}
 ```
 
-**Alternativ 2: Lokal Installation**
+**Alternativ 2: Lokal Installation (stdio)**
 ```json
 {
   "mcpServers": {
