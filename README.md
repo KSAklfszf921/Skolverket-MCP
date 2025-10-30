@@ -4,12 +4,13 @@ En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som g
 
 ## 🚀 Snabbstart
 
-### Live-Server (Snabbast)
-Servern är live-hostad och redo att användas:
+### Live-Server (HTTP/SSE)
+Servern är live-hostad på `https://skolverket-mcp.onrender.com/mcp`
 
-**ChatGPT** (Plus/Pro/Enterprise): Settings → Connectors → Developer Mode → Add MCP Server:
+**ChatGPT** (Plus/Pro/Enterprise):
 ```
-https://skolverket-mcp.onrender.com/mcp
+Settings → Connectors → Developer Mode → Add MCP Server
+URL: https://skolverket-mcp.onrender.com/mcp
 ```
 
 **Claude Code** (HTTP Transport):
@@ -24,12 +25,61 @@ https://skolverket-mcp.onrender.com/mcp
 }
 ```
 
-> **Limits**: 100GB bandbredd/månad. Vid hög belastning, se [lokal installation](INSTALLATION.md).
+> **Limits**: 100GB bandbredd/månad. Vid hög belastning, använd lokal installation nedan.
 
-### Lokal Installation
-```bash
-npx skolverket-mcp  # Eller se INSTALLATION.md för fler alternativ
+---
+
+### Lokal Installation (stdio)
+
+#### Claude Desktop
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "npx",
+      "args": ["-y", "skolverket-mcp"]
+    }
+  }
+}
 ```
+
+#### Claude Code (CLI)
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "npx",
+      "args": ["-y", "skolverket-mcp"]
+    }
+  }
+}
+```
+
+#### Cline/Codex (VS Code Extension)
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "npx",
+      "args": ["-y", "skolverket-mcp"]
+    }
+  }
+}
+```
+
+#### Gemini (Google AI Studio - CLI)
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "npx",
+      "args": ["-y", "skolverket-mcp"]
+    }
+  }
+}
+```
+
+> För fler installationsalternativ (npm global, källkod), se [INSTALLATION.md](INSTALLATION.md)
 
 ## 🌟 Funktioner
 
