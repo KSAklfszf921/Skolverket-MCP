@@ -45,7 +45,8 @@ export function loadConfig(): SkolverketConfig {
   return {
     // API URLs - kan överridas för testning
     syllabusApiBaseUrl: process.env.SKOLVERKET_SYLLABUS_API_URL || 'https://api.skolverket.se/syllabus',
-    schoolUnitsApiBaseUrl: process.env.SKOLVERKET_SCHOOL_UNITS_API_URL || 'https://api.skolverket.se/school-units',
+    // School Units finns i Planned Educations API, inte separat
+    schoolUnitsApiBaseUrl: process.env.SKOLVERKET_SCHOOL_UNITS_API_URL || 'https://api.skolverket.se/planned-educations',
     plannedEducationApiBaseUrl: process.env.SKOLVERKET_PLANNED_EDUCATION_API_URL || 'https://api.skolverket.se/planned-educations',
 
     // Authentication

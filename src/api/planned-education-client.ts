@@ -32,10 +32,8 @@ export class PlannedEducationApiClient extends BaseApiClient {
       maxConcurrent: config.maxConcurrent,
       apiKey: config.apiKey,
       authHeader: config.authHeader,
+      customAcceptHeader: 'application/vnd.skolverket.plannededucations.api.v3.hal+json'
     });
-
-    // Lägg till header för API-version (v4 är senaste)
-    this.client.defaults.headers['Accept'] = 'application/vnd.skolverket.plannededucations.api.v4.hal+json';
   }
 
   /**
@@ -50,11 +48,11 @@ export class PlannedEducationApiClient extends BaseApiClient {
       ...params
     };
 
-    return this.get<ApiResponse<AdultEducationResponse>>('/adult-education-events', searchParams);
+    return this.get<ApiResponse<AdultEducationResponse>>('/v3/adult-education-events', searchParams);
   }
 
   async getAdultEducationDetails(id: string): Promise<ApiResponse<AdultEducationEvent>> {
-    return this.get<ApiResponse<AdultEducationEvent>>(`/adult-education-events/${id}`);
+    return this.get<ApiResponse<AdultEducationEvent>>(`/v3/adult-education-events/${id}`);
   }
 
   /**
@@ -68,11 +66,11 @@ export class PlannedEducationApiClient extends BaseApiClient {
       ...params
     };
 
-    return this.get<ApiResponse<SchoolUnitCompactResponse>>('/school-units', searchParams);
+    return this.get<ApiResponse<SchoolUnitCompactResponse>>('/v3/compact-school-units', searchParams);
   }
 
   async getSchoolUnitDetails(code: string): Promise<ApiResponse<PlannedSchoolUnit>> {
-    return this.get<ApiResponse<PlannedSchoolUnit>>(`/school-units/${code}`);
+    return this.get<ApiResponse<PlannedSchoolUnit>>(`/v3/school-units/${code}`);
   }
 
   /**
@@ -86,11 +84,11 @@ export class PlannedEducationApiClient extends BaseApiClient {
       ...params
     };
 
-    return this.get<ApiResponse<any>>('/education-events', searchParams);
+    return this.get<ApiResponse<any>>('/v3/education-events', searchParams);
   }
 
   async getEducationEventDetails(id: string): Promise<ApiResponse<EducationEvent>> {
-    return this.get<ApiResponse<EducationEvent>>(`/education-events/${id}`);
+    return this.get<ApiResponse<EducationEvent>>(`/v3/education-events/${id}`);
   }
 
   /**
@@ -98,11 +96,11 @@ export class PlannedEducationApiClient extends BaseApiClient {
    */
 
   async getSchoolStatistics(schoolUnitCode: string, params: any = {}): Promise<ApiResponse<StatisticsResponse>> {
-    return this.get<ApiResponse<StatisticsResponse>>(`/statistics/school-units/${schoolUnitCode}`, params);
+    return this.get<ApiResponse<StatisticsResponse>>(`/v3/school-units/${schoolUnitCode}/statistics`, params);
   }
 
   async getMunicipalityStatistics(municipalityCode: string, params: any = {}): Promise<ApiResponse<StatisticsResponse>> {
-    return this.get<ApiResponse<StatisticsResponse>>(`/statistics/municipalities/${municipalityCode}`, params);
+    return this.get<ApiResponse<StatisticsResponse>>(`/v3/statistics/municipalities/${municipalityCode}`, params);
   }
 
   /**
@@ -116,11 +114,11 @@ export class PlannedEducationApiClient extends BaseApiClient {
       ...params
     };
 
-    return this.get<ApiResponse<DocumentsResponse>>('/documents', searchParams);
+    return this.get<ApiResponse<DocumentsResponse>>('/v3/documents', searchParams);
   }
 
   async getDocumentDetails(id: string): Promise<ApiResponse<InspectionDocument>> {
-    return this.get<ApiResponse<InspectionDocument>>(`/documents/${id}`);
+    return this.get<ApiResponse<InspectionDocument>>(`/v3/documents/${id}`);
   }
 
   /**
@@ -128,7 +126,7 @@ export class PlannedEducationApiClient extends BaseApiClient {
    */
 
   async getSchoolSurveyData(schoolUnitCode: string, params: any = {}): Promise<ApiResponse<SchoolSurveyResponse>> {
-    return this.get<ApiResponse<SchoolSurveyResponse>>(`/school-survey/${schoolUnitCode}`, params);
+    return this.get<ApiResponse<SchoolSurveyResponse>>(`/v3/school-units/${schoolUnitCode}/surveys`, params);
   }
 
   /**
@@ -136,11 +134,11 @@ export class PlannedEducationApiClient extends BaseApiClient {
    */
 
   async getEducationAreas(): Promise<ApiResponse<SupportDataResponse>> {
-    return this.get<ApiResponse<SupportDataResponse>>('/support-data/areas');
+    return this.get<ApiResponse<SupportDataResponse>>('/v3/support/geographical-areas');
   }
 
   async getDirections(): Promise<ApiResponse<SupportDataResponse>> {
-    return this.get<ApiResponse<SupportDataResponse>>('/support-data/directions');
+    return this.get<ApiResponse<SupportDataResponse>>('/v3/support/programs');
   }
 }
 

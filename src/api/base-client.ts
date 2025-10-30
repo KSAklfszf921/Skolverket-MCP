@@ -20,6 +20,7 @@ export interface BaseClientConfig {
   retryDelay?: number; // Base delay mellan retries i ms (default: 1000)
   apiKey?: string; // API-nyckel om krävs
   authHeader?: string; // Namn på auth header (default: 'Authorization')
+  customAcceptHeader?: string; // Custom Accept header för specifika API:er
 }
 
 export class BaseApiClient {
@@ -28,7 +29,7 @@ export class BaseApiClient {
 
   constructor(config: BaseClientConfig) {
     const headers: Record<string, string> = {
-      'Accept': 'application/json',
+      'Accept': config.customAcceptHeader || 'application/json',
       'User-Agent': config.userAgent || 'skolverket-mcp/2.1.0'
     };
 
@@ -75,8 +76,11 @@ export class BaseApiClient {
       (config) => {
         log.debug('API Request', {
           method: config.method?.toUpperCase(),
+          baseURL: config.baseURL, // EXTRA DEBUG: Logga baseURL
           url: config.url,
-          params: config.params
+          fullURL: `${config.baseURL}${config.url}`, // EXTRA DEBUG: Logga fullständig URL
+          params: config.params,
+          headers: config.headers // EXTRA DEBUG: Logga alla headers
         });
         return config;
       },
