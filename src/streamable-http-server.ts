@@ -383,7 +383,7 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
           type: 'object',
           properties: {
             schooltype: { type: 'string', description: 'Skoltyp (t.ex. GR, GY, VUX)' },
-            timespan: { type: 'string', description: 'Tidsperiod: LATEST, HISTORICAL, ALL' }
+            timespan: { type: 'string', description: 'Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)' }
           }
         }
       },
@@ -419,7 +419,7 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {
             schooltype: { type: 'string', description: 'Skoltyp' },
             subjectCode: { type: 'string', description: 'Ämneskod för filtrering' },
-            timespan: { type: 'string', description: 'Tidsperiod' }
+            timespan: { type: 'string', description: 'Tidsperiod: LATEST, FUTURE, EXPIRED, MODIFIED' }
           }
         }
       },
@@ -454,7 +454,7 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
           type: 'object',
           properties: {
             schooltype: { type: 'string', description: 'Skoltyp (normalt GY för gymnasium)' },
-            timespan: { type: 'string', description: 'Tidsperiod' }
+            timespan: { type: 'string', description: 'Tidsperiod: LATEST, FUTURE, EXPIRED, MODIFIED' }
           }
         }
       },
@@ -488,7 +488,7 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: 'object',
           properties: {
-            timespan: { type: 'string', description: 'Tidsperiod' }
+            timespan: { type: 'string', description: 'Tidsperiod: LATEST, FUTURE, EXPIRED, MODIFIED' }
           }
         }
       },
