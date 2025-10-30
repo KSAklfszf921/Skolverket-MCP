@@ -1,7 +1,7 @@
 {
   "name": "skolverket-mcp",
   "version": "2.1.0",
-  "description": "Komplett MCP server för Skolverkets öppna API:er med resources, prompts, caching, logging och mer",
+  "description": "MCP server för alla Skolverkets öppna API:er - Läroplan API, Skolenhetsregistret och Planned Educations API",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
