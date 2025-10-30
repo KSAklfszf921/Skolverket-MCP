@@ -822,7 +822,7 @@ app.get('/', (req, res) => {
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://${req.get('host')}/">
-  <meta property="og:title" content="Skolverket MCP Server - AI Access to Swedish Education Data">
+  <meta property="og:title" content="Skolverket MCP server - Give AI Access to Swedish Education Data">
   <meta property="og:description" content="MCP server for Swedish National Agency for Education (Skolverket) open data. Tuned for LLMs to query, parse, and integrate info, data, and stats from three public API endpoints.">
   <meta property="og:image" content="https://${req.get('host')}/og-image.png">
   <meta property="og:image:width" content="1200">
@@ -834,7 +834,7 @@ app.get('/', (req, res) => {
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@isakskogstad">
-  <meta name="twitter:title" content="Skolverket MCP Server - AI Access to Swedish Education Data">
+  <meta name="twitter:title" content="Skolverket MCP server - Give AI Access to Swedish Education Data">
   <meta name="twitter:description" content="MCP server for Swedish National Agency for Education (Skolverket) open data. Tuned for LLMs to query, parse, and integrate info, data, and stats from three public API endpoints.">
   <meta name="twitter:image" content="https://${req.get('host')}/og-image-twitter.png">
   <meta name="twitter:image:alt" content="Skolverket MCP - AI access to Swedish education data">
