@@ -285,6 +285,11 @@ Hittat en bugg eller har en idé? Öppna gärna ett [issue på GitHub](https://g
 ## Versionshistorik
 
 ### Version 2.1.0 (30 oktober 2025)
+- **API Terminology Fixes** – Korrigerade alla API-parametrar enligt Skolverkets officiella specifikationer
+  - Läroplan API: Uppdaterade timespan-värden till `LATEST`, `FUTURE`, `EXPIRED`, `MODIFIED`
+  - Skolenhetsregistret: Korrigerade base URL och API endpoints (v2)
+  - Skolenhetsregistret: Fixade response parsing och lade till `PLANERAD` status
+  - Se [CHANGES.md](CHANGES.md) för detaljerad changelog
 - Lade till Resources-support (4 statiska URI:er)
 - Lade till Prompts-support (5 guidade arbetsflöden)
 - Implementerade strukturerad logging, cachning, rate limiting och validering
