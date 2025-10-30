@@ -830,17 +830,20 @@ app.get('/', (req, res) => {
   <meta name="twitter:image" content="${req.protocol}://${req.get('host')}/og-image.png">
 
   <style>
+    /* === Base & Reset === */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: #f5f5f7;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #fafafa;
       color: #1d1d1f;
-      line-height: 1.6;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
+
+    /* === Header === */
     .header {
-      background: white;
-      border-bottom: 1px solid #e5e5e7;
-      padding: 20px 0;
+      background: #ffffff;
+      padding: 16px 0;
       position: sticky;
       top: 0;
       z-index: 100;
@@ -849,181 +852,376 @@ app.get('/', (req, res) => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      max-width: 980px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0 24px;
     }
-    .nav-left { display: flex; align-items: center; gap: 8px; }
-    .nav-right { display: flex; gap: 16px; }
+    .nav-left { display: flex; align-items: center; }
+    .nav-right {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    /* === Status Badges === */
+    .status-badge {
+      background: #f5f5f7;
+      color: #86868b;
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    /* === Navigation Links & Buttons === */
     .nav-link {
       color: #1d1d1f;
       text-decoration: none;
       font-size: 14px;
-      padding: 6px 12px;
+      font-weight: 400;
+      padding: 8px 12px;
       border-radius: 8px;
-      transition: background 0.2s;
-    }
-    .nav-link:hover { background: #f5f5f7; }
-    .github-btn {
-      background: #1d1d1f;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
-    .github-btn:hover { background: #424245; }
-    .container {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-    .hero {
-      text-align: center;
-      padding: 60px 0 40px;
-    }
-    h1 {
-      font-size: 48px;
-      font-weight: 600;
-      color: #1d1d1f;
-      margin-bottom: 12px;
-      letter-spacing: -0.02em;
-    }
-    .subtitle {
-      font-size: 21px;
-      color: #6e6e73;
-      font-weight: 400;
-      margin-bottom: 8px;
-    }
-    .status-bar {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      margin-top: 24px;
-      flex-wrap: wrap;
-    }
-    .status-badge {
+    .nav-link:hover {
       background: #f5f5f7;
+    }
+    .icon-btn {
+      background: transparent;
+      border: none;
       color: #1d1d1f;
-      padding: 6px 14px;
-      border-radius: 12px;
-      font-size: 14px;
-      border: 1px solid #e5e5e7;
-    }
-    .status-badge.active { background: #e8f5e9; border-color: #4caf50; color: #2e7d32; }
-
-    .section {
-      background: white;
-      border-radius: 12px;
-      padding: 32px;
-      margin: 24px 0;
-      border: 1px solid #e5e5e7;
-    }
-    .section h2 {
-      font-size: 28px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: #1d1d1f;
-    }
-    .section h3 {
-      font-size: 21px;
-      font-weight: 600;
-      margin: 24px 0 12px;
-      color: #1d1d1f;
-    }
-    .section p {
-      color: #6e6e73;
-      margin-bottom: 16px;
-      font-size: 17px;
-    }
-
-    .endpoint-box {
-      background: #f5f5f7;
-      border: 1px solid #e5e5e7;
+      cursor: pointer;
+      padding: 8px;
       border-radius: 8px;
-      padding: 16px;
-      margin: 16px 0;
-      font-family: 'SF Mono', Monaco, 'Courier New', monospace;
-      font-size: 15px;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .endpoint-url {
-      color: #0066cc;
+    .icon-btn:hover {
+      background: #f5f5f7;
+    }
+
+    /* === Search Expanded === */
+    .search-expanded {
+      display: none;
+      background: #ffffff;
+      padding: 16px 0;
+      border-top: 1px solid #f5f5f7;
+    }
+    .search-expanded.active {
+      display: block;
+    }
+    .search-expanded .container {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .search-input-expanded {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 15px;
+      border: none;
+      background: #f5f5f7;
+      border-radius: 8px;
+      outline: none;
+      font-family: inherit;
+    }
+    .search-input-expanded:focus {
+      background: #ebebeb;
+    }
+    .search-close {
+      background: transparent;
+      border: none;
+      color: #86868b;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .search-close:hover {
+      background: #f5f5f7;
+    }
+
+    /* === Container === */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* === Progress Bar (subtle) === */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 1px;
+      background: #007aff;
+      width: 0;
+      z-index: 101;
+      opacity: 0.6;
+    }
+
+    /* === Documentation Navigation === */
+    .doc-nav-sticky {
+      position: sticky;
+      top: 65px;
+      background: #ffffff;
+      padding: 16px 0;
+      z-index: 90;
+      margin-bottom: 40px;
+    }
+    .doc-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+    }
+    .doc-btn {
+      background: transparent;
+      color: #86868b;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 400;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .doc-btn:hover {
+      background: #f5f5f7;
+      color: #1d1d1f;
+    }
+    .doc-btn.active {
+      background: #f5f5f7;
+      color: #1d1d1f;
       font-weight: 500;
     }
 
-    .guide {
-      background: #fafafa;
-      border-left: 3px solid #0066cc;
-      padding: 20px;
-      margin: 16px 0;
-      border-radius: 4px;
+    /* === TOC Modal === */
+    .toc-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 200;
+      backdrop-filter: blur(4px);
     }
-    .guide-title {
-      font-weight: 600;
-      color: #0066cc;
-      margin-bottom: 12px;
-      font-size: 17px;
+    .toc-modal.active {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
     }
-    .guide-steps {
-      color: #6e6e73;
-      font-size: 15px;
+    .toc-modal-content {
+      background: #ffffff;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
-    .guide-steps ol {
-      margin-left: 20px;
-      margin-top: 8px;
+    .toc-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px;
+      border-bottom: 1px solid #f5f5f7;
     }
-    .guide-steps li {
+    .toc-modal-header h3 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #1d1d1f;
+    }
+    .toc-modal-close {
+      background: transparent;
+      border: none;
+      color: #86868b;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .toc-modal-close:hover {
+      background: #f5f5f7;
+    }
+    .toc-modal-body {
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .toc-list {
+      list-style: none;
+    }
+    .toc-list li {
       margin: 8px 0;
-      padding-left: 4px;
     }
-    .guide-steps code {
-      background: #e5e5e7;
-      padding: 2px 6px;
+    .toc-list a {
+      color: #1d1d1f;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 8px 12px;
+      display: block;
+      border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .toc-list a:hover {
+      background: #f5f5f7;
+    }
+
+    /* === Main Content === */
+    .doc-content {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 40px;
+      margin-bottom: 40px;
+      min-height: 400px;
+    }
+
+    /* === Typography === */
+    #github-content h1 {
+      font-size: 32px;
+      font-weight: 500;
+      color: #1d1d1f;
+      margin: 0 0 24px 0;
+      letter-spacing: -0.5px;
+    }
+    #github-content h2 {
+      font-size: 22px;
+      font-weight: 500;
+      color: #1d1d1f;
+      margin: 40px 0 16px 0;
+      letter-spacing: -0.3px;
+    }
+    #github-content h3 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #1d1d1f;
+      margin: 24px 0 12px 0;
+    }
+    #github-content p {
+      color: #86868b;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    #github-content a {
+      color: #007aff;
+      text-decoration: none;
+    }
+    #github-content a:hover {
+      text-decoration: underline;
+    }
+    #github-content code {
+      background: #f5f5f7;
+      padding: 3px 6px;
       border-radius: 4px;
       font-size: 14px;
-      color: #1d1d1f;
+      font-family: 'SF Mono', Monaco, monospace;
     }
-
-    .api-list {
-      display: grid;
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .api-item {
-      background: #fafafa;
+    #github-content pre {
+      background: #f5f5f7;
       padding: 16px;
       border-radius: 8px;
-      border: 1px solid #e5e5e7;
+      overflow-x: auto;
+      margin: 16px 0;
     }
-    .api-item strong {
+    #github-content pre code {
+      background: transparent;
+      padding: 0;
+    }
+    #github-content ul,
+    #github-content ol {
+      margin-left: 24px;
+      margin-bottom: 16px;
+      color: #86868b;
+    }
+    #github-content li {
+      margin: 8px 0;
+      padding-left: 8px;
+    }
+    #github-content blockquote {
+      border-left: 3px solid #f5f5f7;
+      padding-left: 16px;
+      margin: 16px 0;
+      color: #86868b;
+    }
+    #github-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+    #github-content th,
+    #github-content td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #f5f5f7;
+    }
+    #github-content th {
+      background: #fafafa;
+      font-weight: 500;
       color: #1d1d1f;
-      display: block;
-      margin-bottom: 4px;
     }
-    .api-item span {
-      color: #6e6e73;
-      font-size: 15px;
+    #github-content td {
+      color: #86868b;
     }
 
+    /* === Loading Spinner === */
+    .spinner {
+      border: 2px solid #f5f5f7;
+      border-top: 2px solid #86868b;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* === Footer === */
     .footer {
       text-align: center;
-      padding: 40px 20px;
-      color: #6e6e73;
-      font-size: 14px;
+      padding: 40px 24px;
+      color: #86868b;
+      font-size: 13px;
     }
     .footer a {
-      color: #0066cc;
+      color: #007aff;
       text-decoration: none;
     }
     .footer a:hover {
       text-decoration: underline;
+    }
+
+    /* === Responsive === */
+    @media (max-width: 768px) {
+      .nav {
+        padding: 0 16px;
+      }
+      .container {
+        padding: 0 16px;
+      }
+      .doc-content {
+        padding: 24px;
+      }
+      #github-content h1 {
+        font-size: 28px;
+      }
+      #github-content h2 {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -1031,117 +1229,80 @@ app.get('/', (req, res) => {
   <div class="header">
     <div class="nav">
       <div class="nav-left">
-        <span style="font-size: 18px; font-weight: 600;">Skolverket MCP</span>
-        <span class="status-badge active" style="margin-left: 8px;">● Online</span>
+        <span style="font-size: 20px; font-weight: 500; letter-spacing: -0.3px;">Skolverket MCP Server</span>
+        <span class="status-badge" style="margin-left: 16px;">Online</span>
+        <span class="status-badge" style="margin-left: 8px;">v2.1.0</span>
       </div>
       <div class="nav-right">
+        <button onclick="toggleSearch()" class="icon-btn" id="search-toggle" aria-label="Sök">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+        <button onclick="toggleTOC()" class="icon-btn" id="toc-toggle-btn" aria-label="Innehållsförteckning">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
         <a href="/health" class="nav-link">Status</a>
-        <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank" class="github-btn">
+        <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank" class="nav-link">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
           </svg>
-          GitHub
         </a>
       </div>
     </div>
-  </div>
 
-  <div class="container">
-    <div class="hero">
-      <h1>Skolverket MCP Server</h1>
-      <p class="subtitle">Model Context Protocol Server för Skolverkets öppna API:er</p>
-      <div class="status-bar">
-        <span class="status-badge">Version 2.1.0</span>
-        <span class="status-badge">29 verktyg</span>
-        <span class="status-badge">HTTP Transport</span>
+    <!-- Expandable Search -->
+    <div class="search-expanded" id="search-expanded">
+      <div class="container">
+        <input type="text" id="doc-search" placeholder="Sök i dokumentation..." class="search-input-expanded" autofocus>
+        <button onclick="toggleSearch()" class="search-close">✕</button>
       </div>
     </div>
-
-    <!-- Kort beskrivning -->
-    <div class="section" style="margin-top: 0;">
-      <p style="font-size: 17px; color: #1d1d1f; line-height: 1.6;">
-        Skolverket MCP Server ger AI-assistenter tillgång till Skolverkets officiella API:er.
-        Integration med ChatGPT, Claude och andra MCP-kompatibla system för att hämta svenska läroplaner,
-        skolenheter och utbildningar.
-      </p>
-      <p style="font-size: 15px; color: #6e6e73; margin-top: 16px; line-height: 1.6;">
-        <strong>MCP Endpoint:</strong> <code style="background: #f5f5f7; padding: 3px 8px; border-radius: 4px; font-size: 14px;">${req.protocol}://${req.get('host')}/mcp</code><br>
-        <strong>Skapad av:</strong> Isak Skogstad ·
-        <strong>Hosting:</strong> <a href="https://render.com" target="_blank" style="color: #0066cc;">Render.com</a> ·
-        <strong>Licens:</strong> MIT Open Source
-      </p>
-    </div>
   </div>
+
+  <!-- Progress Bar (subtle) -->
+  <div class="progress-bar" id="progress-bar"></div>
 
   <!-- Sticky Documentation Navigation -->
   <div class="doc-nav-sticky" id="doc-nav">
     <div class="container">
-      <div class="doc-nav-content">
-        <div class="doc-tabs">
-          <button onclick="loadDoc('README')" class="doc-btn active" id="btn-README">
-            <span class="doc-icon">📄</span> README
-          </button>
-          <button onclick="loadDoc('INSTALLATION')" class="doc-btn" id="btn-INSTALLATION">
-            <span class="doc-icon">⚙️</span> Installation
-          </button>
-          <button onclick="loadDoc('API')" class="doc-btn" id="btn-API">
-            <span class="doc-icon">📚</span> API
-          </button>
-          <button onclick="loadDoc('EXAMPLES')" class="doc-btn" id="btn-EXAMPLES">
-            <span class="doc-icon">💡</span> Exempel
-          </button>
-          <button onclick="loadDoc('CHANGES')" class="doc-btn" id="btn-CHANGES">
-            <span class="doc-icon">📝</span> Ändringslogg
-          </button>
-        </div>
-        <div class="doc-actions">
-          <input type="text" id="doc-search" placeholder="Sök i dokumentation..." class="search-input">
-          <button onclick="toggleTOC()" class="toc-toggle" id="toc-toggle">
-            <span>☰</span> Innehåll
-          </button>
-        </div>
+      <div class="doc-tabs">
+        <button onclick="loadDoc('README')" class="doc-btn active" id="btn-README">README</button>
+        <button onclick="loadDoc('INSTALLATION')" class="doc-btn" id="btn-INSTALLATION">Installation</button>
+        <button onclick="loadDoc('API')" class="doc-btn" id="btn-API">API</button>
+        <button onclick="loadDoc('EXAMPLES')" class="doc-btn" id="btn-EXAMPLES">Exempel</button>
+        <button onclick="loadDoc('CHANGES')" class="doc-btn" id="btn-CHANGES">Ändringslogg</button>
       </div>
     </div>
   </div>
 
-  <!-- Progress Bar -->
-  <div class="progress-bar" id="progress-bar"></div>
+  <!-- Table of Contents Modal -->
+  <div class="toc-modal" id="toc-modal">
+    <div class="toc-modal-content">
+      <div class="toc-modal-header">
+        <h3>Innehållsförteckning</h3>
+        <button onclick="toggleTOC()" class="toc-modal-close">✕</button>
+      </div>
+      <div class="toc-modal-body" id="toc-content">
+        <p style="color: #86868b;">Laddar innehållsförteckning...</p>
+      </div>
+    </div>
+  </div>
 
-  <!-- Dynamiska GitHub Docs Sektioner -->
-  <div class="container" style="margin-top: 24px;">
-    <div class="doc-layout">
-      <!-- Table of Contents Sidebar -->
-      <aside class="toc-sidebar" id="toc-sidebar">
-        <div class="toc-header">
-          <h3>Innehållsförteckning</h3>
-          <button onclick="toggleTOC()" class="toc-close">✕</button>
+  <!-- Main Content -->
+  <div class="container" style="margin-top: 40px;">
+    <div class="doc-content">
+      <div id="github-content">
+        <div style="text-align: center; padding: 80px 24px; color: #86868b;">
+          <div class="spinner"></div>
+          <p style="margin-top: 24px;">Laddar dokumentation från GitHub...</p>
         </div>
-        <div class="toc-content" id="toc-content">
-          <p style="color: #6e6e73; font-size: 14px;">Laddar innehållsförteckning...</p>
-        </div>
-      </aside>
-
-      <!-- Main Content -->
-      <main class="doc-main">
-        <!-- Breadcrumb -->
-        <div class="breadcrumb" id="breadcrumb">
-          <a href="#" onclick="scrollToTop(); return false;">Hem</a>
-          <span class="breadcrumb-sep">›</span>
-          <span id="breadcrumb-current">README</span>
-        </div>
-
-        <!-- Last Updated -->
-        <div class="last-updated" id="last-updated"></div>
-
-        <div class="section">
-          <div id="github-content">
-            <div style="text-align: center; padding: 40px; color: #6e6e73;">
-              <div class="spinner"></div>
-              <p style="margin-top: 16px;">Laddar dokumentation från GitHub...</p>
-            </div>
-          </div>
-        </div>
-      </main>
+      </div>
     </div>
   </div>
 
@@ -1157,348 +1318,9 @@ app.get('/', (req, res) => {
   <!-- Marked.js från CDN för markdown rendering -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
-  <style>
-    /* Sticky Documentation Navigation */
-    .doc-nav-sticky {
-      position: sticky;
-      top: 65px;
-      background: white;
-      border-bottom: 1px solid #e5e5e7;
-      padding: 16px 0;
-      z-index: 90;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    .doc-nav-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .doc-tabs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .doc-actions {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    /* Documentation Buttons */
-    .doc-btn {
-      background: #f5f5f7;
-      border: 1px solid #e5e5e7;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      position: relative;
-    }
-    .doc-btn:hover {
-      background: #e5e5e7;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .doc-btn.active {
-      background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
-      color: white;
-      border-color: #0066cc;
-      box-shadow: 0 4px 12px rgba(0,102,204,0.3);
-    }
-    .doc-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: -17px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 6px solid #0066cc;
-    }
-    .doc-icon {
-      font-size: 16px;
-    }
-
-    /* Search Input */
-    .search-input {
-      padding: 8px 12px;
-      border: 1px solid #e5e5e7;
-      border-radius: 8px;
-      font-size: 14px;
-      width: 200px;
-      transition: all 0.2s;
-    }
-    .search-input:focus {
-      outline: none;
-      border-color: #0066cc;
-      box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
-    }
-
-    /* TOC Toggle Button */
-    .toc-toggle {
-      background: #f5f5f7;
-      border: 1px solid #e5e5e7;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .toc-toggle:hover {
-      background: #e5e5e7;
-    }
-
-    /* Progress Bar */
-    .progress-bar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #0066cc 0%, #00a8ff 100%);
-      width: 0%;
-      z-index: 1000;
-      transition: width 0.1s ease;
-    }
-
-    /* Documentation Layout */
-    .doc-layout {
-      display: flex;
-      gap: 24px;
-      position: relative;
-    }
-
-    /* TOC Sidebar */
-    .toc-sidebar {
-      position: sticky;
-      top: 180px;
-      width: 250px;
-      max-height: calc(100vh - 200px);
-      overflow-y: auto;
-      background: white;
-      border: 1px solid #e5e5e7;
-      border-radius: 12px;
-      padding: 20px;
-      flex-shrink: 0;
-      display: none;
-    }
-    .toc-sidebar.visible {
-      display: block;
-    }
-    .toc-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #e5e5e7;
-    }
-    .toc-header h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin: 0;
-    }
-    .toc-close {
-      background: none;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
-      color: #6e6e73;
-      padding: 4px 8px;
-    }
-    .toc-close:hover {
-      color: #1d1d1f;
-    }
-    .toc-content {
-      font-size: 14px;
-    }
-    .toc-content a {
-      display: block;
-      padding: 6px 0;
-      color: #1d1d1f;
-      text-decoration: none;
-      transition: all 0.2s;
-      padding-left: 0;
-    }
-    .toc-content a:hover {
-      color: #0066cc;
-      padding-left: 8px;
-    }
-    .toc-content a.toc-h2 {
-      font-weight: 500;
-      margin-top: 8px;
-    }
-    .toc-content a.toc-h3 {
-      font-size: 13px;
-      color: #6e6e73;
-      padding-left: 16px;
-    }
-    .toc-content a.toc-h3:hover {
-      padding-left: 24px;
-    }
-
-    /* Main Content */
-    .doc-main {
-      flex: 1;
-      min-width: 0;
-    }
-
-    /* Breadcrumb */
-    .breadcrumb {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: #6e6e73;
-      margin-bottom: 16px;
-      padding: 12px 0;
-    }
-    .breadcrumb a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-    .breadcrumb a:hover {
-      text-decoration: underline;
-    }
-    .breadcrumb-sep {
-      color: #e5e5e7;
-    }
-    #breadcrumb-current {
-      color: #1d1d1f;
-      font-weight: 500;
-    }
-
-    /* Last Updated */
-    .last-updated {
-      font-size: 13px;
-      color: #6e6e73;
-      padding: 8px 12px;
-      background: #f5f5f7;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      display: inline-block;
-    }
-
-    /* Spinner */
-    .spinner {
-      width: 40px;
-      height: 40px;
-      margin: 0 auto;
-      border: 3px solid #f5f5f7;
-      border-top-color: #0066cc;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* GitHub Content Styles */
-    #github-content h1, #github-content h2, #github-content h3 {
-      margin-top: 24px;
-      margin-bottom: 12px;
-      scroll-margin-top: 180px;
-    }
-    #github-content h1 { font-size: 32px; font-weight: 600; }
-    #github-content h2 { font-size: 24px; font-weight: 600; }
-    #github-content h3 { font-size: 19px; font-weight: 600; }
-    #github-content p { margin-bottom: 16px; line-height: 1.6; color: #1d1d1f; }
-    #github-content pre {
-      background: #1d1d1f;
-      color: #f5f5f7;
-      padding: 16px;
-      border-radius: 8px;
-      overflow-x: auto;
-      margin: 16px 0;
-    }
-    #github-content code {
-      background: #f5f5f7;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 90%;
-    }
-    #github-content pre code {
-      background: transparent;
-      padding: 0;
-    }
-    #github-content ul, #github-content ol {
-      margin: 16px 0 16px 24px;
-      line-height: 1.8;
-    }
-    #github-content blockquote {
-      border-left: 4px solid #e5e5e7;
-      padding-left: 16px;
-      margin: 16px 0;
-      color: #6e6e73;
-    }
-    #github-content table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 16px 0;
-    }
-    #github-content th, #github-content td {
-      border: 1px solid #e5e5e7;
-      padding: 8px 12px;
-      text-align: left;
-    }
-    #github-content th {
-      background: #f5f5f7;
-      font-weight: 600;
-    }
-    #github-content a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-    #github-content a:hover {
-      text-decoration: underline;
-    }
-    .search-highlight {
-      background: #ffeb3b;
-      padding: 2px 4px;
-      border-radius: 2px;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .doc-nav-content {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .doc-tabs {
-        justify-content: center;
-      }
-      .search-input {
-        width: 100%;
-      }
-      .toc-sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        max-height: 100vh;
-        z-index: 1000;
-        border-radius: 0;
-      }
-    }
-  </style>
 
   <script>
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/KSAklfszf921/Skolverket-MCP/master/';
-    const GITHUB_API_BASE = 'https://api.github.com/repos/KSAklfszf921/Skolverket-MCP/commits';
 
     const docs = {
       'README': 'README.md',
@@ -1511,7 +1333,7 @@ app.get('/', (req, res) => {
     const docTitles = {
       'README': 'README',
       'INSTALLATION': 'Installation',
-      'API': 'API Referens',
+      'API': 'API',
       'EXAMPLES': 'Exempel',
       'CHANGES': 'Ändringslogg'
     };
@@ -1534,18 +1356,36 @@ app.get('/', (req, res) => {
       progressBar.style.width = Math.min(progress, 100) + '%';
     }
 
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function toggleSearch() {
+      const searchExpanded = document.getElementById('search-expanded');
+      const searchInput = document.getElementById('doc-search');
+
+      searchExpanded.classList.toggle('active');
+
+      if (searchExpanded.classList.contains('active')) {
+        setTimeout(() => searchInput.focus(), 100);
+      } else {
+        searchInput.value = '';
+        // Restore original content if search was active
+        if (currentMarkdown) {
+          document.getElementById('github-content').innerHTML = marked.parse(currentMarkdown);
+          generateTOC(document.getElementById('github-content').innerHTML);
+        }
+      }
     }
 
     function toggleTOC() {
-      const sidebar = document.getElementById('toc-sidebar');
-      sidebar.classList.toggle('active');
-    }
+      const modal = document.getElementById('toc-modal');
+      modal.classList.toggle('active');
 
-    function updateBreadcrumb(docName) {
-      const breadcrumbCurrent = document.getElementById('breadcrumb-current');
-      breadcrumbCurrent.textContent = docTitles[docName] || docName;
+      // Close modal when clicking outside
+      if (modal.classList.contains('active')) {
+        modal.onclick = (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('active');
+          }
+        };
+      }
     }
 
     function generateTOC(html) {
@@ -1556,7 +1396,7 @@ app.get('/', (req, res) => {
       const tocContent = document.getElementById('toc-content');
 
       if (headings.length === 0) {
-        tocContent.innerHTML = '<p style="color: #6e6e73; font-size: 14px; padding: 12px;">Inga rubriker hittades</p>';
+        tocContent.innerHTML = '<p style="color: #86868b; font-size: 14px;">Inga rubriker hittades</p>';
         return;
       }
 
@@ -1573,7 +1413,7 @@ app.get('/', (req, res) => {
         const indent = level === 'h3' ? 'style="padding-left: 20px;"' : '';
         tocHtml += \`
           <li \${indent}>
-            <a href="#\${id}" onclick="document.getElementById('\${id}').scrollIntoView({ behavior: 'smooth' }); return false;">
+            <a href="#\${id}" onclick="document.getElementById('\${id}').scrollIntoView({ behavior: 'smooth' }); toggleTOC(); return false;">
               \${text}
             </a>
           </li>
@@ -1582,29 +1422,6 @@ app.get('/', (req, res) => {
 
       tocHtml += '</ul>';
       tocContent.innerHTML = tocHtml;
-    }
-
-    async function fetchLastUpdated(filePath) {
-      try {
-        const response = await fetch(\`\${GITHUB_API_BASE}?path=\${filePath}&page=1&per_page=1\`);
-        if (!response.ok) return null;
-
-        const commits = await response.json();
-        if (commits.length === 0) return null;
-
-        const lastCommit = commits[0];
-        const date = new Date(lastCommit.commit.author.date);
-
-        return {
-          date: date.toLocaleDateString('sv-SE'),
-          time: date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' }),
-          author: lastCommit.commit.author.name,
-          message: lastCommit.commit.message.split('\\n')[0]
-        };
-      } catch (error) {
-        console.error('Failed to fetch last updated:', error);
-        return null;
-      }
     }
 
     function setupSearch() {
@@ -1650,7 +1467,7 @@ app.get('/', (req, res) => {
           nodesToHighlight.forEach(textNode => {
             const text = textNode.textContent;
             const regex = new RegExp(\`(\${searchTerm})\`, 'gi');
-            const highlightedText = text.replace(regex, '<mark style="background: #ffd54f; padding: 2px 4px; border-radius: 2px;">$1</mark>');
+            const highlightedText = text.replace(regex, '<mark style="background: #007aff; color: white; padding: 2px 6px; border-radius: 4px;">$1</mark>');
 
             const span = document.createElement('span');
             span.innerHTML = highlightedText;
@@ -1663,8 +1480,8 @@ app.get('/', (req, res) => {
           const matchCount = nodesToHighlight.length;
           if (matchCount === 0) {
             contentDiv.innerHTML = \`
-              <div style="text-align: center; padding: 40px; color: #6e6e73;">
-                <p style="font-size: 18px; font-weight: 500;">🔍 Inga resultat</p>
+              <div style="text-align: center; padding: 80px 24px; color: #86868b;">
+                <p style="font-size: 18px; font-weight: 500;">Inga resultat</p>
                 <p style="margin-top: 8px;">Inga matchningar för "\${searchTerm}"</p>
               </div>
             \` + contentDiv.innerHTML;
@@ -1676,7 +1493,6 @@ app.get('/', (req, res) => {
     async function loadDoc(docName) {
       const contentDiv = document.getElementById('github-content');
       const buttons = document.querySelectorAll('.doc-btn');
-      const lastUpdatedDiv = document.getElementById('last-updated');
 
       currentDoc = docName;
 
@@ -1684,23 +1500,19 @@ app.get('/', (req, res) => {
       buttons.forEach(btn => btn.classList.remove('active'));
       document.getElementById('btn-' + docName).classList.add('active');
 
-      // Update breadcrumb
-      updateBreadcrumb(docName);
-
       // Clear search
       const searchInput = document.getElementById('doc-search');
-      searchInput.value = '';
+      if (searchInput) searchInput.value = '';
 
       // Show loading spinner
       contentDiv.innerHTML = \`
-        <div style="text-align: center; padding: 40px; color: #6e6e73;">
+        <div style="text-align: center; padding: 80px 24px; color: #86868b;">
           <div class="spinner"></div>
-          <p style="margin-top: 16px;">Laddar \${docTitles[docName]}...</p>
+          <p style="margin-top: 24px;">Laddar \${docTitles[docName]}...</p>
         </div>
       \`;
 
-      lastUpdatedDiv.innerHTML = '';
-      document.getElementById('toc-content').innerHTML = '<p style="color: #6e6e73; font-size: 14px;">Laddar innehållsförteckning...</p>';
+      document.getElementById('toc-content').innerHTML = '<p style="color: #86868b;">Laddar innehållsförteckning...</p>';
 
       try {
         const response = await fetch(GITHUB_RAW_BASE + docs[docName]);
@@ -1715,31 +1527,21 @@ app.get('/', (req, res) => {
         // Generate Table of Contents
         generateTOC(contentDiv.innerHTML);
 
-        // Fetch and display last updated info
-        const lastUpdated = await fetchLastUpdated(docs[docName]);
-        if (lastUpdated) {
-          lastUpdatedDiv.innerHTML = \`
-            <span>📅 Senast uppdaterad: \${lastUpdated.date} \${lastUpdated.time}</span>
-            <span style="margin-left: 12px;">👤 \${lastUpdated.author}</span>
-          \`;
-          lastUpdatedDiv.title = lastUpdated.message;
-        }
-
         // Smooth scroll to content
-        contentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
         // Reset progress bar
         updateProgressBar();
       } catch (error) {
         contentDiv.innerHTML = \`
-          <div style="text-align: center; padding: 40px;">
-            <p style="color: #d32f2f; font-weight: 500;">❌ Kunde inte ladda dokumentation</p>
-            <p style="color: #6e6e73; margin-top: 8px;">Kontrollera att GitHub är tillgängligt eller besök
-              <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank" style="color: #0066cc;">repot direkt</a>
+          <div style="text-align: center; padding: 80px 24px;">
+            <p style="color: #ff3b30; font-weight: 500; font-size: 16px;">Kunde inte ladda dokumentation</p>
+            <p style="color: #86868b; margin-top: 12px;">Kontrollera att GitHub är tillgängligt eller besök
+              <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank" style="color: #007aff;">repot direkt</a>
             </p>
           </div>
         \`;
-        document.getElementById('toc-content').innerHTML = '<p style="color: #6e6e73; font-size: 14px;">Ingen innehållsförteckning tillgänglig</p>';
+        document.getElementById('toc-content').innerHTML = '<p style="color: #86868b;">Ingen innehållsförteckning tillgänglig</p>';
       }
     }
 
