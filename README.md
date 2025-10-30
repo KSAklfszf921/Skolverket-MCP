@@ -55,7 +55,19 @@ URL: https://skolverket-mcp.onrender.com/mcp
 }
 ```
 
-#### Cline/Codex (VS Code Extension)
+#### OpenAI Codex (CLI)
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "npx",
+      "args": ["-y", "skolverket-mcp"]
+    }
+  }
+}
+```
+
+#### Cline (VS Code Extension)
 ```json
 {
   "mcpServers": {
