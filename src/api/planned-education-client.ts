@@ -3,6 +3,7 @@
  */
 
 import { BaseApiClient } from './base-client.js';
+import { config } from '../config.js';
 import type {
   ApiResponse,
   AdultEducationEvent,
@@ -23,8 +24,14 @@ import type {
 export class PlannedEducationApiClient extends BaseApiClient {
   constructor() {
     super({
-      baseURL: 'https://api.skolverket.se/planned-educations',
-      userAgent: 'skolverket-mcp/2.0.0'
+      baseURL: config.plannedEducationApiBaseUrl,
+      userAgent: 'skolverket-mcp/2.1.0',
+      timeout: config.timeout,
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      maxConcurrent: config.maxConcurrent,
+      apiKey: config.apiKey,
+      authHeader: config.authHeader,
     });
 
     // Lägg till header för API-version (v4 är senaste)

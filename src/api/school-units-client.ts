@@ -3,6 +3,7 @@
  */
 
 import { BaseApiClient } from './base-client.js';
+import { config } from '../config.js';
 import type {
   SchoolUnitsResponse,
   SchoolUnit,
@@ -12,8 +13,14 @@ import type {
 export class SchoolUnitsApiClient extends BaseApiClient {
   constructor() {
     super({
-      baseURL: 'https://api.skolverket.se/skolenhetsregistret/v2',
-      userAgent: 'skolverket-mcp/2.0.0'
+      baseURL: config.schoolUnitsApiBaseUrl,
+      userAgent: 'skolverket-mcp/2.1.0',
+      timeout: config.timeout,
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      maxConcurrent: config.maxConcurrent,
+      apiKey: config.apiKey,
+      authHeader: config.authHeader,
     });
   }
 

@@ -6,10 +6,11 @@ En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som g
 
 ### 🔧 MCP Capabilities (Ny i v2.1.0)
 
-#### 🛠️ Tools (27 verktyg)
+#### 🛠️ Tools (28 verktyg)
 - **17 verktyg** för Läroplan API
 - **4 verktyg** för Skolenhetsregistret
 - **6 verktyg** för Planned Educations API
+- **1 verktyg** för diagnostik och health check
 
 #### 📚 Resources (4 resurser) - Ny i v2.1.0
 Statiska datakällor för snabb kontextinläsning:
@@ -109,6 +110,144 @@ Lägg till i Claude Desktop config:
 4. Lägg till server-konfigurationen ovan
 5. Starta om Claude Desktop
 
+## ⚙️ Konfiguration
+
+### Miljövariabler
+
+Skolverket MCP Server kan konfigureras via miljövariabler för att anpassa beteende och hantera potentiella anslutningsproblem. Skapa en `.env` fil i projektets rot eller sätt miljövariabler i din shell:
+
+```bash
+# API Endpoints (override för testning eller alternativa endpoints)
+SKOLVERKET_SYLLABUS_API_URL=https://api.skolverket.se/syllabus
+SKOLVERKET_SCHOOL_UNITS_API_URL=https://api.skolverket.se/skolenhetsregistret/v2
+SKOLVERKET_PLANNED_EDUCATION_API_URL=https://api.skolverket.se/planned-educations
+
+# API Authentication (om Skolverket skulle kräva API-nyckel)
+SKOLVERKET_API_KEY=your_api_key_here
+SKOLVERKET_AUTH_HEADER=Authorization
+
+# HTTP Client Settings
+SKOLVERKET_API_TIMEOUT_MS=30000        # Timeout i millisekunder (default: 30000)
+SKOLVERKET_MAX_RETRIES=3               # Max antal retry-försök (default: 3)
+SKOLVERKET_RETRY_DELAY_MS=1000         # Bas-delay mellan retries (default: 1000)
+SKOLVERKET_CONCURRENCY=5               # Max samtidiga requests (default: 5)
+
+# Features
+SKOLVERKET_ENABLE_MOCK=false           # Mock mode för testning (default: false)
+SKOLVERKET_ENABLE_CACHE=true           # Cache aktiverad (default: true)
+
+# Logging
+LOG_LEVEL=info                         # error, warn, info, debug (default: info)
+```
+
+### Konfigurera i Claude Desktop
+
+För att använda miljövariabler i Claude Desktop, lägg till dem i config:
+
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "node",
+      "args": ["/sökväg/till/skolverket-syllabus-mcp/dist/index.js"],
+      "env": {
+        "LOG_LEVEL": "debug",
+        "SKOLVERKET_MAX_RETRIES": "5",
+        "SKOLVERKET_API_TIMEOUT_MS": "60000"
+      }
+    }
+  }
+}
+```
+
+## 🔍 Felsökning och Diagnostik
+
+### Health Check Verktyg
+
+Använd `health_check` verktyget för att diagnosticera problem:
+
+\`\`\`
+Claude, kör health_check för att testa API-anslutningarna.
+\`\`\`
+
+Detta verktyg kontrollerar:
+- ✅ Anslutning till alla tre Skolverkets API:er
+- ⏱️ Response-tider (latency)
+- 🔧 Konfigurationsstatus (cache, mock mode, retry-inställningar)
+- 💡 Rekommendationer vid problem
+
+### Vanliga Problem och Lösningar
+
+#### Problem: "Could not reach the API"
+
+**Orsak**: Nätverksfel eller felaktig URL
+
+**Lösning**:
+```bash
+# Öka timeout
+SKOLVERKET_API_TIMEOUT_MS=60000
+
+# Öka antal retries
+SKOLVERKET_MAX_RETRIES=5
+```
+
+#### Problem: "API authentication failed"
+
+**Orsak**: Om Skolverket skulle börja kräva API-nyckel
+
+**Lösning**:
+```bash
+SKOLVERKET_API_KEY=your_api_key
+```
+
+#### Problem: "API rate limit reached"
+
+**Orsak**: För många requests
+
+**Lösning**:
+```bash
+# Minska samtidiga requests
+SKOLVERKET_CONCURRENCY=2
+
+# Aktivera cache
+SKOLVERKET_ENABLE_CACHE=true
+```
+
+#### Problem: Långsamma svar
+
+**Lösning**:
+```bash
+# Aktivera cache (rekommenderat)
+SKOLVERKET_ENABLE_CACHE=true
+
+# Kör health_check för att se latency
+# Överväg att öka timeout om nödvändigt
+SKOLVERKET_API_TIMEOUT_MS=60000
+```
+
+### Debug Mode
+
+För detaljerad loggning:
+
+```bash
+LOG_LEVEL=debug node dist/index.js
+```
+
+Loggar sparas i `logs/` mappen:
+- `error.log` - Endast fel
+- `combined.log` - Alla loggnivåer
+- `exceptions.log` - Uncaught exceptions
+- `rejections.log` - Unhandled promise rejections
+
+### Förbättringar i v2.1.0
+
+- ✅ **Retry med exponentiell backoff**: Automatiska omförsök vid tillfälliga fel
+- ✅ **Förbättrad felhantering**: Tydliga felkoder (AUTH_REQUIRED, TRANSIENT_ERROR, etc.)
+- ✅ **Request tracing**: Varje request får unikt ID för felsökning
+- ✅ **Health check verktyg**: Diagnosticera API-problem direkt
+- ✅ **Konfigurerbar timeout & retry**: Anpassa för din miljö
+- ✅ **Rate limiting**: Respekterar API-gränser automatiskt
+
 ## 📋 Alla Verktyg
 
 ### Läroplan API (17 verktyg)
@@ -158,6 +297,14 @@ Lägg till i Claude Desktop config:
 #### Stöddata
 - `get_education_areas` - Hämta utbildningsområden
 - `get_directions` - Hämta inriktningar
+
+### Diagnostik och Health Check (1 verktyg)
+
+- `health_check` - Testa API-anslutningar och systemstatus
+  - Verifierar anslutning till alla tre Skolverkets API:er
+  - Mäter response-tider (latency)
+  - Visar konfigurationsstatus
+  - Ger rekommendationer vid problem
 
 ## 💡 Användningsexempel
 

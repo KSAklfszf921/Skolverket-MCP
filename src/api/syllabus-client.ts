@@ -3,6 +3,7 @@
  */
 
 import { BaseApiClient } from './base-client.js';
+import { config } from '../config.js';
 import type {
   SubjectsResponse,
   Subject,
@@ -27,8 +28,14 @@ import type {
 export class SyllabusApiClient extends BaseApiClient {
   constructor() {
     super({
-      baseURL: 'https://api.skolverket.se/syllabus',
-      userAgent: 'skolverket-mcp/2.0.0'
+      baseURL: config.syllabusApiBaseUrl,
+      userAgent: 'skolverket-mcp/2.1.0',
+      timeout: config.timeout,
+      maxRetries: config.maxRetries,
+      retryDelay: config.retryDelay,
+      maxConcurrent: config.maxConcurrent,
+      apiKey: config.apiKey,
+      authHeader: config.authHeader,
     });
   }
 

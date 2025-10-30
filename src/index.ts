@@ -116,6 +116,12 @@ import {
   getDirectionsSchema
 } from './tools/planned-education/support-data.js';
 
+// Health check verktyg
+import {
+  healthCheck,
+  healthCheckSchema
+} from './tools/health.js';
+
 // Skapa servern med uppdaterade capabilities
 const server = new Server(
   {
@@ -1016,6 +1022,33 @@ RETURNERAR: Lista över inriktningar.`,
           properties: getDirectionsSchema,
         },
       },
+
+      // ==============================================
+      // DIAGNOSTIK OCH HEALTH CHECK
+      // ==============================================
+      {
+        name: 'health_check',
+        description: `Kör en health check för att testa API-anslutningar och systemstatus.
+
+ANVÄNDNINGSFALL:
+- Diagnosticera anslutningsproblem
+- Verifiera att alla API:er är tillgängliga
+- Mäta response-tider
+- Få rekommendationer för förbättringar
+
+RETURNERAR:
+- Overall status (healthy/degraded/unhealthy)
+- Status för varje API (Syllabus, School Units, Planned Education)
+- Latency för varje API
+- Konfigurationsinformation
+- Rekommendationer vid problem
+
+EXEMPEL: Kör health_check(includeApiTests=true) för att testa alla API:er.`,
+        inputSchema: {
+          type: 'object',
+          properties: healthCheckSchema,
+        },
+      },
     ],
   };
 });
@@ -1090,6 +1123,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await getEducationAreas();
       case 'get_directions':
         return await getDirections();
+
+      // Diagnostik
+      case 'health_check':
+        return await healthCheck(args || {});
 
       default:
         throw new Error(`Okänt verktyg: ${name}`);

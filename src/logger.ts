@@ -78,12 +78,22 @@ if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir, { recursive: true });
 }
 
-// Export hjälpfunktioner
+// Export hjälpfunktioner med optional request ID
 export const log = {
   error: (message: string, meta?: any) => logger.error(message, meta),
   warn: (message: string, meta?: any) => logger.warn(message, meta),
   info: (message: string, meta?: any) => logger.info(message, meta),
   debug: (message: string, meta?: any) => logger.debug(message, meta),
 };
+
+// Hjälpfunktion för att skapa logg med request ID
+export function createRequestLogger(requestId: string) {
+  return {
+    error: (message: string, meta?: any) => logger.error(message, { ...meta, requestId }),
+    warn: (message: string, meta?: any) => logger.warn(message, { ...meta, requestId }),
+    info: (message: string, meta?: any) => logger.info(message, { ...meta, requestId }),
+    debug: (message: string, meta?: any) => logger.debug(message, { ...meta, requestId }),
+  };
+}
 
 export default logger;
