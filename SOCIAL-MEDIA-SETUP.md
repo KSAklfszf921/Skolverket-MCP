@@ -10,76 +10,77 @@
    - Bild-dimensioner och alt-text tillagda
    - Canonical URL tillagd
 
-2. **HTML-preview filer skapade** 🖼️
-   - `og-image.html` (1200x630px) - För Facebook, LinkedIn, generell
-   - `og-image-twitter.html` (1200x675px) - För Twitter/X
-   - `og-image-square.html` (1200x1200px) - För Instagram
-
-3. **Static file serving konfigurerat** 📁
+2. **Static file serving konfigurerat** 📁
    - Express.static middleware tillagt
    - `public/` katalog skapad
    - Servern servar nu statiska filer från `/public`
 
-## 📋 Nästa steg - Ta screenshots:
+3. **Beskärningsguide skapad** 📐
+   - Detaljerade instruktioner i `CROP-GUIDE.md`
+   - Instruktioner för alla tre storlekar
+   - ImageMagick-kommandon inklusive
 
-### 1. Öppna HTML-preview filerna
-Filerna är redan öppnade i din webbläsare. Om inte, kör:
+---
+
+## 📋 Nästa steg - Beskär och ladda upp bilder:
+
+### 1. Använd originalbilden
+
+Använd den bifogade bilden (1280x640px) som källa.
+
+### 2. Beskär för varje plattform
+
+Se detaljerade instruktioner i **CROP-GUIDE.md**:
+
+#### **Facebook / LinkedIn / Discord** (1200x630px)
 ```bash
-cd /Users/isak/Desktop/skolverket-mcp
-open og-image.html og-image-twitter.html og-image-square.html
+# Med ImageMagick
+convert original-image.png -gravity center -crop 1200x630+0+0 public/og-image.png
 ```
 
-### 2. Ta screenshots med exakta dimensioner
-
-#### **Alternativ A: macOS Screenshot Tool (Rekommenderat)**
+#### **Twitter/X** (1200x675px)
 ```bash
-# Tryck Cmd+Shift+5
-# Välj "Capture Selected Window"
-# Klicka på webbläsarfönstret
+# Lägg till canvas och centrera
+convert original-image.png -gravity center -background "#6B1850" -extent 1200x675 public/og-image-twitter.png
 ```
 
-#### **Alternativ B: Chrome DevTools (Mest exakt!)**
-1. Öppna Chrome DevTools (F12)
-2. Tryck `Cmd+Shift+P` (macOS) eller `Ctrl+Shift+P` (Windows)
-3. Skriv "Capture screenshot"
-4. Välg "Capture screenshot"
-
-### 3. Spara bilderna med rätt namn i `public/` katalogen:
-
-```
-public/
-├── og-image.png          (1200x630px)
-├── og-image-twitter.png  (1200x675px)
-└── og-image-square.png   (1200x1200px)
+#### **Square / Instagram** (1200x1200px)
+```bash
+# Lägg till canvas vertikalt
+convert original-image.png -resize 1200x -gravity center -background "#6B1850" -extent 1200x1200 public/og-image-square.png
 ```
 
-### 4. Optimera bildstorlek (valfritt men rekommenderat)
+### 3. Optimera filstorlek
 
 ```bash
-# Installera ImageMagick om du inte har det
-brew install imagemagick
-
-# Optimera bilderna
 cd public
+# Optimera bilderna (behåll kvalitet, reducera filstorlek)
 convert og-image.png -quality 85 -strip og-image.png
 convert og-image-twitter.png -quality 85 -strip og-image-twitter.png
 convert og-image-square.png -quality 85 -strip og-image-square.png
 ```
 
-### 5. Committa och pusha ändringarna
+### 4. Verifiera bilderna
 
 ```bash
-git add .
-git commit -m "feat: Add optimized social media preview images and metadata
+# Kontrollera dimensioner
+file public/og-image.png
+file public/og-image-twitter.png
+file public/og-image-square.png
 
-- Add HTTPS for all OG and Twitter Card metadata
-- Add platform-specific images (Twitter, Facebook, LinkedIn)
-- Add image dimensions and alt text
-- Configure express.static for serving images from /public
-- Create preview HTML files for generating social media images"
+# Kontrollera filstorlek
+ls -lh public/*.png
+```
 
+### 5. Committa och pusha
+
+```bash
+git add public/*.png
+git commit -m "Add social media preview images (1200x630, 1200x675, 1200x1200)"
 git push origin main
 ```
+
+---
 
 ## 🧪 Testa social media preview:
 
@@ -94,6 +95,8 @@ Efter deploy kan du testa med dessa verktyg:
 ```
 https://skolverket-mcp.onrender.com/
 ```
+
+---
 
 ## 📊 Metadata Summary:
 
@@ -116,14 +119,18 @@ https://skolverket-mcp.onrender.com/
 - ✅ HTTPS länkar
 - ✅ Alt text och dimensioner
 
+---
+
 ## 🎯 Förväntade resultat:
 
 När du delar länken på sociala medier kommer användare se:
 
 - 🎨 Snygg lila gradient-bild med MCP-logotyp
-- 📚 Tydlig titel och beskrivning
+- 📚 Tydlig "Skolverket MCP" titel
 - 🏷️ Tre API-kategorier synliga (Läroplan, Skolenhetsregistret, Vuxenutbildning)
-- 🔢 Version och antal verktyg (29 verktyg • v2.1.0)
+- 📝 Informativ undertitel
+
+---
 
 ## 🐛 Felsökning:
 
@@ -138,5 +145,32 @@ När du delar länken på sociala medier kommer användare se:
 - LinkedIn: Kan ta upp till 7 dagar, använd "Post Inspector"
 
 ### Fel dimensioner?
-- Använd Chrome DevTools för exakta screenshots
-- Verifiera med `file public/og-image.png` att dimensionerna stämmer
+- Använd `file` kommandot för att verifiera dimensioner
+- Kontrollera med validators att bilderna visas korrekt
+
+---
+
+## 📁 Filstruktur:
+
+```
+skolverket-mcp/
+├── public/
+│   ├── og-image.png          (1200x630)
+│   ├── og-image-twitter.png  (1200x675)
+│   └── og-image-square.png   (1200x1200)
+├── CROP-GUIDE.md            (Beskärningsinstruktioner)
+└── SOCIAL-MEDIA-SETUP.md    (Denna fil)
+```
+
+---
+
+## 🎨 Bildinnehåll:
+
+Alla bilder innehåller:
+- MCP-logotyp (vit) + "Model Context Protocol" text
+- "Skolverket MCP" som huvudtitel (serif italic + sans-serif)
+- Undertitel: "AI-tillgång till svenska läroplaner, kurser, ämnen och skolenheter via MCP"
+- Tre API-taggar: "Läroplan API", "Skolenhetsregistret", "Vuxenutbildning"
+- Version: "29 verktyg • v2.1.0"
+- Lila gradient-bakgrund (#8B1F62 → #6B1850 → #4A1038)
+- Subtil geometrisk pattern
