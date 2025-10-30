@@ -1,21 +1,37 @@
 # Skolverket MCP Server - Docker Container
-FROM node:18-alpine
+# Multi-stage build för optimal image storlek
 
-# Skapa app directory
+# Stage 1: Build stage
+FROM node:18-alpine AS builder
+
 WORKDIR /app
 
 # Kopiera package files
 COPY package*.json ./
 COPY tsconfig.json ./
 
-# Installera dependencies
-RUN npm ci --only=production
+# Installera ALLA dependencies (inklusive dev för att bygga)
+RUN npm ci
 
 # Kopiera source code
 COPY src ./src
 
 # Bygg TypeScript
 RUN npm run build
+
+# Stage 2: Production stage
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Kopiera package files
+COPY package*.json ./
+
+# Installera BARA production dependencies
+RUN npm ci --only=production
+
+# Kopiera byggda filer från builder stage
+COPY --from=builder /app/dist ./dist
 
 # Skapa logs directory
 RUN mkdir -p logs
