@@ -2,18 +2,64 @@
 
 En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger AI-assistenter tillgång till Skolverkets officiella API:er. Gör det möjligt för ChatGPT, Claude och andra AI-system att hämta information om svenska läroplaner, skolenheter och utbildningar.
 
-## 🚀 Snabbstart
+## 🌐 Live-Server
 
-### Live-Server (HTTP/SSE)
-Servern är live-hostad på `https://skolverket-mcp.onrender.com/mcp`
+Servern är live-hostad och redo att användas på:
+```
+https://skolverket-mcp.onrender.com/mcp
+```
 
-**ChatGPT** (Plus/Pro/Enterprise):
+**Specifikationer:**
+- Protocol: HTTP/SSE (Server-Sent Events)
+- Bandbredd: 100GB/månad
+- Uptime: 24/7
+- Status: Production-ready
+
+> Vid hög belastning eller bandbreddsgräns, använd lokal installation nedan.
+
+---
+
+## 🚀 Anslutningsinstruktioner
+
+### ChatGPT (Plus/Pro/Enterprise)
+
+**Alternativ 1: Live-Server**
 ```
 Settings → Connectors → Developer Mode → Add MCP Server
 URL: https://skolverket-mcp.onrender.com/mcp
 ```
 
-**Claude Code** (HTTP Transport):
+**Alternativ 2: Lokal Installation**
+```
+ChatGPT stöder endast HTTP/SSE (använd live-servern ovan)
+```
+
+---
+
+### Claude Desktop
+
+**Alternativ 1: Live-Server**
+```
+Claude Desktop stöder endast stdio (använd lokal installation nedan)
+```
+
+**Alternativ 2: Lokal Installation**
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "npx",
+      "args": ["-y", "skolverket-mcp"]
+    }
+  }
+}
+```
+
+---
+
+### Claude Code
+
+**Alternativ 1: Live-Server (HTTP Transport)**
 ```json
 {
   "mcpServers": {
@@ -25,13 +71,28 @@ URL: https://skolverket-mcp.onrender.com/mcp
 }
 ```
 
-> **Limits**: 100GB bandbredd/månad. Vid hög belastning, använd lokal installation nedan.
+**Alternativ 2: Lokal Installation (stdio)**
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "command": "npx",
+      "args": ["-y", "skolverket-mcp"]
+    }
+  }
+}
+```
 
 ---
 
-### Lokal Installation (stdio)
+### OpenAI Codex (CLI)
 
-#### Claude Desktop
+**Alternativ 1: Live-Server**
+```
+OpenAI Codex stöder endast stdio (använd lokal installation nedan)
+```
+
+**Alternativ 2: Lokal Installation**
 ```json
 {
   "mcpServers": {
@@ -43,7 +104,16 @@ URL: https://skolverket-mcp.onrender.com/mcp
 }
 ```
 
-#### Claude Code (CLI)
+---
+
+### Cline (VS Code Extension)
+
+**Alternativ 1: Live-Server**
+```
+Cline stöder endast stdio (använd lokal installation nedan)
+```
+
+**Alternativ 2: Lokal Installation**
 ```json
 {
   "mcpServers": {
@@ -55,7 +125,16 @@ URL: https://skolverket-mcp.onrender.com/mcp
 }
 ```
 
-#### OpenAI Codex (CLI)
+---
+
+### Gemini (Google AI Studio)
+
+**Alternativ 1: Live-Server**
+```
+Gemini stöder endast stdio (använd lokal installation nedan)
+```
+
+**Alternativ 2: Lokal Installation**
 ```json
 {
   "mcpServers": {
@@ -67,31 +146,9 @@ URL: https://skolverket-mcp.onrender.com/mcp
 }
 ```
 
-#### Cline (VS Code Extension)
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "command": "npx",
-      "args": ["-y", "skolverket-mcp"]
-    }
-  }
-}
-```
+---
 
-#### Gemini (Google AI Studio - CLI)
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "command": "npx",
-      "args": ["-y", "skolverket-mcp"]
-    }
-  }
-}
-```
-
-> För fler installationsalternativ (npm global, källkod), se [INSTALLATION.md](INSTALLATION.md)
+> **Fler installationsalternativ**: [INSTALLATION.md](INSTALLATION.md) (npm global, källkod, etc.)
 
 ## 🌟 Funktioner
 
