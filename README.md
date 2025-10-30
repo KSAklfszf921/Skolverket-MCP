@@ -1,6 +1,8 @@
 # Skolverket MCP Server
 
-En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger LLMs fullständig tillgång till Skolverkets öppna API:er. Med denna server kan Claude och andra LLMs söka, läsa och analysera läroplaner, skolenheter, utbildningstillfällen, statistik och inspektionsrapporter.
+En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. Skolverket MCP Server är en Model Context Protocol-server som ger AI-assistenter tillgång till alla Skolverkets officiella API:er. Servern möjliggör integration med verktyg som ChatGPT, Claude, och andra MCP-kompatibla AI-system för att hämta information om svenska läroplaner, skolenheter och utbildningar.
+
+
 
 ## 🌟 Funktioner
 
