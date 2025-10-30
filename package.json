@@ -12,7 +12,8 @@
     "dev": "tsc --watch",
     "prepare": "npm run build",
     "start": "node dist/index.js",
-    "start:http": "node dist/http-server.js"
+    "start:http": "node dist/http-server.js",
+    "start:streamable": "node dist/streamable-http-server.js"
   },
   "keywords": [
     "mcp",

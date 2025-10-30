@@ -44,5 +44,5 @@ ENV NODE_ENV=production
 ENV PORT=3000
 ENV LOG_LEVEL=info
 
-# Starta HTTP server
-CMD ["node", "dist/http-server.js"]
+# Starta Streamable HTTP server (MCP över SSE)
+CMD ["node", "dist/streamable-http-server.js"]
