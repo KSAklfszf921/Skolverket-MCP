@@ -12,7 +12,7 @@ export const getSchoolTypesSchema = {
 
 export const getStudyPathCodesSchema = {
   schooltype: z.string().optional().describe('Filtrera på skoltyp'),
-  timespan: z.enum(['LATEST', 'HISTORIC', 'ALL']).optional().describe('Tidsperiod'),
+  timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).optional().describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
   studyPathType: z.string().optional().describe('Typ av studieväg')
 };
 
@@ -113,7 +113,7 @@ export async function getSubjectAndCourseCodes() {
 
 export async function getStudyPathCodes(params: {
   schooltype?: string;
-  timespan?: 'LATEST' | 'HISTORIC' | 'ALL';
+  timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
   studyPathType?: string;
 }) {
   try {

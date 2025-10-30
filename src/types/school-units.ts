@@ -11,7 +11,7 @@ export interface SchoolUnitsMetadata {
 export interface SchoolUnit {
   schoolUnitCode: string;
   name: string;
-  status: 'AKTIV' | 'UPPHORT' | 'VILANDE';
+  status: 'AKTIV' | 'UPPHORT' | 'VILANDE' | 'PLANERAD'; // Enligt v2 API spec
 }
 
 // API Response
@@ -25,7 +25,7 @@ export interface SchoolUnitsResponse {
 
 // Sökparametrar
 export interface SchoolUnitsSearchParams {
-  status?: 'AKTIV' | 'UPPHORT' | 'VILANDE';
+  status?: 'AKTIV' | 'UPPHORT' | 'VILANDE' | 'PLANERAD'; // Enligt v2 API spec
   name?: string;
   municipality?: string;
   county?: string;

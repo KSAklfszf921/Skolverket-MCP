@@ -8,7 +8,7 @@ import { syllabusApi } from '../../api/syllabus-client.js';
 // Zod-scheman för validering
 export const searchProgramsSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GY" för gymnasium)'),
-  timespan: z.enum(['LATEST', 'HISTORIC', 'ALL']).default('LATEST').describe('Tidsperiod för program'),
+  timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
   typeOfSyllabus: z.string().optional().describe('Typ av läroplan'),
   studyPathType: z.string().optional().describe('Typ av studieväg')
 };
@@ -25,7 +25,7 @@ export const getProgramVersionsSchema = {
 // Verktygsimplementationer
 export async function searchPrograms(params: {
   schooltype?: string;
-  timespan?: 'LATEST' | 'HISTORIC' | 'ALL';
+  timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
   typeOfSyllabus?: string;
   studyPathType?: string;
 }) {

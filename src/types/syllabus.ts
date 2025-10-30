@@ -12,8 +12,8 @@ export interface ApiMetadata {
   startedCaching: string;
 }
 
-// Tidsperioder
-export type Timespan = 'LATEST' | 'HISTORIC' | 'ALL';
+// Tidsperioder (enligt officiell Skolverket Syllabus API spec)
+export type Timespan = 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
 
 // Värdesamlingar (Value Store)
 export interface SchoolType {
