@@ -1,11 +1,11 @@
 {
-  "name": "skolverket-syllabus-mcp",
-  "version": "1.0.0",
-  "description": "MCP server för Skolverkets Läroplan API - ger LLMs tillgång till läroplaner, kurser, ämnen och program",
+  "name": "skolverket-mcp",
+  "version": "2.0.0",
+  "description": "Komplett MCP server för Skolverkets öppna API:er - läroplaner, skolenheter, utbildningstillfällen, statistik och mer",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "skolverket-syllabus-mcp": "./dist/index.js"
+    "skolverket-mcp": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -20,6 +20,13 @@
     "education",
     "sweden",
     "curriculum",
+    "skolenheter",
+    "school-units",
+    "vuxenutbildning",
+    "adult-education",
+    "yrkeshögskola",
+    "komvux",
+    "sfi",
     "model-context-protocol"
   ],
   "author": "",

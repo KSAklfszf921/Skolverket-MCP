@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import { skolverketApi } from '../api/client.js';
+import { syllabusApi } from '../../api/syllabus-client.js';
 
 // Zod-scheman för validering
 export const searchSubjectsSchema = {
@@ -28,7 +28,7 @@ export async function searchSubjects(params: {
   typeOfSyllabus?: string;
 }) {
   try {
-    const result = await skolverketApi.searchSubjects(params);
+    const result = await syllabusApi.searchSubjects(params);
 
     return {
       content: [
@@ -66,7 +66,7 @@ export async function getSubjectDetails(params: {
   version?: number;
 }) {
   try {
-    const subject = await skolverketApi.getSubject(params.code, params.version);
+    const subject = await syllabusApi.getSubject(params.code, params.version);
 
     return {
       content: [
@@ -93,7 +93,7 @@ export async function getSubjectVersions(params: {
   code: string;
 }) {
   try {
-    const versions = await skolverketApi.getSubjectVersions(params.code);
+    const versions = await syllabusApi.getSubjectVersions(params.code);
 
     return {
       content: [

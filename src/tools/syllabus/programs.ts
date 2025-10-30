@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import { skolverketApi } from '../api/client.js';
+import { syllabusApi } from '../../api/syllabus-client.js';
 
 // Zod-scheman för validering
 export const searchProgramsSchema = {
@@ -30,7 +30,7 @@ export async function searchPrograms(params: {
   studyPathType?: string;
 }) {
   try {
-    const result = await skolverketApi.searchPrograms(params);
+    const result = await syllabusApi.searchPrograms(params);
 
     return {
       content: [
@@ -70,7 +70,7 @@ export async function getProgramDetails(params: {
   version?: number;
 }) {
   try {
-    const program = await skolverketApi.getProgram(params.code, params.version);
+    const program = await syllabusApi.getProgram(params.code, params.version);
 
     return {
       content: [
@@ -97,7 +97,7 @@ export async function getProgramVersions(params: {
   code: string;
 }) {
   try {
-    const versions = await skolverketApi.getProgramVersions(params.code);
+    const versions = await syllabusApi.getProgramVersions(params.code);
 
     return {
       content: [

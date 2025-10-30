@@ -3,7 +3,7 @@
  */
 
 import { z } from 'zod';
-import { skolverketApi } from '../api/client.js';
+import { syllabusApi } from '../../api/syllabus-client.js';
 
 // Zod-scheman för validering
 export const getSchoolTypesSchema = {
@@ -21,11 +21,11 @@ export async function getSchoolTypes(params: {
   includeExpired?: boolean;
 }) {
   try {
-    const activeTypes = await skolverketApi.getSchoolTypes();
+    const activeTypes = await syllabusApi.getSchoolTypes();
     let expiredTypes: any[] = [];
 
     if (params.includeExpired) {
-      expiredTypes = await skolverketApi.getExpiredSchoolTypes();
+      expiredTypes = await syllabusApi.getExpiredSchoolTypes();
     }
 
     return {
@@ -55,7 +55,7 @@ export async function getSchoolTypes(params: {
 
 export async function getTypesOfSyllabus() {
   try {
-    const types = await skolverketApi.getTypesOfSyllabus();
+    const types = await syllabusApi.getTypesOfSyllabus();
 
     return {
       content: [
@@ -83,7 +83,7 @@ export async function getTypesOfSyllabus() {
 
 export async function getSubjectAndCourseCodes() {
   try {
-    const codes = await skolverketApi.getSubjectAndCourseCodes();
+    const codes = await syllabusApi.getSubjectAndCourseCodes();
 
     return {
       content: [
@@ -117,7 +117,7 @@ export async function getStudyPathCodes(params: {
   studyPathType?: string;
 }) {
   try {
-    const codes = await skolverketApi.getStudyPathCodes(params);
+    const codes = await syllabusApi.getStudyPathCodes(params);
 
     return {
       content: [
@@ -145,7 +145,7 @@ export async function getStudyPathCodes(params: {
 
 export async function getApiInfo() {
   try {
-    const info = await skolverketApi.getApiInfo();
+    const info = await syllabusApi.getApiInfo();
 
     return {
       content: [
