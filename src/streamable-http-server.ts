@@ -1370,6 +1370,7 @@ app.get('/', (req, res) => {
         if (currentMarkdown) {
           document.getElementById('github-content').innerHTML = marked.parse(currentMarkdown);
           generateTOC();
+          interceptInternalLinks();
         }
       }
     }
@@ -1442,6 +1443,55 @@ app.get('/', (req, res) => {
       }
     }
 
+    function interceptInternalLinks() {
+      const contentDiv = document.getElementById('github-content');
+      const links = contentDiv.querySelectorAll('a');
+
+      // Map file paths to document names
+      const pathToDoc = {
+        'INSTALLATION.md': 'INSTALLATION',
+        'docs/API.md': 'API',
+        'API.md': 'API',
+        'docs/EXAMPLES.md': 'EXAMPLES',
+        'EXAMPLES.md': 'EXAMPLES',
+        'CHANGES.md': 'CHANGES',
+        'docs/CONFIGURATION.md': 'API', // Map to API as fallback
+        'docs/TROUBLESHOOTING.md': 'API', // Map to API as fallback
+        'README.md': 'README'
+      };
+
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+
+        // Check if it's an internal markdown link
+        if (href && href.endsWith('.md') && !href.startsWith('http')) {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Extract filename from path
+            const filename = href.split('/').pop() || href;
+            const fullPath = href;
+
+            // Try to find matching document
+            let docName = pathToDoc[fullPath] || pathToDoc[filename];
+
+            if (docName) {
+              loadDoc(docName);
+            } else {
+              // If no match, show error
+              console.warn('Unknown document link:', href);
+            }
+          });
+        }
+
+        // Make external links open in new tab
+        if (href && (href.startsWith('http') || href.startsWith('//'))) {
+          link.setAttribute('target', '_blank');
+          link.setAttribute('rel', 'noopener noreferrer');
+        }
+      });
+    }
+
     function setupSearch() {
       const searchInput = document.getElementById('doc-search');
       const contentDiv = document.getElementById('github-content');
@@ -1458,6 +1508,7 @@ app.get('/', (req, res) => {
             // Restore original content
             contentDiv.innerHTML = marked.parse(currentMarkdown);
             generateTOC();
+            interceptInternalLinks();
             return;
           }
 
@@ -1544,6 +1595,9 @@ app.get('/', (req, res) => {
 
         // Generate Table of Contents
         generateTOC();
+
+        // Intercept internal markdown links
+        interceptInternalLinks();
 
         // Smooth scroll to content
         window.scrollTo({ top: 0, behavior: 'smooth' });
