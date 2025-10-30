@@ -1,6 +1,33 @@
 # Skolverket MCP Server
 
-En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server. Skolverket MCP Server är en Model Context Protocol-server som ger AI-assistenter tillgång till alla Skolverkets officiella API:er. Servern möjliggör integration med verktyg som ChatGPT, Claude, och andra MCP-kompatibla AI-system för att hämta information om svenska läroplaner, skolenheter och utbildningar.
+En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger AI-assistenter tillgång till alla Skolverkets officiella API:er. Servern möjliggör integration med verktyg som ChatGPT, Claude, och andra MCP-kompatibla AI-system för att hämta information om svenska läroplaner, skolenheter och utbildningar.
+
+## 🌐 Live Server (Render.com)
+
+**Servern är live-hostad och redo att användas:**
+- 🔗 **URL**: [https://skolverket-mcp.onrender.com/](https://skolverket-mcp.onrender.com/)
+- 📊 **Status**: Production-ready
+- 🚀 **Plan**: Render.com Starter ($7/månad, 100GB bandbredd)
+
+### Snabbstart för ChatGPT (Plus/Pro/Enterprise)
+```
+1. Settings → Connectors → Developer Mode
+2. Add MCP Server: https://skolverket-mcp.onrender.com/mcp
+```
+
+### Snabbstart för Claude Code (HTTP Transport)
+```json
+{
+  "mcpServers": {
+    "skolverket": {
+      "transport": "http",
+      "url": "https://skolverket-mcp.onrender.com/mcp"
+    }
+  }
+}
+```
+
+> **OBS**: Render.com Starter-planen har 100GB bandbredd/månad. För egen installation, se [Installation](#installation) nedan.
 
 
 
@@ -83,8 +110,8 @@ Lägg sedan till i Claude Desktop config:
 ### Manuell installation från källkod
 
 ```bash
-git clone https://github.com/KSAklfszf921/skolverket-syllabus-mcp.git
-cd skolverket-syllabus-mcp
+git clone https://github.com/KSAklfszf921/skolverket-mcp.git
+cd skolverket-mcp
 npm install
 npm run build
 ```
@@ -96,7 +123,7 @@ Lägg till i Claude Desktop config:
   "mcpServers": {
     "skolverket": {
       "command": "node",
-      "args": ["/sökväg/till/skolverket-syllabus-mcp/dist/index.js"]
+      "args": ["/sökväg/till/skolverket-mcp/dist/index.js"]
     }
   }
 }
@@ -151,7 +178,7 @@ För att använda miljövariabler i Claude Desktop, lägg till dem i config:
   "mcpServers": {
     "skolverket": {
       "command": "node",
-      "args": ["/sökväg/till/skolverket-syllabus-mcp/dist/index.js"],
+      "args": ["/sökväg/till/skolverket-mcp/dist/index.js"],
       "env": {
         "LOG_LEVEL": "debug",
         "SKOLVERKET_MAX_RETRIES": "5",
@@ -577,7 +604,9 @@ Data kommer från Skolverkets öppna API:er. Denna MCP server är inte officiell
 ## Support
 
 För bugrapporter och feature requests, öppna ett issue på GitHub:
-https://github.com/KSAklfszf921/skolverket-syllabus-mcp/issues
+https://github.com/KSAklfszf921/skolverket-mcp/issues
+
+**Kontakt:** isak.skogstad@me.com
 
 ## Changelog
 
@@ -589,6 +618,8 @@ https://github.com/KSAklfszf921/skolverket-syllabus-mcp/issues
 - ✨ **VIKTIGT**: Rate limiting med p-limit (max 5 samtidiga anrop)
 - ✨ **VIKTIGT**: Runtime validation med Zod och svenska felmeddelanden
 - ✨ **VIKTIGT**: Custom error classes (SkolverketApiError, ValidationError, etc.)
+- 🌐 **NYT**: HTTP/SSE Server för ChatGPT och Claude Code HTTP transport
+- 🚀 **NYT**: Live-hostad på Render.com (https://skolverket-mcp.onrender.com/)
 - 🔧 Förbättrade tool-beskrivningar med ANVÄNDNINGSFALL, RETURNERAR, EXEMPEL
 - 🔧 Uppdaterad capabilities declaration (tools, resources, prompts, logging)
 - 📝 Omfattande dokumentation av alla nya funktioner
