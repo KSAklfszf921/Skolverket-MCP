@@ -790,6 +790,9 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from public directory (for OG images)
+app.use(express.static('public'));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({
@@ -818,16 +821,32 @@ app.get('/', (req, res) => {
 
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="${req.protocol}://${req.get('host')}/">
+  <meta property="og:url" content="https://${req.get('host')}/">
   <meta property="og:title" content="Skolverket MCP Server - AI-tillgång till svenska läroplaner">
   <meta property="og:description" content="Anslut ChatGPT, Claude och andra AI-assistenter till Skolverkets officiella API:er. 29 verktyg för läroplaner, skolenheter och vuxenutbildning.">
-  <meta property="og:image" content="${req.protocol}://${req.get('host')}/og-image.png">
+  <meta property="og:image" content="https://${req.get('host')}/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Skolverket MCP - AI-tillgång till svenska läroplaner via Model Context Protocol">
+  <meta property="og:site_name" content="Skolverket MCP Server">
+  <meta property="og:locale" content="sv_SE">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Skolverket MCP Server">
-  <meta name="twitter:description" content="MCP server för Skolverkets API:er. 29 verktyg för AI-assistenter.">
-  <meta name="twitter:image" content="${req.protocol}://${req.get('host')}/og-image.png">
+  <meta name="twitter:site" content="@skolverket">
+  <meta name="twitter:title" content="Skolverket MCP Server - AI-tillgång till svenska läroplaner">
+  <meta name="twitter:description" content="Anslut ChatGPT, Claude och andra AI-assistenter till Skolverkets officiella API:er. 29 verktyg för läroplaner, skolenheter och vuxenutbildning.">
+  <meta name="twitter:image" content="https://${req.get('host')}/og-image-twitter.png">
+  <meta name="twitter:image:alt" content="Skolverket MCP - AI-tillgång till svenska läroplaner">
+
+  <!-- LinkedIn specific -->
+  <meta property="og:image:secure_url" content="https://${req.get('host')}/og-image.png">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://${req.get('host')}/">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon.png">
 
   <style>
     /* === Base & Reset === */
