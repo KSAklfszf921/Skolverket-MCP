@@ -36,31 +36,6 @@ Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser 
 
 ## 📱 Snabbstart 
 
-### ChatGPT 
-
-#### I Webbläsaren (chatgpt.com)
-
-**1. Aktivera Utvecklarläget (engångsinstallation):**
-- Gå till https://chatgpt.com
-- Klicka på din **profil** (nere till vänster)
-- Välj **"Appar och sammanlänkningar"**
-- Hitta **"Utvecklarläge" (BETA)** och aktivera den blå toggle-knappen
-
-**2. Lägg till MCP-server:**
-- I samma "Appar och sammanlänkningar"-vy
-- Scrolla ner till **"Aktiva sammanlänkningar"**
-- Klicka **"Ny sammanlänkning"** eller **"+"**
-
-**3. Fyll i formuläret:**
-- **Namn:** `Skolverket MCP`
-- **Beskrivning:** (valfritt)
-- **URL för MCP-server:** `https://skolverket-mcp.onrender.com/mcp`
-- **Autentisering:** Välj **"Ingen autentisering"**
-- Markera **"Jag förstår och vill fortsätta"**
-- Klicka **"Skapa"**
-
----
-
 ### Claude (Webb)
 
 **1. Gå till claude.ai:**
@@ -77,8 +52,6 @@ Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser 
 - **URL:** `https://skolverket-mcp.onrender.com/mcp`
 - **Type:** Välj `HTTP` eller `Streamable HTTP`
 - Klicka **"Connect"** eller **"Add"**
-
-**4. Servern är nu tillgänglig** i alla chattar
 
 ---
 
@@ -166,49 +139,28 @@ claude mcp add skolverket node /absolut/sökväg/till/dist/index.js
 
 ---
 
-### VS Code Copilot
+### ChatGPT 
 
-#### I VS Code (Rekommenderat)
+#### I Webbläsaren (chatgpt.com)
 
-**1. Öppna Settings**
-- Cmd/Ctrl+, eller **File → Preferences → Settings**
+**1. Aktivera Utvecklarläget (engångsinstallation):**
+- Gå till https://chatgpt.com
+- Klicka på din **profil** (nere till vänster)
+- Välj **"Appar och sammanlänkningar"**
+- Hitta **"Utvecklarläge" (BETA)** och aktivera den blå toggle-knappen
 
-**2. Sök efter "GitHub Copilot"**
-- Hitta **"GitHub Copilot: Advanced"**
+**2. Lägg till MCP-server:**
+- I samma "Appar och sammanlänkningar"-vy
+- Scrolla ner till **"Aktiva sammanlänkningar"**
+- Klicka **"Ny sammanlänkning"** eller **"+"**
 
-**3. Klicka "Edit in settings.json"**
-
-**4. Lägg till under "github.copilot.advanced":**
-```json
-{
-  "github.copilot.advanced": {
-    "mcpServers": {
-      "skolverket": {
-        "type": "http",
-        "url": "https://skolverket-mcp.onrender.com/mcp"
-      }
-    }
-  }
-}
-```
----
-
-### Google Gemini (terminal)
-
-```bash
-gemini mcp add --transport http --scope user skolverket https://skolverket-mcp.onrender.com/mcp
-```
-
-**Eller `~/.gemini/config.json`:**
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "httpUrl": "https://skolverket-mcp.onrender.com/mcp"
-    }
-  }
-}
-```
+**3. Fyll i formuläret:**
+- **Namn:** `Skolverket MCP`
+- **Beskrivning:** (valfritt)
+- **URL för MCP-server:** `https://skolverket-mcp.onrender.com/mcp`
+- **Autentisering:** Välj **"Ingen autentisering"**
+- Markera **"Jag förstår och vill fortsätta"**
+- Klicka **"Skapa"**
 
 ---
 
@@ -249,7 +201,6 @@ command = "node"
 args = ["C:\\Users\\username\\skolverket-mcp\\dist\\index.js"]
 transport = "stdio"
 ```
-
 ---
 
 ## 💡 Användningsområden
@@ -265,11 +216,9 @@ transport = "stdio"
 - **Betygskriterier:** "Vad krävs för att få A i Historia 1a1?"
 
 ### För undersökningar & analyser  
-- **Läroplansförändringar:** "Visa alla versioner av Engelska 5 och vad som ändrats"
 - **Skolregister:** "Hitta alla aktiva gymnasieskolor i Stockholms län"
 - **Kursutbud:** "Vilka skolor erbjuder Ekonomiprogrammet i Malmö?"
 - **Läroplansanalys:** "Analysera hur begreppet 'programmering' har utvecklats i läroplaner 2011-2025"
-- **Jämförande studier:** "Jämför kunskapskrav mellan GY11 och tidigare gymnasieläroplaner"
 
 ---
 
@@ -283,7 +232,3 @@ transport = "stdio"
 ## 📝 Licens
 
 MIT License – Data från Skolverkets öppna API:er. Inte officiellt associerad med Skolverket.
-
----
-
-**📦 Version: 2.1.0 • 🔧 MCP Protocol: 2025-03-26**
