@@ -803,6 +803,416 @@ app.get('/health', (req, res) => {
   });
 });
 
+// MCP Playground endpoint - Interactive tool testing
+app.get('/playground', (req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.send(`
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Playground - Skolverket MCP Server</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #fafafa;
+      color: #1d1d1f;
+      line-height: 1.6;
+    }
+    .header {
+      background: #832561;
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .header p {
+      font-size: 16px;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    .playground {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .panel {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .panel h2 {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: #832561;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: #1d1d1f;
+    }
+    select, input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #832561;
+    }
+    textarea {
+      min-height: 120px;
+      font-family: 'SF Mono', Monaco, monospace;
+      resize: vertical;
+    }
+    button {
+      background: #832561;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    button:hover:not(:disabled) {
+      background: #6b1e4f;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .result {
+      background: #f5f5f7;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 13px;
+      max-height: 500px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .result.error {
+      background: #fff5f5;
+      color: #c41e3a;
+    }
+    .result.success {
+      background: #f0fdf4;
+      color: #166534;
+    }
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid white;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .example-btn {
+      padding: 8px 14px;
+      background: #f5f5f7;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: auto;
+    }
+    .example-btn:hover {
+      background: #832561;
+      color: white;
+      border-color: #832561;
+    }
+    .help-text {
+      font-size: 13px;
+      color: #86868b;
+      margin-top: 6px;
+    }
+    @media (max-width: 768px) {
+      .playground {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎮 MCP Playground</h1>
+    <p>Testa alla 29 Skolverket MCP-verktyg interaktivt</p>
+  </div>
+
+  <div class="container">
+    <div class="playground">
+      <!-- Left panel: Input -->
+      <div class="panel">
+        <h2>Välj verktyg</h2>
+
+        <div class="form-group">
+          <label for="tool-select">MCP Tool</label>
+          <select id="tool-select" onchange="updateToolParams()">
+            <option value="">-- Välj ett verktyg --</option>
+            <optgroup label="Läroplaner (17 verktyg)">
+              <option value="search_subjects">Sök ämnen</option>
+              <option value="get_subject_details">Hämta ämnesdetaljer</option>
+              <option value="get_subject_versions">Hämta ämnesversioner</option>
+              <option value="search_courses">Sök kurser</option>
+              <option value="get_course_details">Hämta kursdetaljer</option>
+              <option value="get_course_versions">Hämta kursversioner</option>
+              <option value="search_programs">Sök gymnasieprogram</option>
+              <option value="get_program_details">Hämta programdetaljer</option>
+              <option value="get_program_versions">Hämta programversioner</option>
+              <option value="search_curriculums">Sök läroplaner</option>
+              <option value="get_curriculum_details">Hämta läroplansdetaljer</option>
+              <option value="get_curriculum_versions">Hämta läroplansversioner</option>
+              <option value="get_school_types">Hämta skoltyper</option>
+              <option value="get_types_of_syllabus">Hämta läroplanstyper</option>
+              <option value="get_subject_and_course_codes">Hämta ämnes- & kurskoder</option>
+              <option value="get_study_path_codes">Hämta studievägskoder</option>
+              <option value="get_api_info">Hämta API-info</option>
+            </optgroup>
+            <optgroup label="Skolenheter (4 verktyg)">
+              <option value="search_school_units">Sök skolenheter</option>
+              <option value="get_school_unit_details">Hämta skolenhetsdetaljer</option>
+              <option value="get_school_units_by_status">Filtrera på status</option>
+              <option value="search_school_units_by_name">Sök efter namn</option>
+            </optgroup>
+            <optgroup label="Vuxenutbildning (7 verktyg)">
+              <option value="search_adult_education">Sök vuxenutbildningar</option>
+              <option value="get_adult_education_details">Hämta utbildningsdetaljer</option>
+              <option value="filter_adult_education_by_distance">Filtrera på distans</option>
+              <option value="filter_adult_education_by_pace">Filtrera på studietakt</option>
+              <option value="get_education_areas">Hämta utbildningsområden</option>
+              <option value="get_directions">Hämta inriktningar</option>
+            </optgroup>
+            <optgroup label="Diagnostik (1 verktyg)">
+              <option value="health_check">Health Check</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <div id="params-container"></div>
+
+        <button id="run-btn" onclick="runTool()" disabled>
+          Kör verktyg
+        </button>
+
+        <div class="examples" id="examples-container"></div>
+      </div>
+
+      <!-- Right panel: Output -->
+      <div class="panel">
+        <h2>Resultat</h2>
+        <div id="result" class="result">
+Välj ett verktyg och klicka på "Kör verktyg" för att se resultat här.
+
+Exempel:
+1. Välj "Sök kurser" från dropdown
+2. Skriv "Matematik" i sökfältet
+3. Klicka "Kör verktyg"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const toolParams = {
+      search_subjects: { schooltype: { label: 'Skoltyp', example: 'GY', optional: true } },
+      get_subject_details: { code: { label: 'Ämneskod', example: 'MAT' } },
+      get_subject_versions: { code: { label: 'Ämneskod', example: 'MAT' } },
+      search_courses: { schooltype: { label: 'Skoltyp', example: 'GY', optional: true }, subjectCode: { label: 'Ämneskod', example: 'MAT', optional: true } },
+      get_course_details: { code: { label: 'Kurskod', example: 'MATMAT01c' } },
+      get_course_versions: { code: { label: 'Kurskod', example: 'MATMAT01c' } },
+      search_programs: { schooltype: { label: 'Skoltyp', example: 'GY', optional: true } },
+      get_program_details: { code: { label: 'Programkod', example: 'NA' } },
+      get_program_versions: { code: { label: 'Programkod', example: 'NA' } },
+      search_curriculums: {},
+      get_curriculum_details: { code: { label: 'Läroplankod', example: 'LGR11' } },
+      get_curriculum_versions: { code: { label: 'Läroplankod', example: 'LGR11' } },
+      get_school_types: {},
+      get_types_of_syllabus: {},
+      get_subject_and_course_codes: {},
+      get_study_path_codes: {},
+      get_api_info: {},
+      search_school_units: { status: { label: 'Status', example: 'AKTIV', optional: true } },
+      get_school_unit_details: { code: { label: 'Skolenhetskod (8 siffror)', example: '12345678' } },
+      get_school_units_by_status: { status: { label: 'Status', example: 'AKTIV' } },
+      search_school_units_by_name: { name: { label: 'Skolnamn', example: 'Röda skolan' } },
+      search_adult_education: { searchTerm: { label: 'Sökord', example: 'programmering', optional: true }, typeOfSchool: { label: 'Skoltyp', example: 'yh', optional: true } },
+      get_adult_education_details: { id: { label: 'Utbildnings-ID', example: '12345' } },
+      get_education_areas: {},
+      get_directions: {},
+      health_check: {}
+    };
+
+    const examples = {
+      search_courses: [
+        { label: 'Matematik-kurser', params: { schooltype: 'GY', subjectCode: 'MAT' } },
+        { label: 'Alla GY-kurser', params: { schooltype: 'GY' } }
+      ],
+      get_course_details: [
+        { label: 'Matematik 1c', params: { code: 'MATMAT01c' } },
+        { label: 'Svenska 1', params: { code: 'SVASVA01' } }
+      ],
+      search_programs: [
+        { label: 'Gymnasieprogram', params: { schooltype: 'GY' } }
+      ],
+      search_school_units: [
+        { label: 'Aktiva skolor', params: { status: 'AKTIV' } }
+      ],
+      search_adult_education: [
+        { label: 'YH inom IT', params: { searchTerm: 'programmering', typeOfSchool: 'yh' } }
+      ]
+    };
+
+    function updateToolParams() {
+      const toolSelect = document.getElementById('tool-select');
+      const paramsContainer = document.getElementById('params-container');
+      const examplesContainer = document.getElementById('examples-container');
+      const runBtn = document.getElementById('run-btn');
+      const selectedTool = toolSelect.value;
+
+      if (!selectedTool) {
+        paramsContainer.innerHTML = '';
+        examplesContainer.innerHTML = '';
+        runBtn.disabled = true;
+        return;
+      }
+
+      runBtn.disabled = false;
+      const params = toolParams[selectedTool] || {};
+
+      let html = '';
+      for (const [key, config] of Object.entries(params)) {
+        const required = !config.optional;
+        html += \`
+          <div class="form-group">
+            <label for="param-\${key}">\${config.label} \${required ? '*' : '(valfritt)'}</label>
+            <input type="text" id="param-\${key}" placeholder="\${config.example}" \${required ? 'required' : ''}>
+            <div class="help-text">Exempel: \${config.example}</div>
+          </div>
+        \`;
+      }
+
+      paramsContainer.innerHTML = html;
+
+      // Show examples
+      if (examples[selectedTool]) {
+        examplesContainer.innerHTML = '<div class="help-text" style="margin-bottom: 8px;">Snabbexempel:</div>';
+        examples[selectedTool].forEach(ex => {
+          const btn = document.createElement('button');
+          btn.className = 'example-btn';
+          btn.textContent = ex.label;
+          btn.onclick = () => loadExample(ex.params);
+          examplesContainer.appendChild(btn);
+        });
+      } else {
+        examplesContainer.innerHTML = '';
+      }
+    }
+
+    function loadExample(params) {
+      for (const [key, value] of Object.entries(params)) {
+        const input = document.getElementById(\`param-\${key}\`);
+        if (input) input.value = value;
+      }
+    }
+
+    async function runTool() {
+      const toolSelect = document.getElementById('tool-select');
+      const resultDiv = document.getElementById('result');
+      const runBtn = document.getElementById('run-btn');
+      const selectedTool = toolSelect.value;
+
+      if (!selectedTool) return;
+
+      // Collect parameters
+      const params = {};
+      const paramInputs = document.querySelectorAll('[id^="param-"]');
+      paramInputs.forEach(input => {
+        const key = input.id.replace('param-', '');
+        if (input.value) params[key] = input.value;
+      });
+
+      // Show loading
+      runBtn.disabled = true;
+      runBtn.innerHTML = '<span class="loading"></span>Kör...';
+      resultDiv.className = 'result';
+      resultDiv.textContent = 'Kör verktyg...';
+
+      try {
+        const response = await fetch('/mcp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: Date.now(),
+            method: 'tools/call',
+            params: {
+              name: selectedTool,
+              arguments: params
+            }
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = JSON.stringify(data.error, null, 2);
+        } else {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = JSON.stringify(data.result, null, 2);
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = 'Error: ' + error.message;
+      } finally {
+        runBtn.disabled = false;
+        runBtn.textContent = 'Kör verktyg';
+      }
+    }
+  </script>
+</body>
+</html>
+  `);
+});
+
 // Root endpoint - Documentation
 app.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -1716,6 +2126,7 @@ app.get('/', (req, res) => {
     <p>
       Skolverket MCP Server v2.1.0 · Skapad av Isak Skogstad<br>
       <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank">GitHub</a> ·
+      <a href="/playground">🎮 Playground</a> ·
       <a href="/health">Health Check</a> ·
       <a href="https://modelcontextprotocol.io" target="_blank">Om MCP</a>
     </p>
