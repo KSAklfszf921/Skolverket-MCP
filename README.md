@@ -1,131 +1,177 @@
 <img width="700" height="220" alt="Skolverket MCP logo" src="https://github.com/user-attachments/assets/74563bdb-eea4-4276-a58c-ec89b11806ed" />
 
-
 # Skolverket MCP Server
-En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger AI-assistenter tillgång till **alla Skolverkets öppna API:er** – Läroplan API, Skolenhetsregistret och Planned Educations API.
 
-Gör det möjligt för ChatGPT, Claude och andra LLM-system att hämta information om svenska läroplaner, kurser, ämnen, gymnasieprogram, skolenheter, samt vuxenutbildningar (YH, SFI, Komvux).
+En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger AI-assistenter tillgång till **alla Skolverkets öppna API:er** – Läroplan API, Skolenhetsregistret och Planned Educations API.
 
 **Skapad av:** [Isak Skogstad](mailto:isak.skogstad@me.com) • [X/Twitter](https://x.com/isakskogstad)
 
-## Live-Server
+---
 
-
-Servern körs live och kan användas direkt utan installation:
+## 🌐 Live-Server
 
 ```
 https://skolverket-mcp.onrender.com/mcp
 ```
 
-**Tekniska specifikationer:**
-- Protokoll: HTTP/SSE (Server-Sent Events)
-- Bandbredd: 100GB per månad
-- Tillgänglighet: 24/7
-- Status: Produktionsklar
+**Specifikationer:** Streamable HTTP (MCP 2025-03-26) • 100GB bandbredd/månad • Ingen autentisering
 
-> **Obs:** Om servern når bandbreddsgränsen rekommenderas lokal installation (se nedan).
+> **⚠️ VIKTIGT:** Skolverket-MCP är en öppen server utan autentisering. Lämna **ALLTID** OAuth/API-key fält **TOMMA** i alla klienter.
 
 ---
 
-## Anslutningsinstruktioner
+## 📱 Snabbstart per Klient
 
 ### ChatGPT (Plus/Pro/Enterprise)
 
-**Alternativ 1: Live-Server**
-```
-Settings → Connectors → Developer Mode → Add MCP Server
-URL: https://skolverket-mcp.onrender.com/mcp
-```
+**⚠️ Kräver Plus/Pro/Enterprise-prenumeration • Endast webbläsare (ej mobilapp)**
 
-**Alternativ 2: Lokal Installation**
-```
-ChatGPT stöder endast HTTP/SSE (använd live-servern ovan)
-```
+#### I Webbläsaren (chatgpt.com)
+
+**1. Aktivera Utvecklarläget (engångsinstallation):**
+- Gå till https://chatgpt.com
+- Klicka på din **profil** (nere till vänster)
+- Välj **"Appar och sammanlänkningar"**
+- Hitta **"Utvecklarläge" (BETA)** och aktivera den blå toggle-knappen
+
+**2. Lägg till MCP-server:**
+- I samma "Appar och sammanlänkningar"-vy
+- Scrolla ner till **"Aktiva sammanlänkningar"**
+- Klicka **"Ny sammanlänkning"** eller **"+"**
+
+**3. Fyll i formuläret:**
+- **Namn:** `Skolverket MCP`
+- **Beskrivning:** (valfritt)
+- **URL för MCP-server:** `https://skolverket-mcp.onrender.com/mcp`
+- **Autentisering:** Välj **"Ingen autentisering"**
+- Markera **"Jag förstår och vill fortsätta"**
+- Klicka **"Skapa"**
+
+**4. Servern är nu tillgänglig** i alla chattar
+
+---
+
+### claude.ai (Webb)
+
+**⚠️ Kräver Claude Pro eller Team-prenumeration**
+
+**1. Gå till claude.ai:**
+- Logga in på https://claude.ai
+
+**2. Öppna inställningar:**
+- Klicka på din profil (nere till vänster)
+- Välj **"Settings"**
+
+**3. Lägg till MCP-server:**
+- Gå till **"Developer"** eller **"Integrations"**
+- Klicka **"Add MCP Server"** eller **"Connect"**
+- **Name:** `Skolverket MCP`
+- **URL:** `https://skolverket-mcp.onrender.com/mcp`
+- **Type:** Välj `HTTP` eller `Streamable HTTP`
+- Klicka **"Connect"** eller **"Add"**
+
+**4. Servern är nu tillgänglig** i alla chattar
 
 ---
 
 ### Claude Desktop
 
-**Alternativ 1: Live-Server (HTTP Transport)**
+#### I Appen (Enklast - Ingen terminal behövs!)
+
+**1. Öppna Claude Desktop Settings**
+- **macOS:** Claude-menyn → Settings
+- **Windows:** Claude-menyn → Settings
+
+**2. Gå till Connectors:**
+- Klicka på **"Connectors"** i vänstermenyn
+- Klicka **"Add custom connector"**
+
+**3. Fyll i formuläret:**
+- **Name:** `Skolverket MCP`
+- **Remote MCP server URL:** `https://skolverket-mcp.onrender.com/mcp`
+- **Advanced settings:** Lämna OAuth-fälten **tomma**
+- Klicka **"Add"**
+
+**4. Servern aktiveras direkt** - visas med "CUSTOM"-märke i listan
+
+#### Alternativ: Lokal Installation (för utveckling)
+
+**1. Klona och bygg:**
+```bash
+git clone https://github.com/KSAklfszf921/skolverket-mcp.git
+cd skolverket-mcp
+npm install && npm run build
+```
+
+**2. I Claude Desktop:**
+- Settings → **Developer** (inte Connectors!)
+- Klicka **"Edit Config"**
+
+**3. Lägg till i JSON-filen:**
 ```json
 {
   "mcpServers": {
     "skolverket": {
-      "transport": "http",
-      "url": "https://skolverket-mcp.onrender.com/mcp"
+      "command": "node",
+      "args": ["/absolut/sökväg/till/skolverket-mcp/dist/index.js"]
     }
   }
 }
 ```
 
-**Alternativ 2: Lokal Installation (stdio)**
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "command": "npx",
-      "args": ["-y", "skolverket-mcp"]
-    }
-  }
-}
-```
+**4. Spara och starta om Claude Desktop**
+
+**Notera:** Lokal installation använder stdio-transport via Developer-sektionen, inte Connectors.
 
 ---
 
 ### Claude Code
 
-**Alternativ 1: Live-Server (HTTP Transport)**
+**Live-Server:**
+```bash
+claude mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
+```
+
+**Lokal (från källkod):**
+```bash
+# Efter git clone och npm install (se ovan)
+claude mcp add skolverket node /absolut/sökväg/till/dist/index.js
+```
+
+**Verifiera:** `claude mcp list`
+
+---
+
+### Cline (VS Code)
+
+#### I VS Code (Rekommenderat)
+
+**1. Öppna VS Code Settings**
+- Cmd/Ctrl+, eller **File → Preferences → Settings**
+
+**2. Sök efter "Cline MCP"**
+- Hitta **"Cline: MCP Servers"**-inställningen
+
+**3. Klicka "Edit in settings.json"**
+
+**4. Lägg till:**
 ```json
 {
-  "mcpServers": {
+  "cline.mcpServers": {
     "skolverket": {
-      "transport": "http",
+      "transportType": "http",
       "url": "https://skolverket-mcp.onrender.com/mcp"
     }
   }
 }
 ```
 
-**Alternativ 2: Lokal Installation (stdio)**
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "command": "npx",
-      "args": ["-y", "skolverket-mcp"]
-    }
-  }
-}
-```
+**5. Reload VS Code**
+- Cmd/Ctrl+Shift+P → "Developer: Reload Window"
 
----
+#### Eller via config-fil
 
-### OpenAI Codex (CLI)
-
-**Alternativ 1: Live-Server (HTTP)**
-```toml
-# Lägg till i ~/.codex/config.toml:
-[mcp.skolverket]
-url = "https://skolverket-mcp.onrender.com/mcp"
-```
-
-**Alternativ 2: Lokal Installation (stdio)**
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "command": "npx",
-      "args": ["-y", "skolverket-mcp"]
-    }
-  }
-}
-```
-
----
-
-### Cline (VS Code Extension)
-
-**Alternativ 1: Live-Server (HTTP)**
+**`.vscode/cline_mcp_settings.json`:**
 ```json
 {
   "mcpServers": {
@@ -137,13 +183,21 @@ url = "https://skolverket-mcp.onrender.com/mcp"
 }
 ```
 
-**Alternativ 2: Lokal Installation (stdio)**
+---
+
+### Cursor
+
+**Deeplink (automatisk installation):**
+
+[cursor://anysphere.cursor-deeplink/mcp/install?name=skolverket&config=eyJ1cmwiOiJodHRwczovL3Nrb2x2ZXJrZXQtbWNwLm9ucmVuZGVyLmNvbS9tY3AifQ==](cursor://anysphere.cursor-deeplink/mcp/install?name=skolverket&config=eyJ1cmwiOiJodHRwczovL3Nrb2x2ZXJrZXQtbWNwLm9ucmVuZGVyLmNvbS9tY3AifQ==)
+
+**Eller `.cursor/mcp.json`:**
 ```json
 {
   "mcpServers": {
     "skolverket": {
-      "command": "npx",
-      "args": ["-y", "skolverket-mcp"]
+      "type": "http",
+      "url": "https://skolverket-mcp.onrender.com/mcp"
     }
   }
 }
@@ -151,15 +205,50 @@ url = "https://skolverket-mcp.onrender.com/mcp"
 
 ---
 
-### Gemini CLI (Google AI Studio)
+### VS Code Copilot
 
-**Alternativ 1: Live-Server (HTTP)**
-```bash
-# Kommando:
-gemini mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
+#### I VS Code (Rekommenderat)
 
-# Eller i config:
+**1. Öppna Settings**
+- Cmd/Ctrl+, eller **File → Preferences → Settings**
+
+**2. Sök efter "GitHub Copilot"**
+- Hitta **"GitHub Copilot: Advanced"**
+
+**3. Klicka "Edit in settings.json"**
+
+**4. Lägg till under "github.copilot.advanced":**
+```json
+{
+  "github.copilot.advanced": {
+    "mcpServers": {
+      "skolverket": {
+        "type": "http",
+        "url": "https://skolverket-mcp.onrender.com/mcp"
+      }
+    }
+  }
+}
 ```
+
+**5. Reload VS Code**
+- Cmd/Ctrl+Shift+P → "Developer: Reload Window"
+
+#### Eller via CLI
+
+```bash
+code --add-mcp '{"name":"skolverket","type":"http","url":"https://skolverket-mcp.onrender.com/mcp"}'
+```
+
+---
+
+### Gemini CLI
+
+```bash
+gemini mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
+```
+
+**Eller `~/.gemini/config.json`:**
 ```json
 {
   "mcpServers": {
@@ -170,23 +259,69 @@ gemini mcp add --transport http skolverket https://skolverket-mcp.onrender.com/m
 }
 ```
 
-**Alternativ 2: Lokal Installation (stdio)**
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "command": "npx",
-      "args": ["-y", "skolverket-mcp"]
-    }
-  }
-}
+---
+
+### OpenAI Codex
+
+#### Remote Server (HTTP)
+
+**`~/.codex/config.toml`:**
+```toml
+[mcp.skolverket]
+url = "https://skolverket-mcp.onrender.com/mcp"
+transport = "http"
+```
+
+#### Lokal Installation
+
+**1. Klona och bygg (om ej redan gjort):**
+```bash
+git clone https://github.com/KSAklfszf921/skolverket-mcp.git
+cd skolverket-mcp
+npm install && npm run build
+```
+
+**2. Konfigurera stdio-transport:**
+
+**`~/.codex/config.toml`:**
+```toml
+[mcp.skolverket]
+command = "node"
+args = ["/absolut/sökväg/till/skolverket-mcp/dist/index.js"]
+transport = "stdio"
+```
+
+**Windows:**
+```toml
+[mcp.skolverket]
+command = "node"
+args = ["C:\\Users\\username\\skolverket-mcp\\dist\\index.js"]
+transport = "stdio"
 ```
 
 ---
 
-> **Fler installationsalternativ**: [INSTALLATION.md](INSTALLATION.md) (npm global, källkod, etc.)
+## 📊 Transport-stöd
 
-## Funktioner
+| Klient | HTTP | stdio | Rekommendation |
+|--------|------|-------|----------------|
+| ChatGPT | ✅ | ❌ | HTTP via Connectors |
+| claude.ai | ✅ | ❌ | HTTP via Settings |
+| Claude Desktop | ✅ | ✅ | HTTP via Connectors (enklast) |
+| Claude Code | ✅ | ✅ | HTTP (CLI) |
+| Cline | ✅ | ✅ | HTTP |
+| Cursor | ✅ | ✅ | HTTP (deeplink) |
+| VS Code | ✅ | ✅ | HTTP |
+| Gemini CLI | ✅ | ✅ | HTTP |
+| OpenAI Codex | ✅ | ✅ | HTTP |
+
+✅ Direkt stöd • ❌ Fungerar ej
+
+**Notera:** Claude Desktop stöder HTTP via Connectors-sektionen och stdio via Developer-sektionen.
+
+---
+
+## 🛠️ Funktioner
 
 ### MCP Capabilities
 Servern implementerar MCP-protokollet med stöd för:
@@ -206,7 +341,7 @@ Sök och filtrera skolor, förskolor och andra skolenheter. Inkluderar aktiva, n
 **Planned Educations API**
 Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser och studietakt.
 
-### Tekniska förbättringar (v2.1.0)
+### Tekniska förbättringar
 - Strukturerad loggning med Winston
 - Intelligent cachning med TTL
 - Rate limiting (max 5 samtidiga anrop)
@@ -214,77 +349,42 @@ Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser 
 - Automatiska återförsök med exponentiell backoff
 - Health check för diagnostik
 
-## Dokumentation
+---
 
-- **[Installation](INSTALLATION.md)** – Alla installationsalternativ (live-server, npx, npm, källkod)
-- **[Konfiguration](docs/CONFIGURATION.md)** – Miljövariabler och inställningar
-- **[Felsökning](docs/TROUBLESHOOTING.md)** – Health check och vanliga problem
-- **[API](docs/API.md)** – Alla 29 verktyg och koder
-- **[Exempel](docs/EXAMPLES.md)** – Praktiska exempel för olika användargrupper
+## 💡 Användningsområden
 
-## Användningsområden
+**Lärare:** Kursplanering, bedömning, tematiskt arbete
+**Elever/Föräldrar:** Kursval, programval, betygskriterier
+**Vägledare:** Programinfo, vidareutbildning, utbildningstillfällen
+**Administratörer:** Läroplansförändringar, kursutbud, skolregister
+**Forskare:** Läroplansanalys, historisk utveckling
 
-**För lärare**
-Kursplanering med centralt innehåll, bedömning med kunskapskrav, tematiskt arbete över ämnen.
+---
 
-**För elever och föräldrar**
-Kursval, programval, förstå betygskriterier, söka vuxenutbildningar och YH-utbildningar.
+## 📚 Dokumentation
 
-**För studie- och yrkesvägledare**
-Programinformation med yrkesutfall, vägledning om vidareutbildning, söka utbildningstillfällen.
+- **[API](docs/API.md)** – Alla verktyg och parametrar
+- **[Konfiguration](docs/CONFIGURATION.md)** – Miljövariabler
+- **[Felsökning](docs/TROUBLESHOOTING.md)** – Health check
 
-**För administratörer**
-Läroplansförändringar över tid, kursutbud och planering, skolenhetsregister.
+**MCP-resurser:**
+- [Specification](https://spec.modelcontextprotocol.io/)
+- [Claude Desktop Guide](https://docs.anthropic.com/claude/docs/connect-to-local-mcp-servers)
+- [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 
-**För forskare**
-Läroplansanalys, historisk utveckling, jämföra versioner.
+---
 
-## Teknisk Information
+## 🆘 Support
 
-### Arkitektur
-```
-skolverket-mcp/
-├── src/
-│   ├── index.ts                    # Huvudserver (stdio)
-│   ├── streamable-http-server.ts   # HTTP/SSE server
-│   ├── api/                        # API-klienter
-│   ├── tools/                      # 29 verktyg
-│   └── types/                      # TypeScript-typer
-├── docs/                           # Dokumentation
-└── logs/                           # Loggar
-```
+**GitHub Issues:** https://github.com/KSAklfszf921/skolverket-mcp/issues
+**Email:** isak.skogstad@me.com • **X:** [@isakskogstad](https://x.com/isakskogstad)
 
-### Byggd med
-- `@modelcontextprotocol/sdk` - MCP SDK
-- `axios` + `axios-retry` - HTTP-klient med retry
-- `zod` - Schema-validering
-- `winston` - Logging
-- `p-limit` - Rate limiting
-- TypeScript
+---
 
-## Utveckling
+## 📝 Licens
 
-```bash
-git clone https://github.com/KSAklfszf921/skolverket-mcp.git
-cd skolverket-mcp
-npm install
-npm run build      # Kompilera
-npm run dev        # Watch mode
-npm start          # Kör stdio server
-npm run start:streamable  # Kör HTTP/SSE server
+MIT License – Data från Skolverkets öppna API:er. Inte officiellt associerad med Skolverket.
 
-# Testa lokalt
-npx @modelcontextprotocol/inspector node dist/index.js
-```
+---
 
-## Support och kontakt
-
-Hittat en bugg eller har en idé? Öppna gärna ett [issue på GitHub](https://github.com/KSAklfszf921/skolverket-mcp/issues).
-
-**Kontakt:** [isak.skogstad@me.com](mailto:isak.skogstad@me.com) • [X/Twitter](https://x.com/isakskogstad)
-
-## Licens och attribution
-
-MIT License – se [LICENSE](LICENSE) för detaljer.
-
-Data hämtas från Skolverkets öppna API:er. Denna server är inte officiellt associerad av Skolverket. Projektet skapades för att göra svensk utbildningsdata mer tillgänglig för AI-assistenter och forskare. Bidrag välkomnas!
+**🔄 Uppdaterad: 2025-01-20 • 📦 Version: 2.1.0 • 🔧 MCP Protocol: 2025-03-26**
