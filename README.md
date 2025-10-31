@@ -15,8 +15,7 @@ En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som g
 
 ## 🛠️ Funktioner
 
-### MCP Capabilities
-Servern implementerar MCP-protokollet med stöd för:
+MCP-servern implementerar MCP-protokollet med stöd för:
 - **29 verktyg** – 17 för läroplaner, 4 för skolenheter, 7 för vuxenutbildning, 1 för diagnostik
 - **4 resurser** – API-info, skoltyper, läroplanstyper, kurs- och ämneskoder
 - **5 promptmallar** – Kursanalys, versionsjämförelser, vuxenutbildning, studievägledning, kursplanering
@@ -24,64 +23,20 @@ Servern implementerar MCP-protokollet med stöd för:
 ### API-integration
 Servern kopplar till tre av Skolverkets öppna API:er:
 
-**Läroplan API**
+**1. Syllabus API**
 Läroplaner (LGR11, GY11), ämnen, kurser, gymnasieprogram med kunskapskrav och centralt innehåll.
 
-**Skolenhetsregistret**
+**2. Skolenhetsregistret**
 Sök och filtrera skolor, förskolor och andra skolenheter. Inkluderar aktiva, nedlagda och vilande enheter.
 
-**Planned Educations API**
+**3. Planned Educations API**
 Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser och studietakt.
 
 ---
 
-## ⚡ Quick Start (2 minuter)
+## 📱 Snabbstart 
 
-### För ChatGPT Plus/Pro/Enterprise
-
-1. Gå till [chatgpt.com](https://chatgpt.com) → **Profil** → **Appar och sammanlänkningar**
-2. Aktivera **Utvecklarläge (BETA)**
-3. Klicka **"Ny sammanlänkning"**
-4. URL: `https://skolverket-mcp.onrender.com/mcp`
-5. Autentisering: **Ingen autentisering**
-6. Klara! Testa med: *"Visa kunskapskraven för Matematik 2a"*
-
-### För Claude Desktop
-
-1. Öppna **Settings** → **Connectors** → **Add custom connector**
-2. URL: `https://skolverket-mcp.onrender.com/mcp`
-3. Lämna OAuth-fält **tomma**
-4. Klara! Testa med: *"Jämför Naturvetenskapsprogrammet och Teknikprogrammet"*
-
-### För Claude Code (CLI)
-
-```bash
-claude mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
-```
-
-Testa med: *"Hitta alla yrkeshögskoleutbildningar inom AI i Stockholm"*
-
-📚 **Fler klienter?** Se [detaljerade instruktioner nedan](#-snabbstart-per-klient).
-
----
-
-## 🌐 Live-Server
-
-```
-https://skolverket-mcp.onrender.com/mcp
-```
-
-**Specifikationer:** Streamable HTTP (MCP 2025-03-26) • 100GB bandbredd/månad • Ingen autentisering
-
-> **⚠️ VIKTIGT:** Skolverket-MCP är en öppen server utan autentisering. Lämna **ALLTID** OAuth/API-key fält **TOMMA** i alla klienter.
-
----
-
-## 📱 Snabbstart per Klient
-
-### ChatGPT (Plus/Pro/Enterprise)
-
-**⚠️ Kräver Plus/Pro/Enterprise-prenumeration • Endast webbläsare (ej mobilapp)**
+### ChatGPT 
 
 #### I Webbläsaren (chatgpt.com)
 
@@ -104,13 +59,9 @@ https://skolverket-mcp.onrender.com/mcp
 - Markera **"Jag förstår och vill fortsätta"**
 - Klicka **"Skapa"**
 
-**4. Servern är nu tillgänglig** i alla chattar
-
 ---
 
-### claude.ai (Webb)
-
-**⚠️ Kräver Claude Pro eller Team-prenumeration**
+### Claude (Webb)
 
 **1. Gå till claude.ai:**
 - Logga in på https://claude.ai
@@ -133,8 +84,6 @@ https://skolverket-mcp.onrender.com/mcp
 
 ### Claude Desktop
 
-#### I Appen (Enklast - Ingen terminal behövs!)
-
 **1. Öppna Claude Desktop Settings**
 - **macOS:** Claude-menyn → Settings
 - **Windows:** Claude-menyn → Settings
@@ -149,9 +98,7 @@ https://skolverket-mcp.onrender.com/mcp
 - **Advanced settings:** Lämna OAuth-fälten **tomma**
 - Klicka **"Add"**
 
-**4. Servern aktiveras direkt** - visas med "CUSTOM"-märke i listan
-
-#### Alternativ: Lokal Installation (för utveckling)
+#### Alternativ: Lokal installation 
 
 **1. Klona och bygg:**
 ```bash
@@ -196,49 +143,6 @@ claude mcp add skolverket node /absolut/sökväg/till/dist/index.js
 ```
 
 **Verifiera:** `claude mcp list`
-
----
-
-### Cline (VS Code)
-
-#### I VS Code (Rekommenderat)
-
-**1. Öppna VS Code Settings**
-- Cmd/Ctrl+, eller **File → Preferences → Settings**
-
-**2. Sök efter "Cline MCP"**
-- Hitta **"Cline: MCP Servers"**-inställningen
-
-**3. Klicka "Edit in settings.json"**
-
-**4. Lägg till:**
-```json
-{
-  "cline.mcpServers": {
-    "skolverket": {
-      "transportType": "http",
-      "url": "https://skolverket-mcp.onrender.com/mcp"
-    }
-  }
-}
-```
-
-**5. Reload VS Code**
-- Cmd/Ctrl+Shift+P → "Developer: Reload Window"
-
-#### Eller via config-fil
-
-**`.vscode/cline_mcp_settings.json`:**
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "transportType": "http",
-      "url": "https://skolverket-mcp.onrender.com/mcp"
-    }
-  }
-}
-```
 
 ---
 
@@ -287,19 +191,9 @@ claude mcp add skolverket node /absolut/sökväg/till/dist/index.js
   }
 }
 ```
-
-**5. Reload VS Code**
-- Cmd/Ctrl+Shift+P → "Developer: Reload Window"
-
-#### Eller via CLI
-
-```bash
-code --add-mcp '{"name":"skolverket","type":"http","url":"https://skolverket-mcp.onrender.com/mcp"}'
-```
-
 ---
 
-### Gemini CLI
+### Google Gemini (terminal)
 
 ```bash
 gemini mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
@@ -318,7 +212,7 @@ gemini mcp add --transport http skolverket https://skolverket-mcp.onrender.com/m
 
 ---
 
-### OpenAI Codex
+### OpenAI Codex (terminal)
 
 #### Remote Server (HTTP)
 
@@ -365,22 +259,15 @@ transport = "stdio"
 - **Tematiskt arbete:** "Hitta alla kurser i gymnasiet som har hållbarhet i sitt centrala innehåll"
 - **Bedömning:** "Visa alla kunskapskrav för betyg C i Biologi 1 och förklara skillnaderna mot B"
 
-### För Elever & Föräldrar
+### För elever & föräldrar
 - **Programval:** "Jämför Naturvetenskapsprogrammet och Teknikprogrammet - vilka kurser är obligatoriska?"
 - **Kursval:** "Vilka matematikkurser finns på gymnasiet och vilka bygger på varandra?"
 - **Betygskriterier:** "Vad krävs för att få A i Historia 1a1?"
 
-### För Studie- och Yrkesvägledare
-- **Vidareutbildning:** "Hitta alla yrkeshögskoleutbildningar inom IT som startar hösten 2025"
-- **Programinfo:** "Vilka gymnasieprogram har programmering som obligatoriskt ämne?"
-- **Utbildningsplatser:** "Lista SFI-utbildningar i Göteborg med distansalternativ"
-
-### För Administratörer & Beslutsfattare
+### För undersökningar & analyser  
 - **Läroplansförändringar:** "Visa alla versioner av Engelska 5 och vad som ändrats"
 - **Skolregister:** "Hitta alla aktiva gymnasieskolor i Stockholms län"
 - **Kursutbud:** "Vilka skolor erbjuder Ekonomiprogrammet i Malmö?"
-
-### För Forskare & Utbildare
 - **Läroplansanalys:** "Analysera hur begreppet 'programmering' har utvecklats i läroplaner 2011-2025"
 - **Jämförande studier:** "Jämför kunskapskrav mellan GY11 och tidigare gymnasieläroplaner"
 
