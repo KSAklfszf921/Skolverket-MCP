@@ -6,6 +6,11 @@
 [![Version](https://img.shields.io/badge/version-2.1.0-blue)](https://github.com/KSAklfszf921/Skolverket-MCP/releases)
 [![MCP Protocol](https://img.shields.io/badge/MCP-2025--03--26-green)](https://modelcontextprotocol.io/)
 [![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/KSAklfszf921/Skolverket-MCP?style=social)](https://github.com/KSAklfszf921/Skolverket-MCP/stargazers)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Issues](https://img.shields.io/github/issues/KSAklfszf921/Skolverket-MCP)](https://github.com/KSAklfszf921/Skolverket-MCP/issues)
+[![Discussions](https://img.shields.io/github/discussions/KSAklfszf921/Skolverket-MCP)](https://github.com/KSAklfszf921/Skolverket-MCP/discussions)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger AI-assistenter tillgång till **alla Skolverkets öppna API:er** – Läroplan API, Skolenhetsregistret och Planned Educations API.
 

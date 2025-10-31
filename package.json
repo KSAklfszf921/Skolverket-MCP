@@ -1,12 +1,18 @@
 {
-  "name": "Skolverket-MCP",
+  "name": "skolverket-mcp",
   "version": "2.1.0",
   "description": "MCP server för alla Skolverkets öppna API:er - Läroplan API, Skolenhetsregistret och Planned Educations API",
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "Skolverket-MCP": "./dist/index.js"
+    "skolverket-mcp": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -17,6 +23,7 @@
   },
   "keywords": [
     "mcp",
+    "mcp-server",
     "skolverket",
     "läroplan",
     "utbildning",
@@ -30,10 +37,27 @@
     "yrkeshögskola",
     "komvux",
     "sfi",
-    "model-context-protocol"
+    "model-context-protocol",
+    "anthropic",
+    "claude",
+    "chatgpt",
+    "ai",
+    "llm"
   ],
-  "author": "",
+  "author": {
+    "name": "Isak Skogstad",
+    "email": "isak.skogstad@me.com",
+    "url": "https://x.com/isakskogstad"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KSAklfszf921/Skolverket-MCP.git"
+  },
+  "homepage": "https://github.com/KSAklfszf921/Skolverket-MCP#readme",
+  "bugs": {
+    "url": "https://github.com/KSAklfszf921/Skolverket-MCP/issues"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.2",
     "@types/cors": "^2.8.19",

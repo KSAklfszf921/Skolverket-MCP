@@ -7,20 +7,51 @@ tsconfig.json
 .idea/
 *.swp
 *.swo
+*.tmp
+*.temp
 
 # Tests
 tests/
 coverage/
+test-*.mjs
+*.test.ts
+*.spec.ts
 
-# Documentation
+# Documentation (keep README.md, LICENSE, CHANGELOG.md)
 docs/
+CONTRIBUTING.md
+SECURITY.md
+examples/
 
 # Git
 .git/
 .gitignore
+.gitattributes
 
 # CI/CD
 .github/
+.dockerignore
+Dockerfile
+docker-compose.yml
+railway.json
+render.yaml
+
+# Environment
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Media
+images/
+public/
+*.mp4
+*.mov
+*.avi
 
 # OS files
 .DS_Store
