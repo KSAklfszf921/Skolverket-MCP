@@ -42,3 +42,6 @@ coverage/
 *.mov
 *.avi
 .claude/
+
+# MCP Registry tokens
+.mcpregistry_*

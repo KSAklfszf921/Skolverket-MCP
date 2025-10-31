@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.KSAklfszf921/skolverket-mcp",
+  "title": "Skolverket MCP",
+  "description": "MCP server for Skolverket's open APIs - Curriculum, School Units, and Adult Education",
+  "repository": {
+    "url": "https://github.com/KSAklfszf921/skolverket-mcp",
+    "source": "github"
+  },
+  "version": "2.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "skolverket-mcp",
+      "version": "2.1.1",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}

@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2024-10-31
+
+### Added
+- **MCP Registry support** - Published to official Model Context Protocol Registry
+  - Added `server.json` for MCP Registry configuration
+  - Added `mcpName` field to package.json for registry validation
+  - Server now discoverable at `io.github.KSAklfszf921/skolverket-mcp`
+
+### Changed
+- Updated npm package to include `server.json` in published files
+
+## [2.1.0] - 2024-10-31
+
+### Added
+- **Community health files**
+  - CODE_OF_CONDUCT.md (Contributor Covenant 2.1)
+  - SECURITY.md (Security policy and vulnerability reporting)
+  - CONTRIBUTING.md (Contribution guidelines)
+  - Issue templates (bug report, feature request)
+  - Pull request template
+- **GitHub features**
+  - GitHub Discussions enabled
+  - Repository topics for better discoverability
+  - Additional badges in README
+
+### Changed
+- Improved README with "Two ways to use" section (Remote vs Local)
+- Enhanced repository visibility on GitHub
+
 ## [2.0.0] - 2025-01-20
 
 ### Added

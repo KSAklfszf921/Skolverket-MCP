@@ -3,7 +3,8 @@
 # Skolverket MCP Server
 
 [![Server Status](https://img.shields.io/website?url=https%3A%2F%2Fskolverket-mcp.onrender.com%2Fhealth&label=MCP%20Server&up_message=online&down_message=offline)](https://skolverket-mcp.onrender.com/health)
-[![Version](https://img.shields.io/badge/version-2.1.0-blue)](https://github.com/KSAklfszf921/Skolverket-MCP/releases)
+[![npm version](https://img.shields.io/npm/v/skolverket-mcp)](https://www.npmjs.com/package/skolverket-mcp)
+[![MCP Registry](https://img.shields.io/badge/MCP%20Registry-Published-brightgreen)](https://registry.modelcontextprotocol.io/servers/io.github.KSAklfszf921/skolverket-mcp)
 [![MCP Protocol](https://img.shields.io/badge/MCP-2025--03--26-green)](https://modelcontextprotocol.io/)
 [![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/KSAklfszf921/Skolverket-MCP?style=social)](https://github.com/KSAklfszf921/Skolverket-MCP/stargazers)
