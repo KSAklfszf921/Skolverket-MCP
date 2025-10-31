@@ -211,6 +211,10 @@ transport = "stdio"
 
 ## 💡 Användningsområden
 
+
+https://github.com/user-attachments/assets/8eefa26c-4162-49a5-adf0-82677a663b19
+
+
 ### För Lärare
 - **Kursplanering:** "Jämför kunskapskraven E och A för Svenska 1 och ge förslag på bedömningsuppgifter"
 - **Tematiskt arbete:** "Hitta alla kurser i gymnasiet som har hållbarhet i sitt centrala innehåll"
