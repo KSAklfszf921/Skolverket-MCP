@@ -1292,10 +1292,8 @@ app.get('/', (req, res) => {
     <div class="container">
       <div class="doc-tabs">
         <button onclick="loadDoc('README')" class="doc-btn active" id="btn-README">README</button>
-        <button onclick="loadDoc('INSTALLATION')" class="doc-btn" id="btn-INSTALLATION">Installation</button>
         <button onclick="loadDoc('API')" class="doc-btn" id="btn-API">API</button>
         <button onclick="loadDoc('EXAMPLES')" class="doc-btn" id="btn-EXAMPLES">Exempel</button>
-        <button onclick="loadDoc('CHANGES')" class="doc-btn" id="btn-CHANGES">Ändringslogg</button>
       </div>
     </div>
   </div>
@@ -1343,18 +1341,14 @@ app.get('/', (req, res) => {
 
     const docs = {
       'README': 'README.md',
-      'INSTALLATION': 'INSTALLATION.md',
       'API': 'docs/API.md',
-      'EXAMPLES': 'docs/EXAMPLES.md',
-      'CHANGES': 'CHANGES.md'
+      'EXAMPLES': 'docs/EXAMPLES.md'
     };
 
     const docTitles = {
       'README': 'README',
-      'INSTALLATION': 'Installation',
       'API': 'API',
-      'EXAMPLES': 'Exempel',
-      'CHANGES': 'Ändringslogg'
+      'EXAMPLES': 'Exempel'
     };
 
     let currentDoc = 'README';
@@ -1468,14 +1462,10 @@ app.get('/', (req, res) => {
 
       // Map file paths to document names
       const pathToDoc = {
-        'INSTALLATION.md': 'INSTALLATION',
         'docs/API.md': 'API',
         'API.md': 'API',
         'docs/EXAMPLES.md': 'EXAMPLES',
         'EXAMPLES.md': 'EXAMPLES',
-        'CHANGES.md': 'CHANGES',
-        'docs/CONFIGURATION.md': 'API', // Map to API as fallback
-        'docs/TROUBLESHOOTING.md': 'API', // Map to API as fallback
         'README.md': 'README'
       };
 
