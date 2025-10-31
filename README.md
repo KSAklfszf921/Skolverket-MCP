@@ -323,26 +323,6 @@ transport = "stdio"
 
 ---
 
-## 📊 Transport-stöd
-
-| Klient | HTTP | stdio | Rekommendation |
-|--------|------|-------|----------------|
-| ChatGPT | ✅ | ❌ | HTTP via Connectors |
-| claude.ai | ✅ | ❌ | HTTP via Settings |
-| Claude Desktop | ✅ | ✅ | HTTP via Connectors (enklast) |
-| Claude Code | ✅ | ✅ | HTTP (CLI) |
-| Cline | ✅ | ✅ | HTTP |
-| Cursor | ✅ | ✅ | HTTP (deeplink) |
-| VS Code | ✅ | ✅ | HTTP |
-| Gemini CLI | ✅ | ✅ | HTTP |
-| OpenAI Codex | ✅ | ✅ | HTTP |
-
-✅ Direkt stöd • ❌ Fungerar ej
-
-**Notera:** Claude Desktop stöder HTTP via Connectors-sektionen och stdio via Developer-sektionen.
-
----
-
 ## 💡 Användningsområden
 
 **Lärare:** Kursplanering, bedömning, tematiskt arbete
