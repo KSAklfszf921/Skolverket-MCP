@@ -846,7 +846,8 @@ app.get('/', (req, res) => {
   <link rel="canonical" href="https://${req.get('host')}/">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" type="image/png" href="/og-image-square.png">
 
   <!-- Structured Data (Schema.org JSON-LD) -->
   <script type="application/ld+json">
