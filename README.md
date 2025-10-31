@@ -13,6 +13,37 @@ En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som g
 
 ---
 
+## 🚀 Två sätt att använda
+
+### 🌐 Remote Server (Rekommenderat)
+**Hostad på Render – gratis och alltid uppdaterad**
+
+Använd den publika servern direkt utan installation:
+```
+https://skolverket-mcp.onrender.com/mcp
+```
+
+✅ Ingen installation krävs
+✅ Fungerar direkt i ChatGPT, Claude, Cursor, VS Code
+✅ Alltid senaste versionen
+✅ Kostnadsfritt
+
+### 💻 Lokal Installation
+**För utveckling eller offline-användning**
+
+Klona och kör lokalt:
+```bash
+git clone https://github.com/KSAklfszf921/skolverket-mcp.git
+cd skolverket-mcp
+npm install && npm run build
+```
+
+✅ Full kontroll över koden
+✅ Fungerar offline
+✅ Perfekt för utveckling och testning
+
+---
+
 ## 🛠️ Funktioner
 
 MCP-servern implementerar MCP-protokollet med stöd för:

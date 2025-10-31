@@ -36,3 +36,8 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Videos (upload via GitHub UI instead)
+*.mp4
+*.mov
+*.avi
