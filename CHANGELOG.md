@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.3] - 2025-10-31
+
+### Added
+- **GitHub Actions auto-deploy workflows**
+  - `publish-npm.yml` - Automatic npm publishing on tag push
+  - `publish-mcp-registry.yml` - Automatic MCP Registry publishing after npm success
+  - Triggers on `v*.*.*` tags for seamless releases
+- **Deployment documentation**
+  - `.github/AUTO_DEPLOY.md` - Complete guide for auto-deploy setup
+  - `verify-deployment.sh` - Script for verifying deployments across all platforms
+
+### Changed
+- Streamlined release process - single tag push now deploys to npm and MCP Registry
+- Improved deployment consistency across npm, MCP Registry, and Render
+
 ## [2.1.2] - 2024-10-31
 
 ### Fixed
