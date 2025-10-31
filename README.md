@@ -125,26 +125,6 @@ claude mcp add skolverket node /absolut/sökväg/till/dist/index.js
 
 ---
 
-### Cursor
-
-**Deeplink (automatisk installation):**
-
-[cursor://anysphere.cursor-deeplink/mcp/install?name=skolverket&config=eyJ1cmwiOiJodHRwczovL3Nrb2x2ZXJrZXQtbWNwLm9ucmVuZGVyLmNvbS9tY3AifQ==](cursor://anysphere.cursor-deeplink/mcp/install?name=skolverket&config=eyJ1cmwiOiJodHRwczovL3Nrb2x2ZXJrZXQtbWNwLm9ucmVuZGVyLmNvbS9tY3AifQ==)
-
-**Eller `.cursor/mcp.json`:**
-```json
-{
-  "mcpServers": {
-    "skolverket": {
-      "type": "http",
-      "url": "https://skolverket-mcp.onrender.com/mcp"
-    }
-  }
-}
-```
-
----
-
 ### ChatGPT 
 
 #### I Webbläsaren (chatgpt.com)
