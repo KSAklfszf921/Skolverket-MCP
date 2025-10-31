@@ -1786,6 +1786,28 @@ app.get('/', (req, res) => {
       const searchInput = document.getElementById('doc-search');
       if (searchInput) searchInput.value = '';
 
+      // Check cache first (5 min TTL)
+      const cacheKey = 'doc_' + docName;
+      const cached = sessionStorage.getItem(cacheKey);
+      const cacheTime = sessionStorage.getItem(cacheKey + '_time');
+      const now = Date.now();
+      const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+      if (cached && cacheTime && (now - parseInt(cacheTime)) < CACHE_TTL) {
+        // Use cached version
+        currentMarkdown = cached;
+        const html = marked.parse(cached);
+        contentDiv.innerHTML = html;
+
+        generateTOC();
+        interceptInternalLinks();
+        addCopyButtons();
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        updateProgressBar();
+        return;
+      }
+
       // Show loading spinner
       contentDiv.innerHTML = \`
         <div style="text-align: center; padding: 80px 24px; color: #86868b;">
@@ -1802,6 +1824,11 @@ app.get('/', (req, res) => {
 
         const markdown = await response.text();
         currentMarkdown = markdown;
+
+        // Cache the markdown
+        sessionStorage.setItem(cacheKey, markdown);
+        sessionStorage.setItem(cacheKey + '_time', now.toString());
+
         const html = marked.parse(markdown);
 
         contentDiv.innerHTML = html;
