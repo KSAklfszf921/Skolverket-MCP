@@ -2,6 +2,11 @@
 
 # Skolverket MCP Server
 
+[![Server Status](https://img.shields.io/website?url=https%3A%2F%2Fskolverket-mcp.onrender.com%2Fhealth&label=MCP%20Server&up_message=online&down_message=offline)](https://skolverket-mcp.onrender.com/health)
+[![Version](https://img.shields.io/badge/version-2.1.0-blue)](https://github.com/KSAklfszf921/Skolverket-MCP/releases)
+[![MCP Protocol](https://img.shields.io/badge/MCP-2025--03--26-green)](https://modelcontextprotocol.io/)
+[![License](https://img.shields.io/badge/license-MIT-orange)](LICENSE)
+
 En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som ger AI-assistenter tillgång till **alla Skolverkets öppna API:er** – Läroplan API, Skolenhetsregistret och Planned Educations API.
 
 **Skapad av:** [Isak Skogstad](mailto:isak.skogstad@me.com) • [X/Twitter](https://x.com/isakskogstad)
@@ -27,6 +32,36 @@ Sök och filtrera skolor, förskolor och andra skolenheter. Inkluderar aktiva, n
 
 **Planned Educations API**
 Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser och studietakt.
+
+---
+
+## ⚡ Quick Start (2 minuter)
+
+### För ChatGPT Plus/Pro/Enterprise
+
+1. Gå till [chatgpt.com](https://chatgpt.com) → **Profil** → **Appar och sammanlänkningar**
+2. Aktivera **Utvecklarläge (BETA)**
+3. Klicka **"Ny sammanlänkning"**
+4. URL: `https://skolverket-mcp.onrender.com/mcp`
+5. Autentisering: **Ingen autentisering**
+6. Klara! Testa med: *"Visa kunskapskraven för Matematik 2a"*
+
+### För Claude Desktop
+
+1. Öppna **Settings** → **Connectors** → **Add custom connector**
+2. URL: `https://skolverket-mcp.onrender.com/mcp`
+3. Lämna OAuth-fält **tomma**
+4. Klara! Testa med: *"Jämför Naturvetenskapsprogrammet och Teknikprogrammet"*
+
+### För Claude Code (CLI)
+
+```bash
+claude mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
+```
+
+Testa med: *"Hitta alla yrkeshögskoleutbildningar inom AI i Stockholm"*
+
+📚 **Fler klienter?** Se [detaljerade instruktioner nedan](#-snabbstart-per-klient).
 
 ---
 
@@ -325,11 +360,29 @@ transport = "stdio"
 
 ## 💡 Användningsområden
 
-**Lärare:** Kursplanering, bedömning, tematiskt arbete
-**Elever/Föräldrar:** Kursval, programval, betygskriterier
-**Vägledare:** Programinfo, vidareutbildning, utbildningstillfällen
-**Administratörer:** Läroplansförändringar, kursutbud, skolregister
-**Forskare:** Läroplansanalys, historisk utveckling
+### För Lärare
+- **Kursplanering:** "Jämför kunskapskraven E och A för Svenska 1 och ge förslag på bedömningsuppgifter"
+- **Tematiskt arbete:** "Hitta alla kurser i gymnasiet som har hållbarhet i sitt centrala innehåll"
+- **Bedömning:** "Visa alla kunskapskrav för betyg C i Biologi 1 och förklara skillnaderna mot B"
+
+### För Elever & Föräldrar
+- **Programval:** "Jämför Naturvetenskapsprogrammet och Teknikprogrammet - vilka kurser är obligatoriska?"
+- **Kursval:** "Vilka matematikkurser finns på gymnasiet och vilka bygger på varandra?"
+- **Betygskriterier:** "Vad krävs för att få A i Historia 1a1?"
+
+### För Studie- och Yrkesvägledare
+- **Vidareutbildning:** "Hitta alla yrkeshögskoleutbildningar inom IT som startar hösten 2025"
+- **Programinfo:** "Vilka gymnasieprogram har programmering som obligatoriskt ämne?"
+- **Utbildningsplatser:** "Lista SFI-utbildningar i Göteborg med distansalternativ"
+
+### För Administratörer & Beslutsfattare
+- **Läroplansförändringar:** "Visa alla versioner av Engelska 5 och vad som ändrats"
+- **Skolregister:** "Hitta alla aktiva gymnasieskolor i Stockholms län"
+- **Kursutbud:** "Vilka skolor erbjuder Ekonomiprogrammet i Malmö?"
+
+### För Forskare & Utbildare
+- **Läroplansanalys:** "Analysera hur begreppet 'programmering' har utvecklats i läroplaner 2011-2025"
+- **Jämförande studier:** "Jämför kunskapskrav mellan GY11 och tidigare gymnasieläroplaner"
 
 ---
 
@@ -346,4 +399,4 @@ MIT License – Data från Skolverkets öppna API:er. Inte officiellt associerad
 
 ---
 
-**🔄 Uppdaterad: 2025-01-20 • 📦 Version: 2.1.0 • 🔧 MCP Protocol: 2025-03-26**
+**📦 Version: 2.1.0 • 🔧 MCP Protocol: 2025-03-26**

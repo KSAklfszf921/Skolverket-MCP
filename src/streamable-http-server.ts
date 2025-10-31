@@ -848,6 +848,47 @@ app.get('/', (req, res) => {
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/favicon.png">
 
+  <!-- Structured Data (Schema.org JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Skolverket MCP Server",
+    "description": "MCP server for Swedish National Agency for Education (Skolverket) open data. Tuned for LLMs to query, parse, and integrate info, data, and stats from three public API endpoints.",
+    "url": "https://${req.get('host')}/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Isak Skogstad",
+      "email": "isak.skogstad@me.com",
+      "sameAs": "https://x.com/isakskogstad"
+    },
+    "publisher": {
+      "@type": "Person",
+      "name": "Isak Skogstad"
+    },
+    "softwareVersion": "2.1.0",
+    "datePublished": "2025-01-20",
+    "inLanguage": ["sv", "en"],
+    "keywords": "skolverket, mcp, model context protocol, läroplan, curriculum, chatgpt, claude, ai, education, sweden, swedish",
+    "featureList": [
+      "29 MCP tools for curriculum data",
+      "4 MCP resources for context",
+      "5 prompt templates",
+      "Access to 3 Skolverket APIs",
+      "Läroplan API integration",
+      "Skolenhetsregistret API integration",
+      "Planned Educations API integration"
+    ]
+  }
+  </script>
+
   <style>
     /* === Base & Reset === */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1186,10 +1227,38 @@ app.get('/', (req, res) => {
       border-radius: 8px;
       overflow-x: auto;
       margin: 16px 0;
+      position: relative;
     }
     #github-content pre code {
       background: transparent;
       padding: 0;
+    }
+    #github-content pre .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: #1d1d1f;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    #github-content pre:hover .copy-btn {
+      opacity: 1;
+    }
+    #github-content pre .copy-btn:hover {
+      background: #f5f5f7;
+      border-color: #007aff;
+    }
+    #github-content pre .copy-btn.copied {
+      background: #34c759;
+      border-color: #34c759;
+      color: #ffffff;
     }
     #github-content ul,
     #github-content ol {
@@ -1413,6 +1482,29 @@ app.get('/', (req, res) => {
         });
     }
 
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // "/" key - Open search
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+        const activeElement = document.activeElement;
+        if (activeElement.tagName !== 'INPUT' && activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          toggleSearch();
+        }
+      }
+      // Escape key - Close modals
+      if (e.key === 'Escape') {
+        const searchExpanded = document.getElementById('search-expanded');
+        const tocModal = document.getElementById('toc-modal');
+        if (searchExpanded.classList.contains('active')) {
+          toggleSearch();
+        }
+        if (tocModal.classList.contains('active')) {
+          toggleTOC();
+        }
+      }
+    });
+
     // Scroll progress tracking
     window.addEventListener('scroll', updateProgressBar);
 
@@ -1435,9 +1527,13 @@ app.get('/', (req, res) => {
       searchExpanded.classList.toggle('active');
 
       if (searchExpanded.classList.contains('active')) {
-        setTimeout(() => searchInput.focus(), 100);
+        setTimeout(() => {
+          searchInput.focus();
+          searchInput.setAttribute('aria-expanded', 'true');
+        }, 100);
       } else {
         searchInput.value = '';
+        searchInput.setAttribute('aria-expanded', 'false');
         // Restore original content if search was active
         if (currentMarkdown) {
           document.getElementById('github-content').innerHTML = marked.parse(currentMarkdown);
@@ -1449,13 +1545,25 @@ app.get('/', (req, res) => {
 
     function toggleTOC() {
       const modal = document.getElementById('toc-modal');
+      const isOpening = !modal.classList.contains('active');
+
       modal.classList.toggle('active');
+      modal.setAttribute('aria-hidden', isOpening ? 'false' : 'true');
+
+      // Focus management
+      if (isOpening) {
+        // Focus first link in TOC when opened
+        setTimeout(() => {
+          const firstLink = modal.querySelector('.toc-list a');
+          if (firstLink) firstLink.focus();
+        }, 100);
+      }
 
       // Close modal when clicking outside
       if (modal.classList.contains('active')) {
         modal.onclick = (e) => {
           if (e.target === modal) {
-            modal.classList.remove('active');
+            toggleTOC();
           }
         };
       }
@@ -1493,6 +1601,43 @@ app.get('/', (req, res) => {
 
       tocHtml += '</ul>';
       tocContent.innerHTML = tocHtml;
+    }
+
+    function addCopyButtons() {
+      const codeBlocks = document.querySelectorAll('#github-content pre');
+
+      codeBlocks.forEach(pre => {
+        // Don't add button if it already exists
+        if (pre.querySelector('.copy-btn')) return;
+
+        const button = document.createElement('button');
+        button.className = 'copy-btn';
+        button.textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+
+        button.addEventListener('click', async () => {
+          const code = pre.querySelector('code');
+          const text = code ? code.textContent : pre.textContent;
+
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = 'Copied!';
+            button.classList.add('copied');
+
+            setTimeout(() => {
+              button.textContent = 'Copy';
+              button.classList.remove('copied');
+            }, 2000);
+          } catch (err) {
+            button.textContent = 'Error';
+            setTimeout(() => {
+              button.textContent = 'Copy';
+            }, 2000);
+          }
+        });
+
+        pre.appendChild(button);
+      });
     }
 
     function scrollToHeading(id) {
@@ -1666,6 +1811,9 @@ app.get('/', (req, res) => {
 
         // Intercept internal markdown links
         interceptInternalLinks();
+
+        // Add copy buttons to code blocks
+        addCopyButtons();
 
         // Smooth scroll to content
         window.scrollTo({ top: 0, behavior: 'smooth' });
