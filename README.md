@@ -196,7 +196,7 @@ claude mcp add skolverket node /absolut/sökväg/till/dist/index.js
 ### Google Gemini (terminal)
 
 ```bash
-gemini mcp add --transport http skolverket https://skolverket-mcp.onrender.com/mcp
+gemini mcp add --transport http --scope user skolverket https://skolverket-mcp.onrender.com/mcp
 ```
 
 **Eller `~/.gemini/config.json`:**
