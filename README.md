@@ -34,9 +34,15 @@ Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser 
 
 ---
 
+
 ## 📱 Snabbstart 
 
 ### Claude (Webb)
+
+
+
+https://github.com/user-attachments/assets/f7625e91-6f42-4301-b813-51f9bfcc7ef0
+
 
 **1. Gå till claude.ai:**
 - Logga in på https://claude.ai
