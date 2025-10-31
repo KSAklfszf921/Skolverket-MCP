@@ -1326,22 +1326,267 @@ app.get('/', (req, res) => {
       text-decoration: underline;
     }
 
+    /* === Mobile Menu === */
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #1d1d1f;
+      cursor: pointer;
+      padding: 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+      min-width: 48px;
+      min-height: 48px;
+    }
+    .mobile-menu-btn:hover {
+      background: #f5f5f7;
+    }
+    .mobile-menu-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 150;
+      backdrop-filter: blur(4px);
+    }
+    .mobile-menu-overlay.active {
+      display: block;
+    }
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      right: -280px;
+      width: 280px;
+      height: 100%;
+      background: #ffffff;
+      z-index: 151;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-menu.active {
+      right: 0;
+    }
+    .mobile-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #f5f5f7;
+    }
+    .mobile-menu-header h3 {
+      font-size: 16px;
+      font-weight: 500;
+      color: #1d1d1f;
+    }
+    .mobile-menu-close {
+      background: transparent;
+      border: none;
+      color: #86868b;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      min-width: 44px;
+      min-height: 44px;
+    }
+    .mobile-menu-items {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: #1d1d1f;
+      text-decoration: none;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.2s;
+      min-height: 48px;
+      text-align: left;
+    }
+    .mobile-menu-item:hover {
+      background: #f5f5f7;
+    }
+
     /* === Responsive === */
     @media (max-width: 768px) {
+      /* Header */
       .nav {
         padding: 0 16px;
       }
+      .nav-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .nav-left span:first-child {
+        font-size: 18px;
+      }
+      .nav-right {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Status badges - stack vertically */
+      #server-status,
+      .status-badge {
+        margin-left: 0 !important;
+        margin-top: 4px;
+      }
+
+      /* Container */
       .container {
         padding: 0 16px;
       }
-      .doc-content {
-        padding: 24px;
+
+      /* Doc navigation */
+      .doc-nav-sticky {
+        top: 78px;
+        padding: 12px 0;
+        margin-bottom: 24px;
       }
+      .doc-tabs {
+        gap: 6px;
+      }
+      .doc-btn {
+        padding: 12px 16px;
+        font-size: 13px;
+        min-height: 44px;
+      }
+
+      /* Content */
+      .doc-content {
+        padding: 20px 16px;
+      }
+
+      /* Typography - smaller on mobile */
       #github-content h1 {
-        font-size: 28px;
+        font-size: 26px;
+        margin-bottom: 16px;
       }
       #github-content h2 {
         font-size: 20px;
+        margin: 32px 0 12px 0;
+      }
+      #github-content h3 {
+        font-size: 17px;
+      }
+      #github-content p,
+      #github-content li {
+        font-size: 14px;
+      }
+
+      /* Code blocks - better mobile scrolling */
+      #github-content pre {
+        padding: 12px;
+        margin: 12px -16px;
+        border-radius: 0;
+        font-size: 13px;
+      }
+      #github-content pre code {
+        font-size: 13px;
+      }
+      #github-content pre .copy-btn {
+        opacity: 1;
+        position: sticky;
+        right: 8px;
+      }
+
+      /* Tables - scroll horizontally */
+      #github-content table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      #github-content th,
+      #github-content td {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      /* TOC Modal - full screen on mobile */
+      .toc-modal-content {
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+      }
+      .toc-modal-header {
+        padding: 16px;
+      }
+      .toc-modal-body {
+        padding: 16px;
+      }
+      .toc-list a {
+        padding: 12px 16px;
+        font-size: 15px;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+      }
+
+      /* Touch-optimized buttons */
+      .icon-btn {
+        min-width: 48px;
+        min-height: 48px;
+        padding: 12px;
+      }
+      .nav-link {
+        min-height: 48px;
+        padding: 12px 16px;
+      }
+
+      /* Search expanded */
+      .search-expanded .container {
+        padding: 0 16px;
+      }
+      .search-input-expanded {
+        font-size: 16px;
+        padding: 14px 16px;
+      }
+      .search-close {
+        min-width: 48px;
+        min-height: 48px;
+      }
+
+      /* Footer */
+      .footer {
+        padding: 32px 16px;
+        font-size: 12px;
+      }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 480px) {
+      .nav-left span:first-child {
+        font-size: 16px;
+      }
+      #github-content h1 {
+        font-size: 24px;
+      }
+      #github-content h2 {
+        font-size: 18px;
+      }
+      .doc-btn {
+        padding: 10px 14px;
+        font-size: 12px;
       }
     }
   </style>
@@ -1374,6 +1619,14 @@ app.get('/', (req, res) => {
           </svg>
         </a>
       </div>
+      <!-- Mobile hamburger menu button -->
+      <button onclick="toggleMobileMenu()" class="mobile-menu-btn" aria-label="Meny">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
 
     <!-- Expandable Search -->
@@ -1382,6 +1635,40 @@ app.get('/', (req, res) => {
         <input type="text" id="doc-search" placeholder="Sök i dokumentation..." class="search-input-expanded" autofocus>
         <button onclick="toggleSearch()" class="search-close">✕</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="toggleMobileMenu()"></div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <h3>Meny</h3>
+      <button onclick="toggleMobileMenu()" class="mobile-menu-close">✕</button>
+    </div>
+    <div class="mobile-menu-items">
+      <button onclick="toggleSearch(); toggleMobileMenu();" class="mobile-menu-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <span>Sök</span>
+      </button>
+      <button onclick="toggleTOC(); toggleMobileMenu();" class="mobile-menu-item">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <span>Innehållsförteckning</span>
+      </button>
+      <a href="https://github.com/KSAklfszf921/Skolverket-MCP" target="_blank" class="mobile-menu-item">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+        </svg>
+        <span>GitHub</span>
+      </a>
     </div>
   </div>
 
@@ -1568,6 +1855,31 @@ app.get('/', (req, res) => {
         };
       }
     }
+
+    function toggleMobileMenu() {
+      const mobileMenu = document.getElementById('mobile-menu');
+      const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+      mobileMenu.classList.toggle('active');
+      mobileMenuOverlay.classList.toggle('active');
+
+      // Prevent body scroll when menu is open
+      if (mobileMenu.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Close mobile menu on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenu.classList.contains('active')) {
+          toggleMobileMenu();
+        }
+      }
+    });
 
     function generateTOC() {
       const contentDiv = document.getElementById('github-content');
