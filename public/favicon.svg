@@ -1,7 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Background -->
-  <rect width="64" height="64" rx="12" fill="#007aff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Purple background -->
+  <rect width="512" height="512" fill="#832561"/>
 
-  <!-- Letter S -->
-  <path d="M 32 16 C 40 16 44 20 44 24 C 44 26 43 28 40 30 L 36 32 C 34 33 32 34 32 36 C 32 38 34 40 38 40 C 40 40 42 39 44 38 L 46 42 C 44 44 40 46 36 46 C 28 46 24 42 24 38 C 24 36 25 34 28 32 L 32 30 C 34 29 36 28 36 26 C 36 24 34 22 30 22 C 28 22 26 23 24 24 L 22 20 C 24 18 28 16 32 16 Z" fill="#ffffff"/>
+  <!-- Skolverket text (italic serif) -->
+  <text x="256" y="280" font-family="Georgia, serif" font-size="120" font-style="italic" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">Skolverket</text>
+
+  <!-- MCP text (bold sans-serif) -->
+  <text x="256" y="420" font-family="Arial, sans-serif" font-size="180" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle">MCP</text>
 </svg>
