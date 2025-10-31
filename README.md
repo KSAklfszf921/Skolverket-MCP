@@ -8,6 +8,28 @@ En [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server som g
 
 ---
 
+## 🛠️ Funktioner
+
+### MCP Capabilities
+Servern implementerar MCP-protokollet med stöd för:
+- **29 verktyg** – 17 för läroplaner, 4 för skolenheter, 7 för vuxenutbildning, 1 för diagnostik
+- **4 resurser** – API-info, skoltyper, läroplanstyper, kurs- och ämneskoder
+- **5 promptmallar** – Kursanalys, versionsjämförelser, vuxenutbildning, studievägledning, kursplanering
+
+### API-integration
+Servern kopplar till tre av Skolverkets öppna API:er:
+
+**Läroplan API**
+Läroplaner (LGR11, GY11), ämnen, kurser, gymnasieprogram med kunskapskrav och centralt innehåll.
+
+**Skolenhetsregistret**
+Sök och filtrera skolor, förskolor och andra skolenheter. Inkluderar aktiva, nedlagda och vilande enheter.
+
+**Planned Educations API**
+Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser och studietakt.
+
+---
+
 ## 🌐 Live-Server
 
 ```
@@ -321,36 +343,6 @@ transport = "stdio"
 
 ---
 
-## 🛠️ Funktioner
-
-### MCP Capabilities
-Servern implementerar MCP-protokollet med stöd för:
-- **29 verktyg** – 17 för läroplaner, 4 för skolenheter, 7 för vuxenutbildning, 1 för diagnostik
-- **4 resurser** – API-info, skoltyper, läroplanstyper, kurs- och ämneskoder
-- **5 promptmallar** – Kursanalys, versionsjämförelser, vuxenutbildning, studievägledning, kursplanering
-
-### API-integration
-Servern kopplar till tre av Skolverkets öppna API:er:
-
-**Läroplan API**
-Läroplaner (LGR11, GY11), ämnen, kurser, gymnasieprogram med kunskapskrav och centralt innehåll.
-
-**Skolenhetsregistret**
-Sök och filtrera skolor, förskolor och andra skolenheter. Inkluderar aktiva, nedlagda och vilande enheter.
-
-**Planned Educations API**
-Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser och studietakt.
-
-### Tekniska förbättringar
-- Strukturerad loggning med Winston
-- Intelligent cachning med TTL
-- Rate limiting (max 5 samtidiga anrop)
-- Input-validering med Zod
-- Automatiska återförsök med exponentiell backoff
-- Health check för diagnostik
-
----
-
 ## 💡 Användningsområden
 
 **Lärare:** Kursplanering, bedömning, tematiskt arbete
@@ -358,19 +350,6 @@ Yrkeshögskola, SFI, Komvux och andra vuxenutbildningar med startdatum, platser 
 **Vägledare:** Programinfo, vidareutbildning, utbildningstillfällen
 **Administratörer:** Läroplansförändringar, kursutbud, skolregister
 **Forskare:** Läroplansanalys, historisk utveckling
-
----
-
-## 📚 Dokumentation
-
-- **[API](docs/API.md)** – Alla verktyg och parametrar
-- **[Konfiguration](docs/CONFIGURATION.md)** – Miljövariabler
-- **[Felsökning](docs/TROUBLESHOOTING.md)** – Health check
-
-**MCP-resurser:**
-- [Specification](https://spec.modelcontextprotocol.io/)
-- [Claude Desktop Guide](https://docs.anthropic.com/claude/docs/connect-to-local-mcp-servers)
-- [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk)
 
 ---
 
