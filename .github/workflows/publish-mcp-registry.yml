@@ -5,11 +5,12 @@ on:
     workflows: ["Publish to npm"]
     types:
       - completed
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       id-token: write
