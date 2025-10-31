@@ -41,3 +41,4 @@ coverage/
 *.mp4
 *.mov
 *.avi
+.claude/
