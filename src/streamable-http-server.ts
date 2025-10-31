@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.1.0 - HTTP/SSE Transport
+ * Skolverket MCP Server v2.1.2 - HTTP/SSE Transport
  *
  * HTTP server implementation using StreamableHTTPServerTransport
  * for compatibility with OpenAI ChatGPT and other HTTP-based MCP clients.
@@ -92,7 +92,7 @@ import {
 const mcpServer = new Server(
   {
     name: 'skolverket-mcp',
-    version: '2.1.0',
+    version: '2.1.2',
   },
   {
     capabilities: {
@@ -798,7 +798,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     server: 'skolverket-mcp',
-    version: '2.1.0',
+    version: '2.1.2',
     transport: 'streamable-http'
   });
 });
@@ -2239,7 +2239,7 @@ app.listen(PORT, () => {
   log.info('Skolverket MCP Server (HTTP/SSE) started', {
     port: PORT,
     endpoint: `/mcp`,
-    version: '2.1.0',
+    version: '2.1.2',
     capabilities: ['tools', 'resources', 'prompts', 'logging'],
     apis: ['Läroplan API', 'Skolenhetsregistret API', 'Planned Educations API']
   });

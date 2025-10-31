@@ -250,7 +250,7 @@ app.get('/', (req: Request, res: Response) => {
     <div class="header">
       <h1>🎓 Skolverket MCP Server</h1>
       <p>Model Context Protocol Server för Skolverkets öppna API:er</p>
-      <p style="margin-top: 10px;"><span class="badge">v2.1.0</span> <span class="badge" style="background: #3b82f6;">HTTP/SSE</span></p>
+      <p style="margin-top: 10px;"><span class="badge">v2.1.2</span> <span class="badge" style="background: #3b82f6;">HTTP/SSE</span></p>
     </div>
 
     <div class="content">
@@ -426,7 +426,7 @@ curl -X POST https://skolverket-mcp.onrender.com/execute \\
 
     <div class="footer">
       <p>
-        Skolverket MCP Server v2.1.0 • Byggd med Node.js, TypeScript, Express & MCP SDK
+        Skolverket MCP Server v2.1.2 • Byggd med Node.js, TypeScript, Express & MCP SDK
       </p>
       <p style="margin-top: 5px; font-size: 0.9em;">
         Deployad på Render • ${new Date().getFullYear()} • Open Source MIT License
