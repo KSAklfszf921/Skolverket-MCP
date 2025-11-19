@@ -13,6 +13,15 @@ const __dirname = path.dirname(__filename);
 // Log level från miljövariabel eller default till 'info'
 const logLevel = process.env.LOG_LEVEL || 'info';
 
+// Log directory - använd miljövariabel eller default till projektets root/logs
+const getLogDir = () => {
+  if (process.env.LOG_DIR) {
+    return process.env.LOG_DIR;
+  }
+  // Use project root (two levels up from src/ directory)
+  return path.join(__dirname, '..', 'logs');
+};
+
 // Skapa logger
 export const logger = winston.createLogger({
   level: logLevel,
@@ -31,14 +40,14 @@ export const logger = winston.createLogger({
   transports: [
     // Error log - endast errors
     new winston.transports.File({
-      filename: path.join(process.cwd(), 'logs', 'error.log'),
+      filename: path.join(getLogDir(), 'error.log'),
       level: 'error',
       maxsize: 5242880, // 5MB
       maxFiles: 5
     }),
     // Combined log - alla nivåer
     new winston.transports.File({
-      filename: path.join(process.cwd(), 'logs', 'combined.log'),
+      filename: path.join(getLogDir(), 'combined.log'),
       maxsize: 5242880, // 5MB
       maxFiles: 5
     }),
@@ -60,20 +69,20 @@ export const logger = winston.createLogger({
   // Hantera uncaught exceptions
   exceptionHandlers: [
     new winston.transports.File({
-      filename: path.join(process.cwd(), 'logs', 'exceptions.log')
+      filename: path.join(getLogDir(), 'exceptions.log')
     })
   ],
   // Hantera unhandled rejections
   rejectionHandlers: [
     new winston.transports.File({
-      filename: path.join(process.cwd(), 'logs', 'rejections.log')
+      filename: path.join(getLogDir(), 'rejections.log')
     })
   ]
 });
 
 // Skapa logs-mappen om den inte finns
 import fs from 'fs';
-const logsDir = path.join(process.cwd(), 'logs');
+const logsDir = getLogDir();
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir, { recursive: true });
 }

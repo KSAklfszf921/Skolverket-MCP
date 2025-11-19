@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.1.0
+ * Skolverket MCP Server v2.1.3
  *
  * Komplett MCP server för att ge LLMs tillgång till Skolverkets öppna API:er:
  * - Läroplan API (läroplaner, ämnen, kurser, program)
  * - Skolenhetsregistret API (skolenheter och deras status)
  * - Planned Educations API (utbildningstillfällen, statistik, inspektionsrapporter)
  *
- * Version 2.1.0 förbättringar:
+ * Version 2.1.3 förbättringar:
  * - Resources för kontextläsning
  * - Prompts för vanliga användningsfall
  * - Progress reporting
@@ -126,7 +126,7 @@ import {
 const server = new Server(
   {
     name: 'skolverket-mcp',
-    version: '2.1.0',
+    version: '2.1.3',
   },
   {
     capabilities: {
@@ -326,7 +326,8 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
   log.info('Prompt requested', { name, args });
 
-  switch (name) {
+  try {
+    switch (name) {
     case 'analyze_course': {
       const courseCode = args?.course_code as string;
       if (!courseCode) {
@@ -488,8 +489,12 @@ Börja med att hämta kursdata.`
       };
     }
 
-    default:
-      throw new Error(`Okänd prompt: ${name}`);
+      default:
+        throw new Error(`Okänd prompt: ${name}`);
+    }
+  } catch (error) {
+    log.error('Prompt execution failed', { name, error });
+    throw error;
   }
 });
 
@@ -1154,7 +1159,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  log.info('Skolverket MCP Server v2.1.0 startad', {
+  log.info('Skolverket MCP Server v2.1.3 startad', {
     capabilities: ['tools', 'resources', 'prompts', 'logging'],
     apis: ['Läroplan API', 'Skolenhetsregistret API', 'Planned Educations API']
   });

@@ -21,7 +21,11 @@
     "prepare": "npm run build",
     "start": "node dist/index.js",
     "start:http": "node dist/http-server.js",
-    "start:streamable": "node dist/streamable-http-server.js"
+    "start:streamable": "node dist/streamable-http-server.js",
+    "test": "echo \"Error: no test suite configured yet\" && exit 1",
+    "lint": "tsc --noEmit",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "keywords": [
     "mcp",
@@ -62,9 +66,6 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.20.2",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.5",
-    "@types/uuid": "^10.0.0",
     "axios": "^1.7.9",
     "axios-retry": "^4.5.0",
     "cors": "^2.8.5",
@@ -75,7 +76,10 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
     "@types/node": "^22.10.2",
+    "@types/uuid": "^10.0.0",
     "typescript": "^5.7.2"
   },
   "engines": {

@@ -73,7 +73,7 @@ RENDER_STATUS=$(echo "$RENDER_DATA" | node -e "try { console.log(JSON.parse(requ
 echo "🏷️  Version: $RENDER_VERSION"
 echo "💚 Status: $RENDER_STATUS"
 
-if [ "$RENDER_VERSION" = "2.1.2" ]; then
+if [ "$RENDER_VERSION" = "2.1.3" ]; then
   echo -e "${GREEN}✅ KORREKT VERSION DEPLOYAD${NC}"
 else
   echo -e "${YELLOW}⚠️  Gammal version - Trigger redeploy i Render Dashboard${NC}"
@@ -84,7 +84,7 @@ fi
 echo ""
 echo "6️⃣  VERSIONSKONSISTENS"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-cd /Users/isak/Skolverket-MCP
+cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 PKG_VER=$(grep '"version"' package.json | head -1 | cut -d'"' -f4)
 echo "• package.json:  $PKG_VER"
 echo "• npm Registry:  $NPM_VERSION"
