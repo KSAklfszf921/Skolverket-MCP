@@ -31,6 +31,8 @@ import { healthCheck } from './tools/health.js';
 
 const PORT = process.env.PORT || 3000;
 const ENABLE_CORS = process.env.ENABLE_CORS !== 'false';
+const SSE_TIMEOUT_MS = parseInt(process.env.SSE_TIMEOUT_MS || '600000'); // 10 minutes default
+const SSE_KEEPALIVE_MS = parseInt(process.env.SSE_KEEPALIVE_MS || '30000'); // 30 seconds default
 
 const app = express();
 
@@ -451,7 +453,7 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
     service: 'skolverket-mcp',
-    version: '2.1.0',
+    version: '2.1.3',
     timestamp: new Date().toISOString(),
     transport: 'http-sse',
     endpoints: {
@@ -501,17 +503,25 @@ app.get('/sse', async (req: Request, res: Response) => {
     requestId,
     timestamp: new Date().toISOString(),
     service: 'skolverket-mcp',
-    version: '2.1.0',
+    version: '2.1.3',
   })}\n\n`);
 
-  // Keepalive ping every 30 seconds
+  // Keepalive ping
   const keepalive = setInterval(() => {
     res.write(`: keepalive\n\n`);
-  }, 30000);
+  }, SSE_KEEPALIVE_MS);
+
+  // Connection timeout
+  const connectionTimeout = setTimeout(() => {
+    reqLog.info('SSE connection timeout', { timeoutMs: SSE_TIMEOUT_MS });
+    clearInterval(keepalive);
+    res.end();
+  }, SSE_TIMEOUT_MS);
 
   // Cleanup on disconnect
   req.on('close', () => {
     clearInterval(keepalive);
+    clearTimeout(connectionTimeout);
     reqLog.info('SSE connection closed');
   });
 });

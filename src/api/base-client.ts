@@ -11,6 +11,17 @@ import { log, createRequestLogger } from '../logger.js';
 import { cache } from '../cache.js';
 import { SkolverketApiError, RateLimitError, AuthenticationError, TransientError } from '../errors.js';
 
+// Constants for default values
+const DEFAULT_TIMEOUT_MS = 30000; // 30 seconds
+const DEFAULT_MAX_RETRIES = 3;
+const DEFAULT_RETRY_DELAY_MS = 1000; // 1 second
+const DEFAULT_MAX_CONCURRENT = 5;
+const DEFAULT_CACHE_TTL_MS = 3600000; // 1 hour
+const MCP_VERSION = '2.1.3';
+
+// Sensitive headers to redact in logs
+const SENSITIVE_HEADERS = ['authorization', 'api-key', 'x-api-key', 'apikey'];
+
 export interface BaseClientConfig {
   baseURL: string;
   timeout?: number;
@@ -27,10 +38,25 @@ export class BaseApiClient {
   protected client: AxiosInstance;
   private limiter: ReturnType<typeof pLimit>;
 
+  /**
+   * Redact sensitive headers for logging
+   */
+  private redactHeaders(headers: any): any {
+    if (!headers || typeof headers !== 'object') return headers;
+
+    const redacted = { ...headers };
+    for (const key of Object.keys(redacted)) {
+      if (SENSITIVE_HEADERS.includes(key.toLowerCase())) {
+        redacted[key] = '***REDACTED***';
+      }
+    }
+    return redacted;
+  }
+
   constructor(config: BaseClientConfig) {
     const headers: Record<string, string> = {
       'Accept': config.customAcceptHeader || 'application/json',
-      'User-Agent': config.userAgent || 'skolverket-mcp/2.1.0'
+      'User-Agent': config.userAgent || `skolverket-mcp/${MCP_VERSION}`
     };
 
     // Lägg till API-nyckel om angiven
@@ -41,15 +67,15 @@ export class BaseApiClient {
 
     this.client = axios.create({
       baseURL: config.baseURL,
-      timeout: config.timeout || 30000,
+      timeout: config.timeout || DEFAULT_TIMEOUT_MS,
       headers
     });
 
     // Konfigurera axios-retry med exponentiell backoff
     axiosRetry(this.client, {
-      retries: config.maxRetries || 3,
+      retries: config.maxRetries || DEFAULT_MAX_RETRIES,
       retryDelay: (retryCount) => {
-        const baseDelay = config.retryDelay || 1000;
+        const baseDelay = config.retryDelay || DEFAULT_RETRY_DELAY_MS;
         return baseDelay * Math.pow(2, retryCount - 1); // Exponentiell backoff
       },
       retryCondition: (error: AxiosError) => {
@@ -69,18 +95,18 @@ export class BaseApiClient {
     });
 
     // Rate limiter - konfigurerbar via env eller config
-    this.limiter = pLimit(config.maxConcurrent || 5);
+    this.limiter = pLimit(config.maxConcurrent || DEFAULT_MAX_CONCURRENT);
 
     // Lägg till request interceptor för logging
     this.client.interceptors.request.use(
       (config) => {
         log.debug('API Request', {
           method: config.method?.toUpperCase(),
-          baseURL: config.baseURL, // EXTRA DEBUG: Logga baseURL
+          baseURL: config.baseURL,
           url: config.url,
-          fullURL: `${config.baseURL}${config.url}`, // EXTRA DEBUG: Logga fullständig URL
+          fullURL: `${config.baseURL}${config.url}`,
           params: config.params,
-          headers: config.headers // EXTRA DEBUG: Logga alla headers
+          headers: this.redactHeaders(config.headers)
         });
         return config;
       },
@@ -219,7 +245,7 @@ export class BaseApiClient {
   protected async getCached<T>(
     url: string,
     params?: any,
-    ttl: number = 3600000
+    ttl: number = DEFAULT_CACHE_TTL_MS
   ): Promise<T> {
     // Skapa cache key från URL och params
     const cacheKey = `${url}:${JSON.stringify(params || {})}`;

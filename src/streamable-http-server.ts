@@ -265,7 +265,8 @@ mcpServer.setRequestHandler(GetPromptRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
   log.info('Prompt requested', { name, args });
 
-  switch (name) {
+  try {
+    switch (name) {
     case 'analyze_course': {
       const courseCode = args?.course_code as string;
       if (!courseCode) {
@@ -361,8 +362,12 @@ Börja med att söka efter utbildningar.`
       };
     }
 
-    default:
-      throw new Error(`Okänd prompt: ${name}`);
+      default:
+        throw new Error(`Okänd prompt: ${name}`);
+    }
+  } catch (error) {
+    log.error('Prompt execution failed', { name, error });
+    throw error;
   }
 });
 
@@ -874,7 +879,7 @@ app.get('/', (req, res) => {
       "@type": "Person",
       "name": "Isak Skogstad"
     },
-    "softwareVersion": "2.1.0",
+    "softwareVersion": "2.1.3",
     "datePublished": "2025-01-20",
     "inLanguage": ["sv", "en"],
     "keywords": "skolverket, mcp, model context protocol, läroplan, curriculum, chatgpt, claude, ai, education, sweden, swedish",
@@ -1598,7 +1603,7 @@ app.get('/', (req, res) => {
       <div class="nav-left">
         <span style="font-size: 20px; font-weight: 500; letter-spacing: -0.3px;">Skolverket MCP Server</span>
         <span id="server-status" class="status-badge status-checking" style="margin-left: 16px;" title="Kollar serverstatus...">Kollar...</span>
-        <span class="status-badge" style="margin-left: 8px;">v2.1.0</span>
+        <span class="status-badge" style="margin-left: 8px;">v2.1.3</span>
       </div>
       <div class="nav-right">
         <button onclick="toggleSearch()" class="icon-btn" id="search-toggle" aria-label="Sök">

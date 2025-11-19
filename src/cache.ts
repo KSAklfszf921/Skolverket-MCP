@@ -5,6 +5,10 @@
 import { log } from './logger.js';
 import { CacheError } from './errors.js';
 
+// Constants
+const DEFAULT_CACHE_TTL_MS = 3600000; // 1 hour
+const DEFAULT_PRUNE_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
+
 interface CacheEntry<T> {
   data: T;
   expires: number;
@@ -14,6 +18,7 @@ export class Cache {
   private store = new Map<string, CacheEntry<any>>();
   private hits = 0;
   private misses = 0;
+  private pruneInterval?: NodeJS.Timeout;
 
   /**
    * Hämta data från cache
@@ -43,7 +48,7 @@ export class Cache {
   /**
    * Sätt data i cache
    */
-  set<T>(key: string, data: T, ttl: number = 3600000): void {
+  set<T>(key: string, data: T, ttl: number = DEFAULT_CACHE_TTL_MS): void {
     const expires = Date.now() + ttl;
     this.store.set(key, { data, expires });
     log.debug('Cache set', { key, ttl, expires });
@@ -69,6 +74,33 @@ export class Cache {
     this.hits = 0;
     this.misses = 0;
     log.info('Cache cleared', { entriesRemoved: size });
+  }
+
+  /**
+   * Starta auto-prune interval
+   */
+  startAutoPrune(intervalMs: number = DEFAULT_PRUNE_INTERVAL_MS): void {
+    if (this.pruneInterval) {
+      log.warn('Auto-prune already running');
+      return;
+    }
+
+    this.pruneInterval = setInterval(() => {
+      this.prune();
+    }, intervalMs);
+
+    log.info('Auto-prune started', { intervalMs });
+  }
+
+  /**
+   * Stoppa auto-prune interval
+   */
+  stopAutoPrune(): void {
+    if (this.pruneInterval) {
+      clearInterval(this.pruneInterval);
+      this.pruneInterval = undefined;
+      log.info('Auto-prune stopped');
+    }
   }
 
   /**
@@ -112,7 +144,7 @@ export class Cache {
   async getOrFetch<T>(
     key: string,
     fetchFn: () => Promise<T>,
-    ttl: number = 3600000
+    ttl: number = DEFAULT_CACHE_TTL_MS
   ): Promise<T> {
     // Försök hämta från cache
     const cached = this.get<T>(key);
@@ -135,9 +167,20 @@ export class Cache {
 // Singleton cache instance
 export const cache = new Cache();
 
-// Rensa utgångna entries varje 5 minut
-setInterval(() => {
-  cache.prune();
-}, 5 * 60 * 1000);
+// Starta auto-prune
+cache.startAutoPrune();
+
+// Cleanup vid process exit
+process.on('exit', () => {
+  cache.stopAutoPrune();
+});
+
+process.on('SIGTERM', () => {
+  cache.stopAutoPrune();
+});
+
+process.on('SIGINT', () => {
+  cache.stopAutoPrune();
+});
 
 export default cache;
