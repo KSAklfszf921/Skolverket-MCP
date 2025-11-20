@@ -252,7 +252,8 @@ https://github.com/user-attachments/assets/8eefa26c-4162-49a5-adf0-82677a663b19
 ## 🆘 Support
 
 **GitHub Issues:** https://github.com/KSAklfszf921/skolverket-mcp/issues
-**Email:** isak.skogstad@me.com • **X:** [@isakskogstad](https://x.com/isakskogstad)
+**Email:** isak.skogstad@me.com • **X:** [@isakskogstad](https://x.com/isakskogstad) 
+[![MCP Badge](https://lobehub.com/badge/mcp/ksaklfszf921-skolverket-syllabus-mcp)](https://lobehub.com/mcp/ksaklfszf921-skolverket-syllabus-mcp)
 
 ---
 
