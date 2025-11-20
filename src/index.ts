@@ -29,9 +29,10 @@ import {
   GetPromptRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-// Import logger och errors
+// Import logger, errors och constants
 import { log } from './logger.js';
 import { ResourceNotFoundError } from './errors.js';
+import { SERVER_NAME, SERVER_VERSION, ToolName, PromptName, ResourceUri } from './constants.js';
 
 // Importera API-klienter
 import { syllabusApi } from './api/syllabus-client.js';
@@ -125,8 +126,8 @@ import {
 // Skapa servern med uppdaterade capabilities
 const server = new Server(
   {
-    name: 'skolverket-mcp',
-    version: '2.1.3',
+    name: SERVER_NAME,
+    version: SERVER_VERSION,
   },
   {
     capabilities: {
@@ -148,25 +149,25 @@ server.setRequestHandler(ListResourcesRequestSchema, async () => {
   return {
     resources: [
       {
-        uri: 'skolverket://api/info',
+        uri: ResourceUri.API_INFO,
         name: 'Skolverket API Information',
         mimeType: 'application/json',
         description: 'Information om Skolverkets Läroplan API'
       },
       {
-        uri: 'skolverket://school-types',
+        uri: ResourceUri.SCHOOL_TYPES,
         name: 'Alla skoltyper',
         mimeType: 'application/json',
         description: 'Lista över alla aktiva skoltyper (GR, GY, VUX, etc.)'
       },
       {
-        uri: 'skolverket://types-of-syllabus',
+        uri: ResourceUri.TYPES_OF_SYLLABUS,
         name: 'Typer av läroplaner',
         mimeType: 'application/json',
         description: 'Lista över alla typer av läroplaner'
       },
       {
-        uri: 'skolverket://education-areas',
+        uri: ResourceUri.EDUCATION_AREAS,
         name: 'Utbildningsområden',
         mimeType: 'application/json',
         description: 'Alla tillgängliga utbildningsområden för vuxenutbildning'
@@ -181,7 +182,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 
   try {
     switch (uri) {
-      case 'skolverket://api/info': {
+      case ResourceUri.API_INFO: {
         const info = await syllabusApi.getApiInfo();
         return {
           contents: [{
@@ -192,7 +193,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
         };
       }
 
-      case 'skolverket://school-types': {
+      case ResourceUri.SCHOOL_TYPES: {
         const types = await syllabusApi.getSchoolTypes();
         return {
           contents: [{
@@ -203,7 +204,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
         };
       }
 
-      case 'skolverket://types-of-syllabus': {
+      case ResourceUri.TYPES_OF_SYLLABUS: {
         const types = await syllabusApi.getTypesOfSyllabus();
         return {
           contents: [{
@@ -214,7 +215,7 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
         };
       }
 
-      case 'skolverket://education-areas': {
+      case ResourceUri.EDUCATION_AREAS: {
         const response = await plannedEducationApi.getEducationAreas();
         return {
           contents: [{
@@ -1155,11 +1156,60 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 // START SERVER
 // ==============================================
 
+/**
+ * Graceful shutdown handler
+ */
+let isShuttingDown = false;
+
+async function shutdown(signal: string) {
+  if (isShuttingDown) {
+    log.warn('Shutdown already in progress');
+    return;
+  }
+
+  isShuttingDown = true;
+  log.info(`Received ${signal}, starting graceful shutdown...`);
+
+  try {
+    // Ge pågående requests lite tid att slutföra
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    // Stoppa cache auto-prune
+    const { cache } = await import('./cache.js');
+    cache.stopAutoPrune();
+
+    // Logga cache stats innan stängning
+    log.info('Final cache statistics', cache.getStats());
+
+    log.info('Graceful shutdown completed');
+    process.exit(0);
+  } catch (error) {
+    log.error('Error during shutdown', { error });
+    process.exit(1);
+  }
+}
+
+// Registrera shutdown handlers
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+
+// Hantera uncaught exceptions
+process.on('uncaughtException', (error) => {
+  log.error('Uncaught exception', { error });
+  shutdown('uncaughtException');
+});
+
+// Hantera unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  log.error('Unhandled rejection', { reason, promise });
+  shutdown('unhandledRejection');
+});
+
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  log.info('Skolverket MCP Server v2.1.3 startad', {
+  log.info(`${SERVER_NAME} v${SERVER_VERSION} started`, {
     capabilities: ['tools', 'resources', 'prompts', 'logging'],
     apis: ['Läroplan API', 'Skolenhetsregistret API', 'Planned Educations API']
   });

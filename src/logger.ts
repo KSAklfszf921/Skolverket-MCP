@@ -6,12 +6,13 @@
 import winston from 'winston';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { LOGGING_DEFAULTS, SERVER_NAME, SERVER_VERSION } from './constants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Log level från miljövariabel eller default till 'info'
-const logLevel = process.env.LOG_LEVEL || 'info';
+// Log level från miljövariabel eller default
+const logLevel = process.env.LOG_LEVEL || LOGGING_DEFAULTS.DEFAULT_LEVEL;
 
 // Log directory - använd miljövariabel eller default till projektets root/logs
 const getLogDir = () => {
@@ -34,22 +35,26 @@ export const logger = winston.createLogger({
     winston.format.json()
   ),
   defaultMeta: {
-    service: 'skolverket-mcp',
-    version: '2.1.3'
+    service: SERVER_NAME,
+    version: SERVER_VERSION
   },
   transports: [
     // Error log - endast errors
     new winston.transports.File({
       filename: path.join(getLogDir(), 'error.log'),
       level: 'error',
-      maxsize: 5242880, // 5MB
-      maxFiles: 5
+      maxsize: LOGGING_DEFAULTS.MAX_FILE_SIZE,
+      maxFiles: LOGGING_DEFAULTS.MAX_FILES,
+      tailable: true,
+      zippedArchive: true
     }),
     // Combined log - alla nivåer
     new winston.transports.File({
       filename: path.join(getLogDir(), 'combined.log'),
-      maxsize: 5242880, // 5MB
-      maxFiles: 5
+      maxsize: LOGGING_DEFAULTS.MAX_FILE_SIZE,
+      maxFiles: LOGGING_DEFAULTS.MAX_FILES,
+      tailable: true,
+      zippedArchive: true
     }),
     // Console output - ENDAST till stderr
     new winston.transports.Console({
