@@ -9,13 +9,14 @@ import { syllabusApi } from '../../api/syllabus-client.js';
 export const searchCoursesSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
-  typeOfSyllabus: z.string().optional().describe('Typ av läroplan'),
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta kurser som var giltiga vid det datumet'),
   subjectCode: z.string().optional().describe('Ämneskod för att filtrera kurser')
 };
 
 export const getCourseDetailsSchema = {
   code: z.string().describe('Kurskod (t.ex. "MATMAT01a" för Matematik 1a)'),
-  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)')
+  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)'),
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta versionen som var giltig vid det datumet')
 };
 
 export const getCourseVersionsSchema = {
@@ -26,7 +27,7 @@ export const getCourseVersionsSchema = {
 export async function searchCourses(params: {
   schooltype?: string;
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
-  typeOfSyllabus?: string;
+  date?: string;
   subjectCode?: string;
 }) {
   try {
@@ -67,9 +68,10 @@ export async function searchCourses(params: {
 export async function getCourseDetails(params: {
   code: string;
   version?: number;
+  date?: string;
 }) {
   try {
-    const course = await syllabusApi.getCourse(params.code, params.version);
+    const course = await syllabusApi.getCourse(params.code, params.version, params.date);
 
     return {
       content: [

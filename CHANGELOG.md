@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-01-22
+
+### Added
+- **Komplett överensstämmelse med Skolverkets OpenAPI 3.1.0 specifikation**
+  - `date` parameter för alla search endpoints (subjects, courses, programs, curriculums)
+  - `date` parameter för alla detail endpoints för att hämta versioner som var giltiga vid ett specifikt datum
+  - `typeOfProgram` parameter till `get_study_path_codes` för att filtrera efter programtyp (HÖGSKOLEFÖRBEREDANDE, YRKES)
+  - `typeOfStudyPath` parameter till `search_programs` för mer exakt filtrering
+
+### Changed
+- **Förbättrade tool schemas** med bättre beskrivningar och exempel
+- **Uppdaterade TypeScript typer** för att stödja alla nya parametrar
+  - `StudyPathSearchParams` inkluderar nu `date`, `typeOfStudyPath` och `typeOfProgram`
+  - `ProgramSearchParams` använder nu `typeOfStudyPath` istället för `studyPathType`
+  - Alla search params har nu `date` stöd
+- **API-klienten** uppdaterad för att skicka date-parametrar till backend
+
+### Improved
+- Mer komplett täckning av Skolverkets API-funktionalitet
+- Bättre datumbaserad filtrering för historiska läroplansversioner
+- Tydligare parameternamn som matchar OpenAPI specifikationen exakt
+
 ## [2.1.3] - 2025-10-31
 
 ### Added

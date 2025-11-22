@@ -1,21 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.1.3
+ * Skolverket MCP Server v2.2.0
  *
  * Komplett MCP server för att ge LLMs tillgång till Skolverkets öppna API:er:
  * - Läroplan API (läroplaner, ämnen, kurser, program)
  * - Skolenhetsregistret API (skolenheter och deras status)
  * - Planned Educations API (utbildningstillfällen, statistik, inspektionsrapporter)
  *
- * Version 2.1.3 förbättringar:
- * - Resources för kontextläsning
- * - Prompts för vanliga användningsfall
- * - Progress reporting
- * - Strukturerad logging
- * - Caching
- * - Rate limiting
- * - Input validation
+ * Version 2.2.0 förbättringar:
+ * - Alla saknade parametrar från OpenAPI-specen har lagts till
+ * - date parameter för alla endpoints (subjects, courses, programs, curriculums)
+ * - typeOfProgram och typeOfStudyPath parametrar för studievägar
+ * - Komplett överensstämmelse med Skolverkets OpenAPI 3.1.0 spec
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -126,7 +123,7 @@ import {
 const server = new Server(
   {
     name: 'skolverket-mcp',
-    version: '2.1.3',
+    version: '2.2.0',
   },
   {
     capabilities: {
@@ -1159,7 +1156,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  log.info('Skolverket MCP Server v2.1.3 startad', {
+  log.info('Skolverket MCP Server v2.2.0 startad', {
     capabilities: ['tools', 'resources', 'prompts', 'logging'],
     apis: ['Läroplan API', 'Skolenhetsregistret API', 'Planned Educations API']
   });

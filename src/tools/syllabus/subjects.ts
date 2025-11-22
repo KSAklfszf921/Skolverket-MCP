@@ -9,12 +9,14 @@ import { syllabusApi } from '../../api/syllabus-client.js';
 export const searchSubjectsSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GR" för grundskola, "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
-  typeOfSyllabus: z.string().optional().describe('Typ av läroplan')
+  typeOfSyllabus: z.string().optional().describe('Typ av läroplan (t.ex. "SUBJECT_SYLLABUS", "COURSE_SYLLABUS")'),
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta ämnen som var giltiga vid det datumet')
 };
 
 export const getSubjectDetailsSchema = {
   code: z.string().describe('Ämneskod (t.ex. "GRGRMAT01" för matematik i grundskolan)'),
-  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)')
+  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)'),
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta versionen som var giltig vid det datumet')
 };
 
 export const getSubjectVersionsSchema = {
@@ -26,6 +28,7 @@ export async function searchSubjects(params: {
   schooltype?: string;
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
   typeOfSyllabus?: string;
+  date?: string;
 }) {
   try {
     const result = await syllabusApi.searchSubjects(params);
@@ -64,9 +67,10 @@ export async function searchSubjects(params: {
 export async function getSubjectDetails(params: {
   code: string;
   version?: number;
+  date?: string;
 }) {
   try {
-    const subject = await syllabusApi.getSubject(params.code, params.version);
+    const subject = await syllabusApi.getSubject(params.code, params.version, params.date);
 
     return {
       content: [
