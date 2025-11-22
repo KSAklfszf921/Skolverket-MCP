@@ -1,0 +1,1535 @@
+openapi: 3.0.0
+info:
+  version: '2.0.0'
+  title: 'Skolenhetsregistret öppna API v2 - Skolverket'
+  description: |
+    Denna API-specifikation innehåller version 2 av Skolverkets öppna API för Skolenhetsregistret.
+                          
+    Skolverkets öppna API för Skolenhetsregistret innehåller uppgifter om skolenheter. Registret bygger på skolhuvudmännens egna uppgifter och omfattar aktuell organisation samt adresser till skolenheter.
+             
+    För att hämta alla skolenheter kan du använda den här länken: <a href="https://api.skolverket.se/skolenhetsregistret/v2/school-units" target="_blank">https://api.skolverket.se/skolenhetsregistret/v2/school-units</a>
+
+servers:
+  - url: https://api.skolverket.se/skolenhetsregistret
+
+paths:
+  /v2/school-units:
+    get:
+      tags:
+        - '1. School units'
+      summary: 'Hämta en lista med skolenheter. Med möjlighet till filtrering'
+      description: 'Hämta en lista med skolenheter. Listan kan filtreras på en eller flera av tillgängliga parametrar'
+      operationId: getSchoolUnits
+      parameters:
+        - name: organization_number
+          description: >
+            Begränsa urvalet till de skolenheter som har det angivna organisationsnumret. (10 siffror)
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              example: '' #To fix annoying starter value
+        - name: school_type
+          description: >
+            Begränsa urvalet till de skolenheter som har den/de angivna skolformen/skolformerna.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CodeSchoolType"
+        - name: status
+          description: >
+            Begränsa urvalet till skolenheter med angiven status.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CodeSchoolUnitStatus"
+        - name: municipality_code
+          description: >
+            Begränsa urvalet till de skolenheter som har angiven kommunkod. (exempel: 1285)
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              example: '' #To fix annoying starter value
+        - name: school_unit_type
+          description: >
+            Begränsa urvalet till de skolenheter som har den angivna skolenhetstypen.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CodeSchoolUnitType"
+        - $ref: "#/components/parameters/SearchModifiedAfter"
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta alla skolenheter'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchoolUnitResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/school-units/{schoolUnitCode}:
+    get:
+      tags:
+        - '1. School units'
+      summary: 'Hämta information om en skolenhet'
+      description: 'Via detta API kan detaljerad information om en skolenhet hämtas'
+      operationId: getSchoolUnit
+      parameters:
+        - name: schoolUnitCode
+          in: path
+          description: 'Skolenhetskod (8 siffror)'
+          required: true
+          schema:
+            type: string
+        - name: search_date
+          in: query
+          description: >
+            Hämta uppgifter om skolenheten vid angivet datum (format åååå-mm-dd, exempel: 2021-03-01)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta skolenheten'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchoolUnitInfoResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/organizers:
+    get:
+      tags:
+        - '2. Organizers'
+      summary: 'Hämta en lista med huvudmän. Med möjlighet till filtrering'
+      description: 'Hämta en lista med huvudmän. Listan kan filtreras på en eller flera av tillgängliga parametrar'
+      operationId: getOrganizers
+      parameters:
+        - name: organizer_type
+          description: >
+            Begränsa urvalet till de huvudmän som har angiven huvudmannatyp.
+          in: query
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/CodeOrganizerType"
+        - $ref: "#/components/parameters/SearchModifiedAfter"
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta alla huvudmän'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizerResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/organizers/{organizationNumber}:
+    get:
+      tags:
+        - '2. Organizers'
+      summary: 'Hämta information om en huvudman'
+      description: 'Via detta API kan detaljerad information om en huvudman hämtas'
+      operationId: getOrganizer
+      parameters:
+        - name: organizationNumber
+          in: path
+          description: 'Organisationsnummer för den huvudman som ska hämtas (10 siffror)'
+          required: true
+          schema:
+            type: string
+        - name: search_date
+          in: query
+          description: >
+            Hämta uppgifter om organisationen vid angivet datum (format åååå-mm-dd, exempel: 2021-03-01)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta huvudman'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizerInfoResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/education-providers:
+    get:
+      tags:
+        - '3. Education providers'
+      summary: 'Hämta en lista med utbildningsanordnare. Med möjlighet till filtrering'
+      description: 'Hämta en lista med utbildningsanordnare. Listan kan filtreras på en eller flera av tillgängliga parametrar'
+      operationId: getEducationProviders
+      parameters:
+        - name: grading_rights
+          in: query
+          description: >
+            Begränsa urvalet till utbildningsanordnare som har eller inte har betygsrätt
+          required: false
+          schema:
+            type: boolean
+        - $ref: "#/components/parameters/SearchModifiedAfter"
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta alla utbildningsanordnare'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationProviderResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/education-providers/{educationProviderCode}:
+    get:
+      tags:
+        - '3. Education providers'
+      summary: 'Hämta information om en utbildningsanordnare'
+      description: 'Via detta API kan detaljerad information om en utbildningsanordnare hämtas'
+      operationId: getEducationProvider
+      parameters:
+        - name: educationProviderCode
+          in: path
+          description: 'Kod för den utbildningsanordnare som ska hämtas (8 siffror)'
+          required: true
+          schema:
+            type: string
+        - name: search_date
+          in: query
+          description: >
+            Hämta uppgifter om utbildningsanordnare vid angivet datum (format åååå-mm-dd, exempel: 2021-03-01)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta utbildningsanordnare'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EducationProviderInfoResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/contracts:
+    get:
+      tags:
+        - '4. Contracts'
+      summary: 'Hämta en lista med huvudmän och utbildningsanordnare inom komvux på entreprenad. Med möjlighet till filtrering'
+      description: 'Hämta en lista huvudmän och utbildningsanordnare inom komvux på entreprenad. Listan kan filtreras på en eller flera av tillgängliga parametrar'
+      operationId: getContracts
+      parameters:
+        - name: organizer_organization_number
+          description: >
+            Begränsa urvalet till de entreprenader som har huvuman med det angivna organisationsnumret. (10 siffror)
+          in: query
+          schema:
+            type: string
+        - name: education_provider_organization_number
+          description: >
+            Begränsa urvalet till de entreprenader som har utbildningsanordnare med det angivna organisationsnumret. (10 siffror)
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/SearchModifiedAfter"
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta alla entreprenader'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/contracts/{organizationNumber}/{educationProviderCode}:
+    get:
+      tags:
+        - '4. Contracts'
+      summary: 'Hämta information om en entreprenad inom komvux på entreprenad'
+      description: 'Via detta API kan detaljerad information om en entreprenad inom komvux på entreprenad hämtas'
+      operationId: getContract
+      parameters:
+        - name: organizationNumber
+          in: path
+          description: 'Organisationsnummer för huvudman i den entreprenad som ska hämtas (10 siffror)'
+          required: true
+          schema:
+            type: string
+        - name: educationProviderCode
+          in: path
+          description: 'Kod för utbildningsanordnare i den entreprenad som ska hämtas (8 siffror)'
+          required: true
+          schema:
+            type: string
+        - name: search_date
+          in: query
+          description: >
+            Hämta uppgifter om entreprenad vid angivet datum (format åååå-mm-dd, exempel: 2021-03-01)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta entreprenad'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContractInfoResponse'
+        '400':
+          $ref: '#/components/responses/InvalidRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /v2/api-info:
+    get:
+      tags:
+        - '5. Api-Info'
+      summary: 'Hämta information om detta API'
+      description: 'Hämta information om detta API'
+      operationId: getApiInfo
+      responses:
+        '200':
+          description: 'Svarskod för om det gick att hämta api-information'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiInfoResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+
+tags:
+  - name: '1. School units'
+    description: >
+      Information om skolenheter
+  - name: '2. Organizers'
+    description: >
+      Information om huvudmän
+  - name: '3. Education providers'
+    description: >
+      Information om utbildningsanordnare
+  - name: '4. Contracts'
+    description: >
+      Information om komvux på entreprenad
+  - name: '5. Api-Info'
+    description: >
+      Information om api
+
+components:
+  schemas:
+    CodeSchoolType:
+      type: string
+      description: |
+        Följande värden används för att beskriva skolform:
+          - _FKLASS_ - Förskoleklass 
+          - _FTH_ - Fritidshem
+          - _OPPFTH_ - Öppen fritidsverksamhet 
+          - _GR_ - Grundskola 
+          - _GRAN_ - Anpassad grundskola 
+          - _SP_ - Specialskola 
+          - _SAM_ - Sameskola 
+          - _GY_ - Gymnasieskola 
+          - _GYAN_ - Anpassad gymnasieskola 
+          - _VUX_ - Kommunal vuxenutbildning 
+      enum:
+        - FKLASS
+        - FTH
+        - OPPFTH
+        - GR
+        - GRAN
+        - SP
+        - SAM
+        - GY
+        - GYAN
+        - VUX
+
+    CodeSchoolTypePartVux:
+      type: string
+      description: |
+        Följande värden används för att beskriva skolformsdel för kommunal vuxenutbildning:
+          - _VUXGR_ - Kommunal vuxenutbildning på grundläggande nivå 
+          - _VUXGY_ - Kommunal vuxenutbildning på gymnasial nivå 
+          - _VUXGRAN_ - Kommunal vuxenutbildning som anpassad utbildning på grundläggande nivå 
+          - _VUXGYAN_ - Kommunal vuxenutbildning som anpassad utbildning på gymnasial nivå 
+          - _VUXSFI_ - Kommunal vuxenutbildning i svenska för invandrare 
+      enum:
+        - VUXGR
+        - VUXGY
+        - VUXGRAN
+        - VUXGYAN
+        - VUXSFI
+
+    CodeSchoolUnitType:
+      type: string
+      description: |
+        Följande värden används för att beskriva skolenhetstyp:
+          - _SKOLENHET_ - Skolenhet 
+          - _CENTRAL_ - Central insamlingsenhet
+          - _UTLAND_ - Utlandsskolenhet 
+      enum:
+        - SKOLENHET
+        - CENTRAL
+        - UTLAND
+
+    CodeOrientationType:
+      type: string
+      description: |
+        Inriktningstyp.
+      enum:
+        - ALLMAN
+        - WALDORF
+        - KONFESSIONELL
+        - RIKSINTERNAT
+        - INTERNATIONELL
+        - EJ_RELEVANT
+
+    CodeSchoolUnitStatus:
+      type: string
+      description: |
+        Skolenhetsstatus.
+      enum:
+        - AKTIV
+        - VILANDE
+        - UPPHORT
+        - PLANERAD
+
+    CodeOrganizerType:
+      type: string
+      description: "Följande värden används för att beskriva huvudmannatyp:\n  - _KOMMUN_ -\
+        \ Kommunal \n  - _REGION_ - Region \n  - _STAT_ - Statlig\n  - _SAME_\
+        \ - Sameskolan \n  - _ENSKILD_ - Enskild \n  - _SPECIAL_ - Specialskola \n  - _KOMMFORB_ - Kommunalförbund\n  - _HMANUTL_ - Huvudman för svensk utlandsskola \n "
+      enum:
+        - KOMMUN
+        - REGION
+        - STAT
+        - SAME
+        - ENSKILD
+        - SPECIAL
+        - KOMMFORB
+        - HMANUTL
+
+    CodeLegalEntityStatus:
+      type: string
+      description: "Status hos skatteverket. Följande värden används:\n  - _INKLUDERAD_SKV_ -\
+        \ Ingår i populationen och är registrerad i Skatteverkets organisationsnummerregister \n  - INKLUDERAD_ANNAN \
+         - Ingår i populationen och är registrerad på annat sätt \n  - _EJ_LANGRE_INKLUDERAD_ - Ingår inte längre i populationen\n  "
+      enum:
+        - INKLUDERAD_SKV
+        - INKLUDERAD_ANNAN
+        - EJ_LANGRE_INKLUDERAD
+
+    CodeCompanyStatus:
+      type: string
+      description: "Status hos bolagsverket. Följande värden används:\n  - _ALDRIG_AKTIV_ -\
+        \ Har aldrig varit verksam \n  - _AKTIV_ - Är verksam \n  - _EJ_LANGRE_AKTIV_ - Är ej längre verksam\n  "
+      enum:
+        - ALDRIG_AKTIV
+        - AKTIV
+        - EJ_LANGRE_AKTIV
+
+    CodeProviderType:
+      type: string
+      description: |
+        Uppgiftslämnartyp
+      enum:
+        - SCB
+        - SKOLVERKET
+
+    CodeReportType:
+      type: string
+      description: |
+        Endast för centrala insamlingsenheter. Om den centrala insamlingsenheten skall lämna information om elever resp. personal för kommunal eller enskild verksamhet
+      enum:
+        - NEJ
+        - KOMMUNAL
+        - ENSKILD
+
+    AddressTypeEnum:
+      type: string
+      enum:
+        - BESOKSADRESS
+        - LEVERANSADRESS
+        - POSTADRESS
+        - UTLANDSADRESS
+
+    SchoolUnitResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaExtracted'
+        data:
+          $ref: '#/components/schemas/SchoolUnitResponseData'
+
+    SchoolUnitResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'schoolunit'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchoolUnit'
+
+    SchoolUnitInfoResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        links:
+          $ref: '#/components/schemas/Link'
+        data:
+          $ref: '#/components/schemas/SchoolUnitInfoResponseData'
+        included:
+          $ref: '#/components/schemas/OrganizerIncluded'
+
+    SchoolUnitInfoResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'schoolunit'
+        schoolUnitCode:
+          type: string
+          description: 'Skolenhetskod. Informationslöst slumptal mellan 10000000 och 99999999. Får ej vara en tidigare skolkod. Får ej vara ett datum (regeln tillkom nov 2013)'
+          example: '12345678'
+        attributes:
+          $ref: '#/components/schemas/SchoolUnitInfo'
+
+    Link:
+      type: object
+      properties:
+        href:
+          type: string
+          example: 'https://api.skolverket.se/skolenhetsregistret/v2/link/to/object'
+        rel:
+          type: string
+          example: 'self'
+        method:
+          type: string
+          example: 'GET'
+
+    EducationProviderResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaExtracted'
+        data:
+          $ref: '#/components/schemas/EducationProviderResponseData'
+
+    EducationProviderResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'educationProvider'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/EducationProvider'
+
+    EducationProviderInfoResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        links:
+          $ref: '#/components/schemas/Link'
+        data:
+          $ref: '#/components/schemas/EducationProviderInfoResponseData'
+
+    EducationProviderInfoResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'educationProvider'
+        educationProviderCode:
+          type: string
+          example: '12345678'
+          description: 'Utbildningsanordnarens anordnarkod'
+        attributes:
+          $ref: '#/components/schemas/EducationProviderInfo'
+        relationships:
+          $ref: '#/components/schemas/EducationProviderInfoResponseDataRelationships'
+
+    ContractResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaExtracted'
+        data:
+          $ref: '#/components/schemas/ContractResponseData'
+
+    ContractResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'contract'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contract'
+
+    OrganizerResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MetaExtracted'
+        data:
+          $ref: '#/components/schemas/OrganizerResponseData'
+
+    OrganizerResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'organizer'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Organizer'
+
+    OrganizerInfoResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        links:
+          $ref: '#/components/schemas/Link'
+        data:
+          $ref: '#/components/schemas/OrganizerInfoResponseData'
+
+    OrganizerInfoResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'organizer'
+        organizationNumber:
+          type: string
+          example: '1234567890'
+          description: 'Huvudmannens organisationsnummer'
+        attributes:
+          $ref: '#/components/schemas/OrganizerInfo'
+        relationships:
+          $ref: '#/components/schemas/OrganizerInfoResponseDataRelationships'
+
+    ContractInfoResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/Meta'
+        links:
+          $ref: '#/components/schemas/Link'
+        data:
+          $ref: '#/components/schemas/ContractInfoResponseData'
+
+    ContractInfoResponseData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'contract'
+        organizationNumber:
+          type: string
+          example: '1234567890'
+          description: 'Huvudmannens organisationsnummer'
+        educationProviderCode:
+          type: string
+          example: '12345678'
+          description: 'Utbildningsanordnarens anordnarkod'
+        attributes:
+          $ref: '#/components/schemas/ContractInfo'
+        relationships:
+          $ref: '#/components/schemas/ContractInfoResponseDataRelationships'
+
+    SchoolUnit:
+      type: object
+      properties:
+        schoolUnitCode:
+          type: string
+          example: '12345678'
+          description: 'Skolenhetens skolenhetskod'
+        name:
+          type: string
+          example: 'Scenskolan'
+          description: 'Namn på skolenheten'
+        status:
+          $ref: "#/components/schemas/CodeSchoolUnitStatus"
+
+    SchoolUnitInfo:
+      type: object
+      properties:
+        displayName:
+          type: string
+          example: 'Storskolan'
+          description: 'Namn på skolenheten'
+        status:
+          $ref: "#/components/schemas/CodeSchoolUnitStatus"
+        url:
+          type: string
+          nullable: true
+          format: uri
+          example: 'https://www.skolverket.se'
+          description: 'Webbadress till skolenheten'
+        email:
+          type: string
+          nullable: true
+          example: 'storskolan@skolverket.se'
+          description: 'Epostadress till skolenheten'
+        phoneNumber:
+          type: string
+          nullable: true
+          example: '12345678'
+          description: 'Telefonnummer till skolenheten'
+        headMaster:
+          type: string
+          nullable: true
+          example: 'Pelle Sträng'
+          description: 'Namn på skolenhetens rektor'
+        addresses:
+          type: array
+          description: 'Skolenhetens adresser'
+          items:
+            $ref: '#/components/schemas/SchoolUnitAddress'
+        orientationType:
+          $ref: "#/components/schemas/CodeOrientationType"
+        schoolUnitType:
+          $ref: "#/components/schemas/CodeSchoolUnitType"
+        schoolName:
+          type: string
+          nullable: true
+          example: 'Storskolan'
+          description: 'Namn på Skola som skolenheten är knuten till. Inte samma som skolenhetens namn'
+        municipalityCode:
+          description: "Kommunkod. Län och kommunkod för den kommun där skolan är\
+            \ belägen, exempelvis 0180 där 01 anger länet och 80 anger kommunen.\n"
+          type: string
+          example: '0180'
+        schoolTypes:
+          type: array
+          description: 'Skolenhetens skolformer'
+          items:
+            $ref: '#/components/schemas/CodeSchoolType'
+        schoolTypeProperties:
+          $ref: '#/components/schemas/SchoolTypeProperties'
+        specialSupportSchool:
+          type: boolean
+          nullable: true
+          description: 'Resursskola. Relevant för skolformen Grundskola'
+          example: 'false'
+        hospitalSchool:
+          type: boolean
+          nullable: true
+          description: 'Sjukhusskola. Relevant för skolformen Grundskola'
+          example: 'false'
+        reportsStudents:
+          $ref: "#/components/schemas/CodeReportType"
+        reportsPersonell:
+          $ref: "#/components/schemas/CodeReportType"
+        startdate:
+          type: string
+          format: date
+          nullable: true
+          example: '2022-11-08'
+        endDate:
+          type: string
+          format: date
+          nullable: true
+          example: '2022-11-09'
+
+    OrganizationAddress:
+      type: object
+      description: Organisationens postadress
+      properties:
+        type:
+          $ref: '#/components/schemas/AddressTypeEnum'
+        careOfAddress:
+          type: string
+          description: Care-of adress.
+        streetAddress:
+          type: string
+          description: Gatuadress.
+        postalCode:
+          type: string
+          description: Postadress.
+        locality:
+          type: string
+          description: Postort.
+        geoCoordinates:
+          $ref: '#/components/schemas/GeoCoordinates'
+        country:
+          type: string
+          description: Land.
+        continent:
+          type: string
+          nullable: true
+          example: 'Europa'
+      example:
+        type: BESOKSADRESS
+        careOfAddress: Olsson
+        streetAddress: Agatan 1
+        postalCode: 234 67
+        locality: Borås
+
+    SchoolUnitAddress:
+      type: object
+      description: Skolenhetens adress
+      properties:
+        type:
+          $ref: '#/components/schemas/AddressTypeEnum'
+        careOfAddress:
+          type: string
+          description: Care-of adress.
+        streetAddress:
+          type: string
+          description: Gatuadress.
+        postalCode:
+          type: string
+          description: Postadress.
+        locality:
+          type: string
+          description: Postort.
+        geoCoordinates:
+          $ref: '#/components/schemas/GeoCoordinates'
+        country:
+          type: string
+          description: Land.
+        continent:
+          type: string
+          nullable: true
+          example: 'Europa'
+      example:
+        type: BESOKSADRESS
+        streetAddress: Agatan 1
+        postalCode: 234 67
+        locality: Borås
+        geoCoordinates: {
+          coordinateSweRefN: '1234567,89',
+          coordinateSweRefE: '1234567,89',
+          latitude: '12.3456789',
+          longitude: '12.3456789'
+        }
+
+    EducationProviderAddress:
+      type: object
+      description: Utbildningsanordnares adress
+      properties:
+        type:
+          $ref: '#/components/schemas/AddressTypeEnum'
+        careOfAddress:
+          type: string
+          description: Care-of adress.
+        streetAddress:
+          type: string
+          description: Gatuadress.
+        postalCode:
+          type: string
+          description: Postadress.
+        locality:
+          type: string
+          description: Postort.
+      example:
+        type: BESOKSADRESS
+        careOfAddress: Stolpe
+        streetAddress: Agatan 1
+        postalCode: 234 67
+        locality: Borås
+
+    SchoolTypeProperties:
+      type: object
+      description: Information om skolformer. Egenskaper för respektive skolform.
+      properties:
+        gr:
+          $ref: "#/components/schemas/Gr"
+        gran:
+          $ref: "#/components/schemas/Gran"
+        sam:
+          $ref: "#/components/schemas/Sam"
+        sp:
+          $ref: "#/components/schemas/Sp"
+        gy:
+          $ref: "#/components/schemas/Gy"
+        gyan:
+          $ref: "#/components/schemas/Gyan"
+        vux:
+          $ref: "#/components/schemas/Vux"
+
+    Gr:
+      type: object
+      description: Egenskaper för grundskola
+      properties:
+        grades:
+          type: array
+          nullable: true
+          description: 'Årskurser, 1 - 9.'
+          items:
+            type: string
+            example: '1'
+
+    Gran:
+      type: object
+      description: Egenskaper för anpassad grundskola
+      properties:
+        grades:
+          type: array
+          nullable: true
+          description: 'Årskurser, 1 - 9.'
+          items:
+            type: string
+            example: '1'
+
+    Sam:
+      type: object
+      description: Egenskaper för sameskola
+      properties:
+        grades:
+          type: array
+          nullable: true
+          description: 'Årskurser, 1 - 6.'
+          items:
+            type: string
+            example: '1'
+
+    Sp:
+      type: object
+      description: Egenskaper för specialskola
+      properties:
+        grades:
+          type: array
+          nullable: true
+          description: 'Årskurser, 1 - 10.'
+          items:
+            type: string
+            example: '1'
+
+    Gy:
+      type: object
+      description: Egenskaper för gymnasieskola
+      properties:
+        programmes:
+          type: array
+          nullable: true
+          description: 'Progam, kod. För värdemängd se skolvekets API för läroplaner, kurs- och ämnesplaner (Syllabus)'
+          items:
+            type: string
+            example: 'BA'
+        csnCode:
+          type: string
+          nullable: true
+          description: 'CSN-kod.'
+          example: '21'
+
+    Gyan:
+      type: object
+      description: Egenskaper för anpassad gymnasieskola
+      properties:
+        programmes:
+          type: array
+          nullable: true
+          description: 'Progam, kod. För värdemängd se skolvekets API för läroplaner, kurs- och ämnesplaner (Syllabus)'
+          items:
+            type: string
+            example: 'AH'
+
+    Vux:
+      type: object
+      description: Egenskaper för kommunal vuxenutbildning
+      properties:
+        schoolTypeParts:
+          type: array
+          items:
+            $ref: "#/components/schemas/CodeSchoolTypePartVux"
+
+    EMailInfo:
+      type: object
+      properties:
+        providerType:
+          $ref: "#/components/schemas/CodeProviderType"
+        email:
+          type: string
+          format: email
+          description: 'epost-adress'
+          example: 'sven@skolverket.se'
+      example:
+        - providerType: SCB
+          email: sven@skolverket.se
+        - providerType: SV
+          email: mona@skolverket.se
+
+    PhoneInfo:
+      type: object
+      properties:
+        providerType:
+          $ref: "#/components/schemas/CodeProviderType"
+        phone:
+          type: string
+          description: 'telefonnummer'
+          example: '12345678'
+      example:
+        - providerType: SCB
+          phone: 12345678
+        - providerType: SV
+          phone: 23456789
+
+    Organizer:
+      type: object
+      properties:
+        organizationNumber:
+          type: string
+          example: '1234567890'
+          description: 'Huvudmans organisationsnummer'
+        displayName:
+          type: string
+          example: 'Enskilda gymnasiet'
+          description: 'Huvudmannens namn'
+        organizerType:
+          $ref: "#/components/schemas/CodeOrganizerType"
+
+    EducationProvider:
+      type: object
+      properties:
+        organizationNumber:
+          type: string
+          description: 'Utbildningsanordnares organisationsnummer'
+          example: '1234567890'
+        educationProviderCode:
+          type: string
+          description: 'Utbildningsanordnarkod. Motsvarighet till skolenhetskod för utbildningsanordnare'
+          example: '12345678'
+        displayName:
+          type: string
+          description: 'Utbildningsanordnares namn'
+          example: 'Skolverket'
+        folkHighschoolName:
+          type: string
+          description: 'Namn folkhögskola. För folkhögskola med betygsrätt i SFI ( enligt 6 kap. 1§ förordningen 2011:1108 2 pt)'
+          example: 'Skolverket folkhögskola'
+        gradingRight:
+          type: boolean
+          description: 'Om utbildningsanordnaren har betygsrätt (J/N)'
+          example: 'true'
+
+    Contract:
+      type: object
+      properties:
+        organizerOrganizationNumber:
+          type: string
+          description: 'Huvudmannens organisationsnummer'
+          example: '1234567890'
+        organizerName:
+          type: string
+          description: 'Huvudmannens namn'
+          example: 'Huvudman namn'
+        educationProviderOrganizationNumber:
+          type: string
+          description: 'Utbildningsanordnares organisationsnummer'
+          example: '1234567890'
+        educationProviderName:
+          type: string
+          description: 'Utbildningsanordnares namn'
+          example: 'Utbildningsanordnare namn'
+        educationProviderCode:
+          type: string
+          description: 'Utbildningsanordnarkod. Motsvarighet till skolenhetskod för utbildningsanordnare'
+          example: '12345678'
+        folkHighschoolName:
+          type: string
+          description: 'Namn folkhögskola. För folkhögskola med betygsrätt i SFI ( enligt 6 kap. 1§ förordningen 2011:1108 2 pt)'
+          example: 'Skolverket folkhögskola'
+        status:
+          type: string
+          description: 'Om entreprenad är aktiv eller inaktiv'
+          example: 'aktiv'
+
+    OrganizerIncluded:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'organization'
+        organizationNumber:
+          type: string
+          description: 'Huvudmans organisationsnummer'
+          example: '1234567890'
+        attributes:
+          $ref: '#/components/schemas/OrganizerIncludedAttributes'
+        links:
+          $ref: '#/components/schemas/Link'
+
+    OrganizerIncludedAttributes:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: 'Huvudmannens namn'
+          example: 'Enskilda gymnasiet'
+        organizerType:
+          $ref: "#/components/schemas/CodeOrganizerType"
+
+    OrganizerInfo:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: 'Huvudmannens namn. Uppgift kommer från SCB:s allmänna företagsregister'
+          example: 'Enskilda gymnasiet'
+        address:
+          $ref: '#/components/schemas/OrganizationAddress'
+        url:
+          type: string
+          format: uri
+          description: >
+            Länk till en websida med information om organisationen. Uppgift kommer från SCB:s allmänna företagsregister
+        email:
+          type: array
+          description: 'E-postadresser för huvudmannen'
+          items:
+            $ref: '#/components/schemas/EMailInfo'
+        phoneNumber:
+          type: array
+          description: 'Telefonnummer till huvudmannen'
+          items:
+            $ref: '#/components/schemas/PhoneInfo'
+        companyForm:
+          $ref: '#/components/schemas/CompanyForm'
+        organizerType:
+          $ref: "#/components/schemas/CodeOrganizerType"
+        legalEntityStatus:
+          $ref: "#/components/schemas/CodeLegalEntityStatus"
+        companyStatus:
+          $ref: "#/components/schemas/CodeCompanyStatus"
+        isInternational:
+          type: boolean
+          description: 'Om huvudmannén endast har skolenheter med internationell inriktning'
+          example: 'false'
+        municipalities:
+          type: array
+          description: 'Säteskommun. Uppgiften finns från 2025-03-05. Källa: SCB:s allmänna företagsregister.'
+          items:
+            $ref: '#/components/schemas/Municipality'
+        regions:
+          type: array
+          description: 'Vilket region en huvudman av typen Region hör till'
+          items:
+            $ref: '#/components/schemas/Region'
+        schoolTypes:
+          type: array
+          description: 'Organisationens skolformer'
+          items:
+            $ref: '#/components/schemas/CodeSchoolType'
+        highSchoolAssociationId:
+          type: string
+          description: 'Id för gymnasieförbund'
+          example: '1234'
+
+    EducationProviderInfo:
+      type: object
+      properties:
+        displayName:
+          type: string
+          description: 'Utbildningsanordnarens namn. Uppgift kommer från SCB:s allmänna företagsregister'
+          example: 'Utbildningsanordnare namn'
+        folkHighschoolName:
+          type: string
+          description: 'Namn folkhögskola. För folkhögskola med betygsrätt i SFI ( enligt 6 kap. 1§ förordningen 2011:1108 2 pt)'
+          example: 'Skolverket folkhögskola'
+        address:
+          $ref: '#/components/schemas/EducationProviderAddress'
+        email:
+          type: array
+          description: 'E-postadresser för utbildningsanordnaren'
+          items:
+            $ref: '#/components/schemas/EMailInfo'
+        phoneNumber:
+          type: array
+          description: 'Telefonnummer till utbildningsanordnaren'
+          items:
+            $ref: '#/components/schemas/PhoneInfo'
+        companyForm:
+          $ref: '#/components/schemas/CompanyForm'
+        gradingRights:
+          type: boolean
+          nullable: true
+          description: 'Betygsrätt'
+          example: 'true'
+        gradingRightsFrom:
+          type: string
+          format: date
+          description: Betygsrätt från och med datum (RFC 3339 format tex "2023-12-12").
+        gradingRightsTo:
+          type: string
+          format: date
+          description: Betygsrätt till och med datum (RFC 3339 format tex "2025-12-12").
+        schoolTypeParts:
+          type: array
+          description: 'Utbildningsanordnarens skolformsdelar inom vuxenutbildning'
+          items:
+            $ref: '#/components/schemas/CodeSchoolTypePartVux'
+
+    ContractInfo:
+      type: object
+      properties:
+        organizerName:
+          type: string
+          description: 'Huvudmannens namn. Uppgift kommer från SCB:s allmänna företagsregister'
+          example: 'Huvudman namn'
+        educationProviderOrganizationNumber:
+          type: string
+          description: 'Utbildningsanordnares organisationsnummer'
+          example: '1234567890'
+        educationProviderName:
+          type: string
+          description: 'Utbildningsanordnares namn'
+          example: 'Utbildningsanordnare namn'
+        folkHighschoolName:
+          type: string
+          description: 'Namn folkhögskola. För folkhögskola med betygsrätt i SFI ( enligt 6 kap. 1§ förordningen 2011:1108 2 pt)'
+          example: 'Skolverket folkhögskola'
+        status:
+          type: string
+          description: 'Om entreprenad är aktiv eller inaktiv'
+          example: 'aktiv'
+        schoolTypeParts:
+          type: array
+          description: 'Skolformsdelar inom entreprenad'
+          items:
+            $ref: '#/components/schemas/SchoolTypePartInfo'
+
+    SchoolTypePartInfo:
+      type: object
+      properties:
+        schoolTypePart:
+          $ref: '#/components/schemas/CodeSchoolTypePartVux'
+        validFrom:
+          type: string
+          format: date
+          description: Startdatum entreprenad (RFC 3339 format tex "2023-12-12").
+        validTo:
+          type: string
+          format: date
+          description: Slutdatum entreprenad (RFC 3339 format tex "2025-12-12").
+
+    ContractInfoResponseDataRelationships:
+      type: object
+      properties:
+        schoolUnit:
+          $ref: '#/components/schemas/SchoolUnitRelation'
+        organizer:
+          $ref: '#/components/schemas/WrappedLink'
+        educationProvider:
+          $ref: '#/components/schemas/WrappedLink'
+ 
+    OrganizerInfoResponseDataRelationships:
+      type: object
+      properties:
+        schoolunit:
+          $ref: '#/components/schemas/OrgSchoolUnitRelation'
+        contract:
+          $ref: '#/components/schemas/OrgContractRelation'
+
+    EducationProviderInfoResponseDataRelationships:
+      type: object
+      properties:
+        contract:
+          $ref: '#/components/schemas/OrgContractRelation'
+      example:
+        contracts:
+          links:
+            href: 'https://api.skolverket.se/skolenhetsregistret/v2/contracts?education-provider-code=12345678'
+            rel: 'self'
+            method: 'GET'
+            related:
+              href: 'https://api.skolverket.se/skolenhetsregistret/v2/contracts/1234567890/12345678'
+              rel: 'related'
+              method: 'GET'
+          data:
+            type: 'contract'
+            organizationNumber: '1234567890'
+            educationProviderCode: '12345678'
+
+    OrgSchoolUnitRelation:
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/LinkWithRelatedLinks'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgSchoolUnitData'
+
+    OrgContractRelation:
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/LinkWithRelatedLinks'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgContractData'
+
+    SchoolUnitRelation:
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/SchoolUnitLinks'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrgSchoolUnitData'
+
+    LinkWithRelatedLinks:
+      type: object
+      properties:
+        href:
+          type: string
+          example: 'https://api.skolverket.se/skolenhetsregistret/v2/link/to/list'
+        rel:
+          type: string
+          example: 'self'
+        method:
+          type: string
+          example: 'GET'
+        related:
+          type: array
+          items:
+            $ref: '#/components/schemas/Link'
+
+    SchoolUnitLinks:
+      type: object
+      properties:
+        related:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                example: 'https://api.skolverket.se/skolenhetsregistret/v2/school-units/12345678'
+              rel:
+                type: string
+                example: 'related'
+              method:
+                type: string
+                example: 'GET'
+
+    WrappedLink:
+      type: object
+      properties:
+        links:
+          $ref: '#/components/schemas/RelatedLink'
+
+    RelatedLink:
+      type: object
+      properties:
+        related:
+          $ref: '#/components/schemas/Link'
+
+    OrgSchoolUnitData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'schoolunit'
+        schoolUnitCode:
+          type: string
+          example: '12345678'
+
+    OrgContractData:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'contract'
+        organizationNumber:
+          type: string
+          example: '1234567890'
+        educationProviderCode:
+          type: string
+          example: '12345678'
+
+    Municipality:
+      type: object
+      properties:
+        municipalityCode:
+          type: string
+          example: '1285'
+        displayName:
+          type: string
+          example: 'Uppsala'
+
+    Region:
+      type: object
+      properties:
+        regionCode:
+          type: string
+          example: '07'
+        displayName:
+          type: string
+          example: 'Örebro läns landsting'
+
+    CompanyForm:
+      type: object
+      properties:
+        code:
+          type: string
+          example: '81'
+        displayName:
+          type: string
+          example: 'Statliga enheter'
+
+    Meta:
+      type: object
+      readOnly: true
+      properties:
+        extractDate:
+          type: string
+          format: date-time
+          example: '2025-05-08T00:06:10.19+02:00'
+        created:
+          type: string
+          format: date
+          description: >
+            Datum för när entiteten skapades (RFC 3339 format tex
+            "2015-12-12").
+        modified:
+          type: string
+          format: date
+          description: >
+            Datum för när entiteten senast uppdaterades (RFC 3339 format
+            tex "2015-12-12"). Tidpunkten avser den senaste
+            tidpunkt när något av de attribut som direkt tillhör entiteten har
+            ändrats. Observera att om sökning gjorts med datum så är ändrinstidpunkten
+            senaste ändring fram till och med angivet datum.
+
+    MetaExtracted:
+      type: object
+      properties:
+        extractDate:
+          type: string
+          format: date-time
+          example: '2025-05-08T00:06:10.19+02:00'
+
+    GeoCoordinates:
+      type: object
+      properties:
+        coordinateSweRefN:
+          type: string
+          nullable: true
+          example: '6562397,097'
+        coordinateSweRefE:
+          type: string
+          nullable: true
+          example: '679180,062'
+        latitude:
+          type: string
+          nullable: true
+          example: '59.16286545184274'
+        longitude:
+          type: string
+          nullable: true
+          example: '18.134313905557242'
+
+    Errors:
+      type: object
+      properties:
+        type:
+          type: string
+          example: 'about:blank'
+        title:
+          type: string
+          example: 'Exempel felrubrik'
+        status:
+          type: string
+          example: '404'
+        detail:
+          type: string
+          example: 'Exempel feldetalj'
+
+    ApiInfoResponse:
+      type: object
+      properties:
+        apiPublisher:
+          type: string
+          example: 'Skolverket'
+        apiName:
+          type: string
+          example: 'skolenhetsregistret'
+        apiVersion:
+          type: string
+          example: '2.0'
+        apiReleased:
+          type: string
+          format: date
+          example: '2024-02-14'
+        apiDocumentation:
+          type: string
+          example: 'https://api.skolverket.se/skolenhetsregistret/swagger-ui/index.html#?urls.primaryName=Öppet API version 2'
+        apiStatus:
+          type: string
+          example: 'beta'
+
+
+  parameters:
+    SearchModifiedAfter:
+      name: meta_modified_after
+      description: Endast poster modifierade från och med detta datum (RFC 3339 format, tex "2015-12-12").
+      in: query
+      schema:
+        type: string
+        format: date
+
+
+  responses:
+    InternalServerError:
+      description: Internt applikationsfel
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    InvalidRequest:
+      description: Ogiltig data i anrop
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+    NotFound:
+      description: Angiven resurs hittades inte
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
