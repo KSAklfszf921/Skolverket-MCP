@@ -9,13 +9,14 @@ import { syllabusApi } from '../../api/syllabus-client.js';
 export const searchProgramsSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
-  typeOfSyllabus: z.string().optional().describe('Typ av läroplan'),
-  studyPathType: z.string().optional().describe('Typ av studieväg')
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta program som var giltiga vid det datumet'),
+  typeOfStudyPath: z.string().optional().describe('Typ av studieväg (t.ex. "PROGRAM" för gymnasieprogram)')
 };
 
 export const getProgramDetailsSchema = {
   code: z.string().describe('Programkod (t.ex. "NA" för Naturvetenskapsprogrammet)'),
-  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)')
+  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)'),
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta versionen som var giltig vid det datumet')
 };
 
 export const getProgramVersionsSchema = {
@@ -26,8 +27,8 @@ export const getProgramVersionsSchema = {
 export async function searchPrograms(params: {
   schooltype?: string;
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
-  typeOfSyllabus?: string;
-  studyPathType?: string;
+  date?: string;
+  typeOfStudyPath?: string;
 }) {
   try {
     const result = await syllabusApi.searchPrograms(params);
@@ -68,9 +69,10 @@ export async function searchPrograms(params: {
 export async function getProgramDetails(params: {
   code: string;
   version?: number;
+  date?: string;
 }) {
   try {
-    const program = await syllabusApi.getProgram(params.code, params.version);
+    const program = await syllabusApi.getProgram(params.code, params.version, params.date);
 
     return {
       content: [

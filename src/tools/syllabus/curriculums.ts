@@ -9,12 +9,13 @@ import { syllabusApi } from '../../api/syllabus-client.js';
 export const searchCurriculumsSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GR" för grundskola, "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
-  typeOfSyllabus: z.string().optional().describe('Typ av läroplan')
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta läroplaner som var giltiga vid det datumet')
 };
 
 export const getCurriculumDetailsSchema = {
   code: z.string().describe('Läroplanskod (t.ex. "LGR11" för Läroplan för grundskolan 2011)'),
-  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)')
+  version: z.number().optional().describe('Versionsnummer (lämna tomt för senaste versionen)'),
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta versionen som var giltig vid det datumet')
 };
 
 export const getCurriculumVersionsSchema = {
@@ -25,7 +26,7 @@ export const getCurriculumVersionsSchema = {
 export async function searchCurriculums(params: {
   schooltype?: string;
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
-  typeOfSyllabus?: string;
+  date?: string;
 }) {
   try {
     const result = await syllabusApi.searchCurriculums(params);
@@ -66,9 +67,10 @@ export async function searchCurriculums(params: {
 export async function getCurriculumDetails(params: {
   code: string;
   version?: number;
+  date?: string;
 }) {
   try {
-    const curriculum = await syllabusApi.getCurriculum(params.code, params.version);
+    const curriculum = await syllabusApi.getCurriculum(params.code, params.version, params.date);
 
     return {
       content: [

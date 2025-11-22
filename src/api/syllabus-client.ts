@@ -44,11 +44,12 @@ export class SyllabusApiClient extends BaseApiClient {
     return this.get<SubjectsResponse>('/v1/subjects', params);
   }
 
-  async getSubject(code: string, version?: number): Promise<Subject> {
+  async getSubject(code: string, version?: number, date?: string): Promise<Subject> {
     const url = version
       ? `/v1/subjects/${code}/versions/${version}`
       : `/v1/subjects/${code}`;
-    return this.get<Subject>(url);
+    const params = date ? { date } : undefined;
+    return this.get<Subject>(url, params);
   }
 
   async getSubjectVersions(code: string): Promise<VersionsResponse> {
@@ -60,11 +61,12 @@ export class SyllabusApiClient extends BaseApiClient {
     return this.get<CoursesResponse>('/v1/courses', params);
   }
 
-  async getCourse(code: string, version?: number): Promise<Course> {
+  async getCourse(code: string, version?: number, date?: string): Promise<Course> {
     const url = version
       ? `/v1/courses/${code}/versions/${version}`
       : `/v1/courses/${code}`;
-    return this.get<Course>(url);
+    const params = date ? { date } : undefined;
+    return this.get<Course>(url, params);
   }
 
   async getCourseVersions(code: string): Promise<VersionsResponse> {
@@ -76,11 +78,12 @@ export class SyllabusApiClient extends BaseApiClient {
     return this.get<ProgramsResponse>('/v1/programs', params);
   }
 
-  async getProgram(code: string, version?: number): Promise<Program> {
+  async getProgram(code: string, version?: number, date?: string): Promise<Program> {
     const url = version
       ? `/v1/programs/${code}/versions/${version}`
       : `/v1/programs/${code}`;
-    return this.get<Program>(url);
+    const params = date ? { date } : undefined;
+    return this.get<Program>(url, params);
   }
 
   async getProgramVersions(code: string): Promise<VersionsResponse> {
@@ -92,11 +95,12 @@ export class SyllabusApiClient extends BaseApiClient {
     return this.get<CurriculumsResponse>('/v1/curriculums', params);
   }
 
-  async getCurriculum(code: string, version?: number): Promise<Curriculum> {
+  async getCurriculum(code: string, version?: number, date?: string): Promise<Curriculum> {
     const url = version
       ? `/v1/curriculums/${code}/versions/${version}`
       : `/v1/curriculums/${code}`;
-    return this.get<Curriculum>(url);
+    const params = date ? { date } : undefined;
+    return this.get<Curriculum>(url, params);
   }
 
   async getCurriculumVersions(code: string): Promise<VersionsResponse> {
