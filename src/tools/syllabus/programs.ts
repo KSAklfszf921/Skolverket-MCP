@@ -9,8 +9,8 @@ import { syllabusApi } from '../../api/syllabus-client.js';
 export const searchProgramsSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
-  typeOfSyllabus: z.string().optional().describe('Typ av läroplan'),
-  studyPathType: z.string().optional().describe('Typ av studieväg')
+  date: z.string().optional().describe('Datum i format YYYY-MM-DD'),
+  typeOfStudyPath: z.string().optional().default('ALL').describe('Typ av studieväg (default: ALL)')
 };
 
 export const getProgramDetailsSchema = {
@@ -26,8 +26,8 @@ export const getProgramVersionsSchema = {
 export async function searchPrograms(params: {
   schooltype?: string;
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
-  typeOfSyllabus?: string;
-  studyPathType?: string;
+  date?: string;
+  typeOfStudyPath?: string;
 }) {
   try {
     const result = await syllabusApi.searchPrograms(params);

@@ -11,9 +11,11 @@ export const getSchoolTypesSchema = {
 };
 
 export const getStudyPathCodesSchema = {
-  schooltype: z.string().optional().describe('Filtrera på skoltyp'),
-  timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).optional().describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
-  studyPathType: z.string().optional().describe('Typ av studieväg')
+  schooltype: z.string().optional().default('ALL').describe('Filtrera på skoltyp (default: ALL)'),
+  timespan: z.string().optional().default('ALL').describe('Tidsperiod: LATEST, FUTURE, EXPIRED, MODIFIED, ALL (default: ALL)'),
+  date: z.string().optional().describe('Datum i format YYYY-MM-DD'),
+  typeOfStudyPath: z.string().optional().default('ALL').describe('Typ av studieväg (default: ALL)'),
+  typeOfProgram: z.string().optional().default('ALL').describe('Typ av program (default: ALL)')
 };
 
 // Verktygsimplementationer
@@ -113,8 +115,10 @@ export async function getSubjectAndCourseCodes() {
 
 export async function getStudyPathCodes(params: {
   schooltype?: string;
-  timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
-  studyPathType?: string;
+  timespan?: string;
+  date?: string;
+  typeOfStudyPath?: string;
+  typeOfProgram?: string;
 }) {
   try {
     const codes = await syllabusApi.getStudyPathCodes(params);

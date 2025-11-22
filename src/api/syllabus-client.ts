@@ -153,6 +153,19 @@ export class SyllabusApiClient extends BaseApiClient {
   async getApiInfo(): Promise<ApiInfo> {
     return this.getCached<ApiInfo>('/v1/api-info', undefined, 3600000);
   }
+
+  // Cache-hantering
+  async clearSubjectCache(): Promise<any> {
+    return this.get<any>('/cache/subjects/clear');
+  }
+
+  async clearProgramsCache(): Promise<any> {
+    return this.get<any>('/cache/programs/clear');
+  }
+
+  async clearCache(auth: string): Promise<any> {
+    return this.get<any>('/cache/clear', { auth });
+  }
 }
 
 // Singleton-instans

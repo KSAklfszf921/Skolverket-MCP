@@ -85,6 +85,13 @@ import {
   getStudyPathCodesSchema
 } from './tools/syllabus/valuestore.js';
 
+import {
+  clearSubjectCache,
+  clearProgramsCache,
+  clearCache,
+  clearCacheSchema
+} from './tools/syllabus/cache.js';
+
 // Importera skolenhetsverktyg (School Units API)
 import {
   searchSchoolUnits,
@@ -826,6 +833,57 @@ RETURNERAR: API-metadata och information.`,
         },
       },
 
+      // Cache-verktyg
+      {
+        name: 'clear_subject_cache',
+        description: `Rensar cache för ämnen i Skolverkets API.
+
+ANVÄNDNINGSFALL:
+- Tvinga uppdatering av ämnesdata
+- Rensa gammal cache-data
+
+RETURNERAR: Bekräftelse att cache har rensats.
+
+OBS: Kräver inga parametrar.`,
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'clear_programs_cache',
+        description: `Rensar cache för program i Skolverkets API.
+
+ANVÄNDNINGSFALL:
+- Tvinga uppdatering av programdata
+- Rensa gammal cache-data
+
+RETURNERAR: Bekräftelse att cache har rensats.
+
+OBS: Kräver inga parametrar.`,
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'clear_cache',
+        description: `Rensar all cache i Skolverkets API.
+
+ANVÄNDNINGSFALL:
+- Tvinga uppdatering av all data
+- Rensa all gammal cache-data
+
+RETURNERAR: Bekräftelse att all cache har rensats.
+
+OBS: Kräver autentiseringsnyckel.`,
+        inputSchema: {
+          type: 'object',
+          properties: clearCacheSchema,
+          required: ['auth'],
+        },
+      },
+
       // ==============================================
       // SKOLENHETSREGISTRET API VERKTYG
       // ==============================================
@@ -1104,6 +1162,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await getStudyPathCodes(args as any);
       case 'get_api_info':
         return await getApiInfo();
+      case 'clear_subject_cache':
+        return await clearSubjectCache();
+      case 'clear_programs_cache':
+        return await clearProgramsCache();
+      case 'clear_cache':
+        return await clearCache(args as any);
 
       // Skolenhetsregistret API
       case 'search_school_units':

@@ -190,13 +190,15 @@ export interface CourseSearchParams extends SearchParams {
 }
 
 export interface ProgramSearchParams extends SearchParams {
-  studyPathType?: string;
+  typeOfStudyPath?: string;
 }
 
 export interface StudyPathSearchParams {
   schooltype?: string;
-  timespan?: Timespan;
-  studyPathType?: string;
+  timespan?: string;
+  date?: string;
+  typeOfStudyPath?: string;
+  typeOfProgram?: string;
 }
 
 // Versionshantering
