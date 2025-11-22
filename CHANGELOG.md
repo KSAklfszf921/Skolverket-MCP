@@ -5,6 +5,125 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2025-01-22
+
+### Added
+- **Meta-verktyg för konsolidering** - 6 nya meta-verktyg som konsoliderar 18 tidigare verktyg:
+  - `get_national_statistics` - Konsoliderar 5 verktyg (fsk, gr, gran, gy, gyan) → välj skoltyp som parameter
+  - `get_salsa_statistics` - Konsoliderar 2 verktyg (gr, gran) → välj skoltyp som parameter
+  - `get_program_statistics` - Konsoliderar 2 verktyg (gy, gyan) → välj skoltyp som parameter
+  - `get_school_unit_statistics` - Konsoliderar 5 verktyg (fsk, gr, gran, gy, gyan) → välj skoltyp som parameter
+  - `get_school_unit_survey` - Konsoliderar 2 verktyg (nested, flat) → välj format som parameter
+  - `search_education_events` - Konsoliderar 2 verktyg (full, compact) → välj format som parameter
+
+### Improved
+- **Reducerat antal verktyg** - Från 64 till 52 verktyg (18 konsoliderade till 6 meta-verktyg)
+- **Enklare användning för LLMs** - Välj skoltyp/format som parameter istället för att hitta rätt verktyg
+- **Mindre kognitiv belastning** - Färre verktyg att navigera mellan och förstå
+- **Bättre discoverability** - Meta-verktyg har tydliga beskrivningar om vilka verktyg de ersätter
+- **Fullständig bakåtkompabilitet** - Alla 18 ursprungliga verktyg fungerar fortfarande som tidigare
+
+### Technical
+- Nya meta-verktyg i:
+  - `/src/tools/planned-education/meta-statistics.ts` - Statistik meta-verktyg
+  - `/src/tools/school-units/meta-tools.ts` - Skolenhets meta-verktyg
+- Routing baserat på skoltyp/format parameter till befintliga implementationer
+- Inga breaking changes - alla gamla verktyg behålls för bakåtkompabilitet
+- Total reduktion: 64 verktyg → 52 verktyg (sparar 12 verktygsplatser)
+
+## [2.4.0] - 2025-01-22
+
+### Added
+- **Comprehensive Tool Descriptions** - Alla 64 verktyg har nu utökade beskrivningar med:
+  - ANVÄNDNINGSFALL - Konkreta use cases för varje verktyg
+  - EXEMPEL - Praktiska exempel med riktiga parametervärden
+  - RELATERADE VERKTYG - Cross-references till kompletterande verktyg
+  - RETURNERAR - Detaljerad information om vad verktyget returnerar
+  - TIPS/VIKTIGT - Användbara tips och viktiga noteringar
+- **Intelligent Parameter Validation** - Nya validerings-utilities:
+  - Skolenhetskod validation (8 siffror)
+  - Läsår format validation (YYYY/YYYY)
+  - Skoltyp enum validation
+  - Koordinat validation för GPS-positioner
+  - Pagination validation (page, size)
+  - Survey year validation
+  - Status validation
+- **Smart Caching System** - In-memory cache med TTL för bättre prestanda:
+  - Support data: 24h cache (skoltyper, geografiska områden, program, etc.)
+  - Statistics: 1h cache (nationell statistik, SALSA, program-statistik)
+  - School units: 30min cache (skolenheter, detaljer)
+  - Surveys: 4h cache (enkätdata)
+  - Automatisk cleanup av expired entries var 5:e minut
+- **Enhanced Error Messages** - Förbättrade felmeddelanden med:
+  - Kontextuell information om vad som gick fel
+  - Användbara förslag på hur man fixar problemet
+  - Transform av API-fel till begripliga svenska meddelanden
+
+### Improved
+- **LLM Discoverability** - Verktyg är nu mycket lättare för LLMs att upptäcka och använda korrekt
+- **User Experience** - Tydligare felmeddelanden och bättre vägledning
+- **Performance** - Färre API-anrop tack vare smart caching av referensdata
+- **Developer Experience** - Validering fångar fel tidigt innan API-anrop görs
+
+### Technical
+- Nya utilities:
+  - `/src/utils/validation.ts` - Parameter validation och error transformation
+  - `/src/utils/cache.ts` - In-memory TTL cache implementation
+- Uppdaterade v4-verktyg med validation och caching
+- Inga breaking changes - fullt bakåtkompatibelt
+
+## [2.3.0] - 2025-01-22
+
+### Added
+- **Full Planned Education API v4 support** - 37 nya verktyg
+  - **School Units v4** (15 verktyg):
+    - `search_school_units_v4` - Avancerad sökning med fler filtreringsmöjligheter
+    - `get_school_unit_details_v4` - Utökad detaljerad information
+    - `get_school_unit_education_events` - Alla utbildningstillfällen per skolenhet
+    - `get_school_unit_compact_education_events` - Kompakt format (snabbare)
+    - `calculate_distance_from_school_unit` - Avståndberäkning från GPS-koordinat
+    - `get_school_unit_documents` - Inspektionsrapporter och dokument
+    - `get_school_unit_statistics_links` - Länkar till tillgänglig statistik
+    - `get_school_unit_statistics_fsk/gr/gran/gy/gyan` - Statistik per skoltyp
+    - `get_school_unit_survey_nested` - Skolenkäter i nested format
+    - `get_school_unit_survey_flat` - Skolenkäter i flat format
+  - **Education Events v4** (4 verktyg):
+    - `search_education_events_v4` - Full detaljnivå med omfattande filter
+    - `search_compact_education_events_v4` - Kompakt format
+    - `count_education_events_v4` - Räkna matchande utbildningstillfällen
+    - `count_adult_education_events_v4` - Räkna vuxenutbildningstillfällen
+  - **Statistics v4** (9 verktyg):
+    - `get_national_statistics_fsk/gr/gran/gy/gyan` - Nationella värden per skoltyp
+    - `get_salsa_statistics_gr/gran` - SALSA-bedömningar
+    - `get_program_statistics_gy/gyan` - Programspecifik statistik
+  - **Support Data v4** (9 verktyg):
+    - `get_school_types_v4` - Alla skoltyper
+    - `get_geographical_areas_v4` - Län och kommuner
+    - `get_principal_organizer_types_v4` - Huvudmanstyper
+    - `get_programs_v4` - Gymnasieprogram och inriktningar
+    - `get_orientations_v4` - Alla programinriktningar
+    - `get_instruction_languages_v4` - Undervisningsspråk
+    - `get_distance_study_types_v4` - Distansstudietyper
+    - `get_adult_type_of_schooling_v4` - Vuxenutbildningstyper
+    - `get_municipality_school_units_v4` - Kommun-skolenhet mappning
+
+### Changed
+- **API-klient** utökad för v4-stöd
+  - Uppdaterad BaseApiClient med stöd för custom headers
+  - PlannedEducationApiClient med alla v4-metoder
+  - Korrekt Accept header för v4: `application/vnd.skolverket.plannededucations.api.v4.hal+json`
+- **TypeScript typer** för v4
+  - 35+ nya interfaces i `planned-education.ts`
+  - Fullständig typning för alla v4 responses
+  - Support för nested och flat survey strukturer
+
+### Improved
+- **Total antal verktyg**: 27 → 64 verktyg
+- Mer komplett täckning av Skolverkets Planned Education API
+- Bättre statistiktillgång (nationellt, SALSA, per-program)
+- Skolenkäter i två format för olika användningsfall
+- Avståndberäkning för geografisk filtrering
+
 ## [2.2.0] - 2025-01-22
 
 ### Added
