@@ -4,6 +4,7 @@
 
 import { z } from 'zod';
 import { plannedEducationApi } from '../../api/planned-education-client.js';
+import { cache, CacheTTL, withCache } from '../../utils/cache.js';
 
 // ===== SCHOOL TYPES V4 =====
 
@@ -11,7 +12,11 @@ export const getSchoolTypesV4Schema = {};
 
 export async function getSchoolTypesV4() {
   try {
-    const result = await plannedEducationApi.getSchoolTypesV4();
+    const result = await withCache(
+      'school-types-v4',
+      CacheTTL.SUPPORT_DATA,
+      () => plannedEducationApi.getSchoolTypesV4()
+    );
 
     return {
       content: [
@@ -43,7 +48,11 @@ export const getGeographicalAreasV4Schema = {};
 
 export async function getGeographicalAreasV4() {
   try {
-    const result = await plannedEducationApi.getGeographicalAreasV4();
+    const result = await withCache(
+      'geographical-areas-v4',
+      CacheTTL.SUPPORT_DATA,
+      () => plannedEducationApi.getGeographicalAreasV4()
+    );
 
     return {
       content: [

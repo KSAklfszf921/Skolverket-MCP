@@ -5,6 +5,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2025-01-22
+
+### Added
+- **Comprehensive Tool Descriptions** - Alla 64 verktyg har nu utökade beskrivningar med:
+  - ANVÄNDNINGSFALL - Konkreta use cases för varje verktyg
+  - EXEMPEL - Praktiska exempel med riktiga parametervärden
+  - RELATERADE VERKTYG - Cross-references till kompletterande verktyg
+  - RETURNERAR - Detaljerad information om vad verktyget returnerar
+  - TIPS/VIKTIGT - Användbara tips och viktiga noteringar
+- **Intelligent Parameter Validation** - Nya validerings-utilities:
+  - Skolenhetskod validation (8 siffror)
+  - Läsår format validation (YYYY/YYYY)
+  - Skoltyp enum validation
+  - Koordinat validation för GPS-positioner
+  - Pagination validation (page, size)
+  - Survey year validation
+  - Status validation
+- **Smart Caching System** - In-memory cache med TTL för bättre prestanda:
+  - Support data: 24h cache (skoltyper, geografiska områden, program, etc.)
+  - Statistics: 1h cache (nationell statistik, SALSA, program-statistik)
+  - School units: 30min cache (skolenheter, detaljer)
+  - Surveys: 4h cache (enkätdata)
+  - Automatisk cleanup av expired entries var 5:e minut
+- **Enhanced Error Messages** - Förbättrade felmeddelanden med:
+  - Kontextuell information om vad som gick fel
+  - Användbara förslag på hur man fixar problemet
+  - Transform av API-fel till begripliga svenska meddelanden
+
+### Improved
+- **LLM Discoverability** - Verktyg är nu mycket lättare för LLMs att upptäcka och använda korrekt
+- **User Experience** - Tydligare felmeddelanden och bättre vägledning
+- **Performance** - Färre API-anrop tack vare smart caching av referensdata
+- **Developer Experience** - Validering fångar fel tidigt innan API-anrop görs
+
+### Technical
+- Nya utilities:
+  - `/src/utils/validation.ts` - Parameter validation och error transformation
+  - `/src/utils/cache.ts` - In-memory TTL cache implementation
+- Uppdaterade v4-verktyg med validation och caching
+- Inga breaking changes - fullt bakåtkompatibelt
+
 ## [2.3.0] - 2025-01-22
 
 ### Added

@@ -5,6 +5,16 @@
 
 import { z } from 'zod';
 import { plannedEducationApi } from '../../api/planned-education-client.js';
+import {
+  validateSkolenhetskod,
+  validateSchoolYear,
+  validateStatus,
+  validatePagination,
+  validateCoordinates,
+  validateSurveyYear,
+  createValidationError,
+  transformApiError
+} from '../../utils/validation.js';
 
 // =====  SEARCH SCHOOL UNITS V4 =====
 
@@ -38,6 +48,20 @@ export async function searchSchoolUnitsV4(params: {
   sort?: string;
 }) {
   try {
+    // Validate status
+    if (params.status) {
+      const statusValidation = validateStatus(params.status);
+      if (!statusValidation.valid) {
+        throw createValidationError(statusValidation);
+      }
+    }
+
+    // Validate pagination
+    const paginationValidation = validatePagination(params.page, params.size);
+    if (!paginationValidation.valid) {
+      throw createValidationError(paginationValidation);
+    }
+
     const result = await plannedEducationApi.searchSchoolUnitsV4(params);
 
     return {
@@ -57,7 +81,7 @@ export async function searchSchoolUnitsV4(params: {
       content: [
         {
           type: 'text' as const,
-          text: `Fel vid sökning av skolenheter (v4): ${error instanceof Error ? error.message : String(error)}`
+          text: transformApiError(error, 'Fel vid sökning av skolenheter (v4)')
         }
       ],
       isError: true
@@ -73,6 +97,12 @@ export const getSchoolUnitDetailsV4Schema = {
 
 export async function getSchoolUnitDetailsV4(params: { code: string }) {
   try {
+    // Validate skolenhetskod
+    const codeValidation = validateSkolenhetskod(params.code);
+    if (!codeValidation.valid) {
+      throw createValidationError(codeValidation);
+    }
+
     const unit = await plannedEducationApi.getSchoolUnitDetailsV4(params.code);
 
     return {
@@ -88,7 +118,7 @@ export async function getSchoolUnitDetailsV4(params: { code: string }) {
       content: [
         {
           type: 'text' as const,
-          text: `Fel vid hämtning av skolenhetsdetaljer (v4): ${error instanceof Error ? error.message : String(error)}`
+          text: transformApiError(error, 'Fel vid hämtning av skolenhetsdetaljer (v4)')
         }
       ],
       isError: true
@@ -208,6 +238,18 @@ export async function calculateDistanceFromSchoolUnit(params: {
   longitude: number;
 }) {
   try {
+    // Validate skolenhetskod
+    const codeValidation = validateSkolenhetskod(params.code);
+    if (!codeValidation.valid) {
+      throw createValidationError(codeValidation);
+    }
+
+    // Validate coordinates
+    const coordValidation = validateCoordinates(params.latitude, params.longitude);
+    if (!coordValidation.valid) {
+      throw createValidationError(coordValidation);
+    }
+
     const result = await plannedEducationApi.calculateDistanceFromSchoolUnit(
       params.code,
       params.latitude,
@@ -227,7 +269,7 @@ export async function calculateDistanceFromSchoolUnit(params: {
       content: [
         {
           type: 'text' as const,
-          text: `Fel vid beräkning av avstånd: ${error instanceof Error ? error.message : String(error)}`
+          text: transformApiError(error, 'Fel vid beräkning av avstånd')
         }
       ],
       isError: true
@@ -317,6 +359,20 @@ export const getSchoolUnitStatisticsFSKSchema = {
 
 export async function getSchoolUnitStatisticsFSK(params: { code: string; schoolYear?: string }) {
   try {
+    // Validate skolenhetskod
+    const codeValidation = validateSkolenhetskod(params.code);
+    if (!codeValidation.valid) {
+      throw createValidationError(codeValidation);
+    }
+
+    // Validate school year
+    if (params.schoolYear) {
+      const yearValidation = validateSchoolYear(params.schoolYear);
+      if (!yearValidation.valid) {
+        throw createValidationError(yearValidation);
+      }
+    }
+
     const { code, ...queryParams } = params;
     const result = await plannedEducationApi.getSchoolUnitStatisticsFSK(code, queryParams);
 
@@ -337,7 +393,7 @@ export async function getSchoolUnitStatisticsFSK(params: { code: string; schoolY
       content: [
         {
           type: 'text' as const,
-          text: `Fel vid hämtning av FSK-statistik: ${error instanceof Error ? error.message : String(error)}`
+          text: transformApiError(error, 'Fel vid hämtning av FSK-statistik')
         }
       ],
       isError: true

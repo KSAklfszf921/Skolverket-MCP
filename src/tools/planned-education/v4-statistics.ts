@@ -4,6 +4,7 @@
 
 import { z } from 'zod';
 import { plannedEducationApi } from '../../api/planned-education-client.js';
+import { validateSchoolYear, createValidationError, transformApiError } from '../../utils/validation.js';
 
 // ===== NATIONAL STATISTICS FSK =====
 
@@ -52,6 +53,14 @@ export async function getNationalStatisticsGR(params: {
   indicator?: string;
 }) {
   try {
+    // Validate school year if provided
+    if (params.schoolYear) {
+      const yearValidation = validateSchoolYear(params.schoolYear);
+      if (!yearValidation.valid) {
+        throw createValidationError(yearValidation);
+      }
+    }
+
     const result = await plannedEducationApi.getNationalStatisticsGR(params);
 
     return {
@@ -67,7 +76,7 @@ export async function getNationalStatisticsGR(params: {
       content: [
         {
           type: 'text' as const,
-          text: `Fel vid hämtning av nationell GR-statistik: ${error instanceof Error ? error.message : String(error)}`
+          text: transformApiError(error, 'Fel vid hämtning av nationell GR-statistik')
         }
       ],
       isError: true
