@@ -1,18 +1,20 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.2.0
+ * Skolverket MCP Server v2.3.0
  *
  * Komplett MCP server för att ge LLMs tillgång till Skolverkets öppna API:er:
  * - Läroplan API (läroplaner, ämnen, kurser, program)
  * - Skolenhetsregistret API (skolenheter och deras status)
- * - Planned Educations API (utbildningstillfällen, statistik, inspektionsrapporter)
+ * - Planned Educations API v4 (utbildningstillfällen, statistik, inspektionsrapporter, enkäter)
  *
- * Version 2.2.0 förbättringar:
- * - Alla saknade parametrar från OpenAPI-specen har lagts till
- * - date parameter för alla endpoints (subjects, courses, programs, curriculums)
- * - typeOfProgram och typeOfStudyPath parametrar för studievägar
- * - Komplett överensstämmelse med Skolverkets OpenAPI 3.1.0 spec
+ * Version 2.3.0 förbättringar:
+ * - Full support för Planned Education API v4
+ * - 37 nya verktyg för skolenheter, statistik, och referensdata
+ * - Utökad statistik: nationella värden, SALSA, per-program
+ * - Skolenkäter i nested och flat format
+ * - Avståndberäkning från skolenheter
+ * - Komplett stöd för alla v4 endpoints
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -113,6 +115,94 @@ import {
   getDirectionsSchema
 } from './tools/planned-education/support-data.js';
 
+// V4 School Units verktyg
+import {
+  searchSchoolUnitsV4,
+  getSchoolUnitDetailsV4,
+  getSchoolUnitEducationEvents,
+  getSchoolUnitCompactEducationEvents,
+  calculateDistanceFromSchoolUnit,
+  getSchoolUnitDocuments,
+  getSchoolUnitStatisticsLinks,
+  getSchoolUnitStatisticsFSK,
+  getSchoolUnitStatisticsGR,
+  getSchoolUnitStatisticsGRAN,
+  getSchoolUnitStatisticsGY,
+  getSchoolUnitStatisticsGYAN,
+  getSchoolUnitSurveyNested,
+  getSchoolUnitSurveyFlat,
+  searchSchoolUnitsV4Schema,
+  getSchoolUnitDetailsV4Schema,
+  getSchoolUnitEducationEventsSchema,
+  getSchoolUnitCompactEducationEventsSchema,
+  calculateDistanceFromSchoolUnitSchema,
+  getSchoolUnitDocumentsSchema,
+  getSchoolUnitStatisticsLinksSchema,
+  getSchoolUnitStatisticsFSKSchema,
+  getSchoolUnitStatisticsGRSchema,
+  getSchoolUnitStatisticsGRANSchema,
+  getSchoolUnitStatisticsGYSchema,
+  getSchoolUnitStatisticsGYANSchema,
+  getSchoolUnitSurveyNestedSchema,
+  getSchoolUnitSurveyFlatSchema
+} from './tools/school-units/v4.js';
+
+// V4 Education Events verktyg
+import {
+  searchEducationEventsV4,
+  searchCompactEducationEventsV4,
+  countEducationEventsV4,
+  countAdultEducationEventsV4,
+  searchEducationEventsV4Schema,
+  searchCompactEducationEventsV4Schema,
+  countEducationEventsV4Schema,
+  countAdultEducationEventsV4Schema
+} from './tools/planned-education/v4-education-events.js';
+
+// V4 Statistics verktyg
+import {
+  getNationalStatisticsFSK,
+  getNationalStatisticsGR,
+  getNationalStatisticsGRAN,
+  getNationalStatisticsGY,
+  getNationalStatisticsGYAN,
+  getSALSAStatisticsGR,
+  getSALSAStatisticsGRAN,
+  getProgramStatisticsGY,
+  getProgramStatisticsGYAN,
+  getNationalStatisticsFSKSchema,
+  getNationalStatisticsGRSchema,
+  getNationalStatisticsGRANSchema,
+  getNationalStatisticsGYSchema,
+  getNationalStatisticsGYANSchema,
+  getSALSAStatisticsGRSchema,
+  getSALSAStatisticsGRANSchema,
+  getProgramStatisticsGYSchema,
+  getProgramStatisticsGYANSchema
+} from './tools/planned-education/v4-statistics.js';
+
+// V4 Support Data verktyg
+import {
+  getSchoolTypesV4,
+  getGeographicalAreasV4,
+  getPrincipalOrganizerTypesV4,
+  getProgramsV4,
+  getOrientationsV4,
+  getInstructionLanguagesV4,
+  getDistanceStudyTypesV4,
+  getAdultTypeOfSchoolingV4,
+  getMunicipalitySchoolUnitsV4,
+  getSchoolTypesV4Schema,
+  getGeographicalAreasV4Schema,
+  getPrincipalOrganizerTypesV4Schema,
+  getProgramsV4Schema,
+  getOrientationsV4Schema,
+  getInstructionLanguagesV4Schema,
+  getDistanceStudyTypesV4Schema,
+  getAdultTypeOfSchoolingV4Schema,
+  getMunicipalitySchoolUnitsV4Schema
+} from './tools/planned-education/v4-support.js';
+
 // Health check verktyg
 import {
   healthCheck,
@@ -123,7 +213,7 @@ import {
 const server = new Server(
   {
     name: 'skolverket-mcp',
-    version: '2.2.0',
+    version: '2.3.0',
   },
   {
     capabilities: {
@@ -1026,6 +1116,206 @@ RETURNERAR: Lista över inriktningar.`,
       },
 
       // ==============================================
+      // V4 API VERKTYG - SCHOOL UNITS
+      // ==============================================
+      {
+        name: 'search_school_units_v4',
+        description: `Sök skolenheter med utökade v4-funktioner (v4).
+
+Stöd för avancerad filtrering inkl. huvudmanstyp, geografiska områden, och mer detaljerad information.`,
+        inputSchema: { type: 'object', properties: searchSchoolUnitsV4Schema },
+      },
+      {
+        name: 'get_school_unit_details_v4',
+        description: `Hämta detaljerad information om en skolenhet (v4).`,
+        inputSchema: { type: 'object', properties: getSchoolUnitDetailsV4Schema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_education_events',
+        description: `Hämta alla utbildningstillfällen för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitEducationEventsSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_compact_education_events',
+        description: `Hämta kompakta utbildningstillfällen för en skolenhet (snabbare).`,
+        inputSchema: { type: 'object', properties: getSchoolUnitCompactEducationEventsSchema, required: ['code'] },
+      },
+      {
+        name: 'calculate_distance_from_school_unit',
+        description: `Beräkna avstånd från en skolenhet till en GPS-koordinat.`,
+        inputSchema: { type: 'object', properties: calculateDistanceFromSchoolUnitSchema, required: ['code', 'latitude', 'longitude'] },
+      },
+      {
+        name: 'get_school_unit_documents',
+        description: `Hämta dokument (t.ex. inspektionsrapporter) för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitDocumentsSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_statistics_links',
+        description: `Hämta länkar till tillgänglig statistik för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitStatisticsLinksSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_statistics_fsk',
+        description: `Hämta FSK-statistik (förskola) för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitStatisticsFSKSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_statistics_gr',
+        description: `Hämta GR-statistik (grundskola) för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitStatisticsGRSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_statistics_gran',
+        description: `Hämta GRAN-statistik (grundsärskola) för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitStatisticsGRANSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_statistics_gy',
+        description: `Hämta GY-statistik (gymnasium) för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitStatisticsGYSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_statistics_gyan',
+        description: `Hämta GYAN-statistik (gymnasiesärskola) för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitStatisticsGYANSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_survey_nested',
+        description: `Hämta skolenkätdata i nested format för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitSurveyNestedSchema, required: ['code'] },
+      },
+      {
+        name: 'get_school_unit_survey_flat',
+        description: `Hämta skolenkätdata i flat format för en skolenhet.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitSurveyFlatSchema, required: ['code'] },
+      },
+
+      // ==============================================
+      // V4 API VERKTYG - EDUCATION EVENTS
+      // ==============================================
+      {
+        name: 'search_education_events_v4',
+        description: `Sök utbildningstillfällen med full detaljnivå (v4).
+
+Stöd för omfattande filtrering på program, inriktningar, undervisningsspråk, och mer.`,
+        inputSchema: { type: 'object', properties: searchEducationEventsV4Schema },
+      },
+      {
+        name: 'search_compact_education_events_v4',
+        description: `Sök utbildningstillfällen i kompakt format (v4) - snabbare respons.`,
+        inputSchema: { type: 'object', properties: searchCompactEducationEventsV4Schema },
+      },
+      {
+        name: 'count_education_events_v4',
+        description: `Räkna antal utbildningstillfällen som matchar filter (v4).`,
+        inputSchema: { type: 'object', properties: countEducationEventsV4Schema },
+      },
+      {
+        name: 'count_adult_education_events_v4',
+        description: `Räkna antal vuxenutbildningstillfällen som matchar filter (v4).`,
+        inputSchema: { type: 'object', properties: countAdultEducationEventsV4Schema },
+      },
+
+      // ==============================================
+      // V4 API VERKTYG - STATISTICS
+      // ==============================================
+      {
+        name: 'get_national_statistics_fsk',
+        description: `Hämta nationell statistik för förskolor (FSK).`,
+        inputSchema: { type: 'object', properties: getNationalStatisticsFSKSchema },
+      },
+      {
+        name: 'get_national_statistics_gr',
+        description: `Hämta nationell statistik för grundskolor (GR).`,
+        inputSchema: { type: 'object', properties: getNationalStatisticsGRSchema },
+      },
+      {
+        name: 'get_national_statistics_gran',
+        description: `Hämta nationell statistik för grundsärskolor (GRAN).`,
+        inputSchema: { type: 'object', properties: getNationalStatisticsGRANSchema },
+      },
+      {
+        name: 'get_national_statistics_gy',
+        description: `Hämta nationell statistik för gymnasieskolor (GY).`,
+        inputSchema: { type: 'object', properties: getNationalStatisticsGYSchema },
+      },
+      {
+        name: 'get_national_statistics_gyan',
+        description: `Hämta nationell statistik för gymnasiesärskolor (GYAN).`,
+        inputSchema: { type: 'object', properties: getNationalStatisticsGYANSchema },
+      },
+      {
+        name: 'get_salsa_statistics_gr',
+        description: `Hämta SALSA-statistik (bedömningar) för grundskolor (GR).`,
+        inputSchema: { type: 'object', properties: getSALSAStatisticsGRSchema },
+      },
+      {
+        name: 'get_salsa_statistics_gran',
+        description: `Hämta SALSA-statistik för grundsärskolor (GRAN).`,
+        inputSchema: { type: 'object', properties: getSALSAStatisticsGRANSchema },
+      },
+      {
+        name: 'get_program_statistics_gy',
+        description: `Hämta programspecifik statistik för gymnasium (GY).`,
+        inputSchema: { type: 'object', properties: getProgramStatisticsGYSchema },
+      },
+      {
+        name: 'get_program_statistics_gyan',
+        description: `Hämta programspecifik statistik för gymnasiesärskola (GYAN).`,
+        inputSchema: { type: 'object', properties: getProgramStatisticsGYANSchema },
+      },
+
+      // ==============================================
+      // V4 API VERKTYG - SUPPORT DATA
+      // ==============================================
+      {
+        name: 'get_school_types_v4',
+        description: `Hämta alla skoltyper (v4 referensdata).`,
+        inputSchema: { type: 'object', properties: getSchoolTypesV4Schema },
+      },
+      {
+        name: 'get_geographical_areas_v4',
+        description: `Hämta alla geografiska områden (län, kommuner) (v4).`,
+        inputSchema: { type: 'object', properties: getGeographicalAreasV4Schema },
+      },
+      {
+        name: 'get_principal_organizer_types_v4',
+        description: `Hämta alla huvudmanstyper (kommunal, enskild, etc.) (v4).`,
+        inputSchema: { type: 'object', properties: getPrincipalOrganizerTypesV4Schema },
+      },
+      {
+        name: 'get_programs_v4',
+        description: `Hämta alla gymnasieprogram och inriktningar (v4).`,
+        inputSchema: { type: 'object', properties: getProgramsV4Schema },
+      },
+      {
+        name: 'get_orientations_v4',
+        description: `Hämta alla programinriktningar (v4).`,
+        inputSchema: { type: 'object', properties: getOrientationsV4Schema },
+      },
+      {
+        name: 'get_instruction_languages_v4',
+        description: `Hämta alla undervisningsspråk (v4).`,
+        inputSchema: { type: 'object', properties: getInstructionLanguagesV4Schema },
+      },
+      {
+        name: 'get_distance_study_types_v4',
+        description: `Hämta typer av distansstudier (v4).`,
+        inputSchema: { type: 'object', properties: getDistanceStudyTypesV4Schema },
+      },
+      {
+        name: 'get_adult_type_of_schooling_v4',
+        description: `Hämta typer av vuxenutbildning (v4).`,
+        inputSchema: { type: 'object', properties: getAdultTypeOfSchoolingV4Schema },
+      },
+      {
+        name: 'get_municipality_school_units_v4',
+        description: `Hämta mappning mellan kommuner och skolenheter (v4).`,
+        inputSchema: { type: 'object', properties: getMunicipalitySchoolUnitsV4Schema },
+      },
+
+      // ==============================================
       // DIAGNOSTIK OCH HEALTH CHECK
       // ==============================================
       {
@@ -1125,6 +1415,86 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await getEducationAreas();
       case 'get_directions':
         return await getDirections();
+
+      // V4 School Units
+      case 'search_school_units_v4':
+        return await searchSchoolUnitsV4(args as any);
+      case 'get_school_unit_details_v4':
+        return await getSchoolUnitDetailsV4(args as any);
+      case 'get_school_unit_education_events':
+        return await getSchoolUnitEducationEvents(args as any);
+      case 'get_school_unit_compact_education_events':
+        return await getSchoolUnitCompactEducationEvents(args as any);
+      case 'calculate_distance_from_school_unit':
+        return await calculateDistanceFromSchoolUnit(args as any);
+      case 'get_school_unit_documents':
+        return await getSchoolUnitDocuments(args as any);
+      case 'get_school_unit_statistics_links':
+        return await getSchoolUnitStatisticsLinks(args as any);
+      case 'get_school_unit_statistics_fsk':
+        return await getSchoolUnitStatisticsFSK(args as any);
+      case 'get_school_unit_statistics_gr':
+        return await getSchoolUnitStatisticsGR(args as any);
+      case 'get_school_unit_statistics_gran':
+        return await getSchoolUnitStatisticsGRAN(args as any);
+      case 'get_school_unit_statistics_gy':
+        return await getSchoolUnitStatisticsGY(args as any);
+      case 'get_school_unit_statistics_gyan':
+        return await getSchoolUnitStatisticsGYAN(args as any);
+      case 'get_school_unit_survey_nested':
+        return await getSchoolUnitSurveyNested(args as any);
+      case 'get_school_unit_survey_flat':
+        return await getSchoolUnitSurveyFlat(args as any);
+
+      // V4 Education Events
+      case 'search_education_events_v4':
+        return await searchEducationEventsV4(args as any);
+      case 'search_compact_education_events_v4':
+        return await searchCompactEducationEventsV4(args as any);
+      case 'count_education_events_v4':
+        return await countEducationEventsV4(args as any);
+      case 'count_adult_education_events_v4':
+        return await countAdultEducationEventsV4(args as any);
+
+      // V4 Statistics
+      case 'get_national_statistics_fsk':
+        return await getNationalStatisticsFSK(args as any);
+      case 'get_national_statistics_gr':
+        return await getNationalStatisticsGR(args as any);
+      case 'get_national_statistics_gran':
+        return await getNationalStatisticsGRAN(args as any);
+      case 'get_national_statistics_gy':
+        return await getNationalStatisticsGY(args as any);
+      case 'get_national_statistics_gyan':
+        return await getNationalStatisticsGYAN(args as any);
+      case 'get_salsa_statistics_gr':
+        return await getSALSAStatisticsGR(args as any);
+      case 'get_salsa_statistics_gran':
+        return await getSALSAStatisticsGRAN(args as any);
+      case 'get_program_statistics_gy':
+        return await getProgramStatisticsGY(args as any);
+      case 'get_program_statistics_gyan':
+        return await getProgramStatisticsGYAN(args as any);
+
+      // V4 Support Data
+      case 'get_school_types_v4':
+        return await getSchoolTypesV4();
+      case 'get_geographical_areas_v4':
+        return await getGeographicalAreasV4();
+      case 'get_principal_organizer_types_v4':
+        return await getPrincipalOrganizerTypesV4();
+      case 'get_programs_v4':
+        return await getProgramsV4();
+      case 'get_orientations_v4':
+        return await getOrientationsV4();
+      case 'get_instruction_languages_v4':
+        return await getInstructionLanguagesV4();
+      case 'get_distance_study_types_v4':
+        return await getDistanceStudyTypesV4();
+      case 'get_adult_type_of_schooling_v4':
+        return await getAdultTypeOfSchoolingV4();
+      case 'get_municipality_school_units_v4':
+        return await getMunicipalitySchoolUnitsV4();
 
       // Diagnostik
       case 'health_check':

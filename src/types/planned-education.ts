@@ -191,3 +191,387 @@ export interface SupportDataResponse {
   areas?: EducationArea[];
   directions?: Direction[];
 }
+
+// ===== V4 API TYPES =====
+
+// V4 School Unit - Full detailed version
+export interface SchoolUnitV4 {
+  schoolUnitCode: string;
+  name: string;
+  schoolType?: string;
+  schoolTypes?: string[];
+  status?: string;
+  municipality?: string;
+  municipalityCode?: string;
+  county?: string;
+  countyCode?: string;
+  principalOrganizer?: string;
+  principalOrganizerType?: string;
+  geographicalArea?: string;
+  geographicalAreaCode?: string;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  postalCode?: string;
+  city?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  _links?: Record<string, any>;
+}
+
+export interface SchoolUnitV4Response {
+  _embedded: {
+    schoolUnits: SchoolUnitV4[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+export interface SchoolUnitDetailsV4 extends SchoolUnitV4 {
+  description?: string;
+  foundingDate?: string;
+  closingDate?: string;
+  additionalInfo?: Record<string, any>;
+}
+
+// V4 Education Events - Compact and Full
+export interface CompactEducationEvent {
+  educationEventId: string;
+  schoolUnitCode: string;
+  schoolUnitName?: string;
+  titleSv: string;
+  typeOfSchool?: string;
+  municipality?: string;
+  county?: string;
+  geographicalAreaCode?: string;
+  semesterStartFrom?: string;
+  distance?: boolean;
+  paceOfStudy?: string;
+  _links?: Record<string, any>;
+}
+
+export interface FullEducationEvent extends CompactEducationEvent {
+  providerName?: string;
+  contractor?: string;
+  location?: string;
+  town?: string;
+  contactInfoAddressCity?: string;
+  credits?: string;
+  creditsSystem?: string;
+  extent?: string;
+  recommendedPriorKnowledge?: string;
+  lastApplicationDate?: string;
+  executionCondition?: number;
+  directionIds?: string[];
+  instructionLanguages?: string[];
+  programCode?: string;
+  orientationCode?: string;
+  educationAreaCode?: string;
+}
+
+export interface EducationEventsV4Response {
+  _embedded: {
+    educationEvents: FullEducationEvent[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+export interface CompactEducationEventsV4Response {
+  _embedded: {
+    compactEducationEvents: CompactEducationEvent[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+export interface EducationEventsCountResponse {
+  count: number;
+  filters?: Record<string, any>;
+}
+
+// V4 Statistics structures
+export interface StatisticsLink {
+  rel: string;
+  href: string;
+  description?: string;
+}
+
+export interface SchoolUnitStatisticsLinks {
+  schoolUnitCode: string;
+  schoolUnitName?: string;
+  _links: {
+    fsk?: StatisticsLink;
+    gr?: StatisticsLink;
+    gran?: StatisticsLink;
+    gy?: StatisticsLink;
+    gyan?: StatisticsLink;
+    [key: string]: StatisticsLink | undefined;
+  };
+}
+
+export interface NationalStatisticsValue {
+  schoolType: string;
+  schoolYear: string;
+  indicator: string;
+  value: number;
+  unit?: string;
+  description?: string;
+}
+
+export interface NationalStatisticsResponse {
+  schoolType: string;
+  values: NationalStatisticsValue[];
+  metadata?: {
+    extractDate: string;
+    schoolYear: string;
+  };
+}
+
+export interface SALSAStatistics {
+  schoolUnitCode: string;
+  schoolYear: string;
+  subject?: string;
+  grade?: string;
+  averageScore?: number;
+  distribution?: Record<string, number>;
+  metadata?: Record<string, any>;
+}
+
+export interface SALSAStatisticsResponse {
+  statistics: SALSAStatistics[];
+  metadata?: {
+    schoolYear: string;
+    extractDate: string;
+  };
+}
+
+export interface ProgramStatistics {
+  programCode: string;
+  programName?: string;
+  schoolYear: string;
+  orientation?: string;
+  statistics: Record<string, any>;
+}
+
+export interface ProgramStatisticsResponse {
+  programs: ProgramStatistics[];
+  metadata?: {
+    schoolYear: string;
+    extractDate: string;
+  };
+}
+
+// V4 School Survey - Nested and Flat structures
+export interface NestedSurveyQuestion {
+  questionId: string;
+  question: string;
+  responses: {
+    [responseCategory: string]: number;
+  };
+}
+
+export interface NestedSurveyRespondentGroup {
+  respondentGroup: string;
+  questions: NestedSurveyQuestion[];
+}
+
+export interface NestedSchoolSurvey {
+  schoolUnitCode: string;
+  schoolUnitName?: string;
+  surveyYear: string;
+  respondentGroups: NestedSurveyRespondentGroup[];
+}
+
+export interface NestedSurveyResponse {
+  survey: NestedSchoolSurvey;
+  metadata?: {
+    surveyYear: string;
+    extractDate: string;
+  };
+}
+
+export interface FlatSurveyDataPoint {
+  schoolUnitCode: string;
+  surveyYear: string;
+  respondentGroup: string;
+  questionId: string;
+  question: string;
+  responseCategory: string;
+  value: number;
+}
+
+export interface FlatSurveyResponse {
+  data: FlatSurveyDataPoint[];
+  metadata?: {
+    surveyYear: string;
+    extractDate: string;
+  };
+}
+
+// V4 Documents
+export interface DocumentV4 {
+  documentId: string;
+  schoolUnitCode?: string;
+  documentType: string;
+  title: string;
+  publicationDate?: string;
+  url?: string;
+  summary?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface DocumentsV4Response {
+  _embedded: {
+    documents: DocumentV4[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+// V4 Support Data (Stöddata)
+export interface SchoolTypeV4 {
+  code: string;
+  name: string;
+  description?: string;
+}
+
+export interface GeographicalAreaV4 {
+  code: string;
+  name: string;
+  type?: string; // LÄN, KOMMUN, etc.
+  parentCode?: string;
+}
+
+export interface PrincipalOrganizerTypeV4 {
+  code: string;
+  name: string;
+  description?: string;
+}
+
+export interface ProgramV4 {
+  code: string;
+  name: string;
+  schoolType?: string;
+  typeOfProgram?: string; // HÖGSKOLEFÖRBEREDANDE, YRKES
+  orientations?: OrientationV4[];
+}
+
+export interface OrientationV4 {
+  code: string;
+  name: string;
+  programCode: string;
+}
+
+export interface InstructionLanguageV4 {
+  code: string;
+  name: string;
+}
+
+export interface DistanceStudyTypeV4 {
+  code: string;
+  name: string;
+  description?: string;
+}
+
+export interface AdultTypeOfSchoolingV4 {
+  code: string;
+  name: string;
+  description?: string;
+}
+
+export interface MunicipalitySchoolUnitMapping {
+  municipalityCode: string;
+  municipalityName: string;
+  schoolUnitCodes: string[];
+}
+
+export interface SchoolTypesResponse {
+  schoolTypes: SchoolTypeV4[];
+}
+
+export interface GeographicalAreasResponse {
+  geographicalAreas: GeographicalAreaV4[];
+}
+
+export interface PrincipalOrganizerTypesResponse {
+  principalOrganizerTypes: PrincipalOrganizerTypeV4[];
+}
+
+export interface ProgramsResponse {
+  programs: ProgramV4[];
+}
+
+export interface OrientationsResponse {
+  orientations: OrientationV4[];
+}
+
+export interface InstructionLanguagesResponse {
+  instructionLanguages: InstructionLanguageV4[];
+}
+
+export interface DistanceStudyTypesResponse {
+  distanceStudyTypes: DistanceStudyTypeV4[];
+}
+
+export interface AdultTypeOfSchoolingResponse {
+  adultTypeOfSchooling: AdultTypeOfSchoolingV4[];
+}
+
+export interface MunicipalitySchoolUnitsResponse {
+  municipalities: MunicipalitySchoolUnitMapping[];
+}
+
+// Distance calculation
+export interface DistanceCalculation {
+  fromSchoolUnitCode: string;
+  toLatitude: number;
+  toLongitude: number;
+  distanceKm: number;
+  method?: string; // haversine, etc.
+}
+
+// Pagination info
+export interface PageInfo {
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  number: number;
+}
+
+// Search parameters for v4
+export interface SchoolUnitSearchParamsV4 {
+  name?: string;
+  schoolType?: string;
+  municipality?: string;
+  municipalityCode?: string;
+  county?: string;
+  countyCode?: string;
+  status?: string;
+  geographicalAreaCode?: string;
+  principalOrganizerType?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+}
+
+export interface EducationEventSearchParamsV4 {
+  schoolUnitCode?: string;
+  typeOfSchool?: string;
+  municipality?: string;
+  county?: string;
+  geographicalAreaCode?: string;
+  distance?: boolean;
+  paceOfStudy?: string;
+  semesterStartFrom?: string;
+  programCode?: string;
+  orientationCode?: string;
+  educationAreaCode?: string;
+  directionIds?: string;
+  instructionLanguages?: string;
+  searchTerm?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+}

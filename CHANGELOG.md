@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2025-01-22
+
+### Added
+- **Full Planned Education API v4 support** - 37 nya verktyg
+  - **School Units v4** (15 verktyg):
+    - `search_school_units_v4` - Avancerad sökning med fler filtreringsmöjligheter
+    - `get_school_unit_details_v4` - Utökad detaljerad information
+    - `get_school_unit_education_events` - Alla utbildningstillfällen per skolenhet
+    - `get_school_unit_compact_education_events` - Kompakt format (snabbare)
+    - `calculate_distance_from_school_unit` - Avståndberäkning från GPS-koordinat
+    - `get_school_unit_documents` - Inspektionsrapporter och dokument
+    - `get_school_unit_statistics_links` - Länkar till tillgänglig statistik
+    - `get_school_unit_statistics_fsk/gr/gran/gy/gyan` - Statistik per skoltyp
+    - `get_school_unit_survey_nested` - Skolenkäter i nested format
+    - `get_school_unit_survey_flat` - Skolenkäter i flat format
+  - **Education Events v4** (4 verktyg):
+    - `search_education_events_v4` - Full detaljnivå med omfattande filter
+    - `search_compact_education_events_v4` - Kompakt format
+    - `count_education_events_v4` - Räkna matchande utbildningstillfällen
+    - `count_adult_education_events_v4` - Räkna vuxenutbildningstillfällen
+  - **Statistics v4** (9 verktyg):
+    - `get_national_statistics_fsk/gr/gran/gy/gyan` - Nationella värden per skoltyp
+    - `get_salsa_statistics_gr/gran` - SALSA-bedömningar
+    - `get_program_statistics_gy/gyan` - Programspecifik statistik
+  - **Support Data v4** (9 verktyg):
+    - `get_school_types_v4` - Alla skoltyper
+    - `get_geographical_areas_v4` - Län och kommuner
+    - `get_principal_organizer_types_v4` - Huvudmanstyper
+    - `get_programs_v4` - Gymnasieprogram och inriktningar
+    - `get_orientations_v4` - Alla programinriktningar
+    - `get_instruction_languages_v4` - Undervisningsspråk
+    - `get_distance_study_types_v4` - Distansstudietyper
+    - `get_adult_type_of_schooling_v4` - Vuxenutbildningstyper
+    - `get_municipality_school_units_v4` - Kommun-skolenhet mappning
+
+### Changed
+- **API-klient** utökad för v4-stöd
+  - Uppdaterad BaseApiClient med stöd för custom headers
+  - PlannedEducationApiClient med alla v4-metoder
+  - Korrekt Accept header för v4: `application/vnd.skolverket.plannededucations.api.v4.hal+json`
+- **TypeScript typer** för v4
+  - 35+ nya interfaces i `planned-education.ts`
+  - Fullständig typning för alla v4 responses
+  - Support för nested och flat survey strukturer
+
+### Improved
+- **Total antal verktyg**: 27 → 64 verktyg
+- Mer komplett täckning av Skolverkets Planned Education API
+- Bättre statistiktillgång (nationellt, SALSA, per-program)
+- Skolenkäter i två format för olika användningsfall
+- Avståndberäkning för geografisk filtrering
+
 ## [2.2.0] - 2025-01-22
 
 ### Added

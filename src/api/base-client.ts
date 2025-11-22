@@ -232,9 +232,12 @@ export class BaseApiClient {
   /**
    * GET-request med rate limiting
    */
-  protected async get<T>(url: string, params?: any): Promise<T> {
+  protected async get<T>(url: string, params?: any, options?: { headers?: Record<string, string> }): Promise<T> {
     return this.limiter(async () => {
-      const response = await this.client.get<T>(url, { params });
+      const response = await this.client.get<T>(url, {
+        params,
+        headers: options?.headers
+      });
       return response.data;
     });
   }
