@@ -8,15 +8,21 @@ import { plannedEducationApi } from '../../api/planned-education-client.js';
 // Zod-scheman för validering
 export const searchAdultEducationSchema = {
   searchTerm: z.string().optional().describe('Sökterm för utbildningar'),
-  town: z.string().optional().describe('Stad/Studieort (t.ex. "Stockholm", "Göteborg")'),
+  town: z.string().optional().describe('Städer/Studieort(er) ex. Solna,Göteborg'),
+  executionCondition: z.string().optional().describe('Kod som beskriver när kurs startar (0 = Ej fastställt, 1 = Datum satt, 2,3 = Löpande kursstart)'),
+  geographicalAreaCode: z.string().optional().describe('Områdeskod (kommun- eller länskod)'),
+  instructionLanguages: z.string().optional().describe('De språk kursen leds på'),
+  directionIds: z.string().optional().describe('Inriktning(ar), tillgängliga inriktningar hittar du under endpoint: /v4/adult-education-events/areas'),
   county: z.string().optional().describe('Län'),
-  municipality: z.string().optional().describe('Kommun'),
-  typeOfSchool: z.string().optional().describe('Utbildningsform (t.ex. "yh" för Yrkeshögskola, "sfi" för SFI, "komvuxgycourses" för Komvux)'),
-  distance: z.enum(['true', 'false']).optional().describe('Distansutbildning (true/false)'),
-  paceOfStudy: z.string().optional().describe('Studietakt (t.ex. "100", "50", "25" eller intervall "50-100")'),
-  semesterStartFrom: z.string().optional().describe('Terminstart från datum (format: YYYY-MM-DD)'),
-  page: z.number().optional().default(0).describe('Sidnummer (0-index)'),
-  size: z.number().optional().default(20).describe('Antal resultat per sida (max 100)')
+  municipality: z.string().optional().describe('Kommun(er)'),
+  typeOfSchool: z.string().optional().describe('Utbildningsform (ex. forutbildning, coursebasic, courseadvanced, programbasic, kku (konstkultur), programadvanced, fhs (fhsk), vuxgy (komvuxgycourses), vuxgr (komvuxbasiccourses), komvuxcoursepackage, sfi, vuxgyan (komvuxgysar), vuxgran (komvuxgrsar), aub (arbmarknutb), fhsaub (fhskaub), forberutb, testokartl, yh, ny, yhkurskurspaket, yhprogram, vuxsfi (komvuxsfi))'),
+  distance: z.enum(['true', 'false']).optional().describe('Distansutbildning kan vara true, false eller lämnas tom för att få allt'),
+  paceOfStudy: z.string().optional().describe('Studietakt, ex: 25,50,100 eller 25 eller 50, 100 eller 0-25, 25-75, 0-100 osv (separera med , eller ; eller :)'),
+  semesterStartFrom: z.string().optional().describe('Terminstart, ex: 2020-01-01TO2020-05-31,2020-08-01TO2020-12-31'),
+  recommendedPriorKnowledge: z.string().optional().describe('Utbildningar som bara kräver grundläggande behörighet kan vara grundlaggande eller lämnas tomt'),
+  sort: z.string().optional().describe('Sorteringsordning kan kombineras t.ex. titleSv:asc, typeOfSchool:desc, municipality:desc'),
+  page: z.number().optional().default(0).describe('Sidnummer att starta hämtning från (max 999999999)'),
+  size: z.number().optional().default(20).describe('Antal träffar per sida (max 200)')
 };
 
 export const getAdultEducationDetailsSchema = {
@@ -41,12 +47,18 @@ export const filterAdultEducationByPaceSchema = {
 export async function searchAdultEducation(params: {
   searchTerm?: string;
   town?: string;
+  executionCondition?: string;
+  geographicalAreaCode?: string;
+  instructionLanguages?: string;
+  directionIds?: string;
   county?: string;
   municipality?: string;
   typeOfSchool?: string;
   distance?: 'true' | 'false';
   paceOfStudy?: string;
   semesterStartFrom?: string;
+  recommendedPriorKnowledge?: string;
+  sort?: string;
   page?: number;
   size?: number;
 }) {

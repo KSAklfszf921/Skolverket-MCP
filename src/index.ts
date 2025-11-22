@@ -969,13 +969,13 @@ TIPS: Fungerar med partiella namn.`,
       // Vuxenutbildning
       {
         name: 'search_adult_education',
-        description: `Sök vuxenutbildningar med omfattande filter.
+        description: `Sök vuxenutbildningar med omfattande filter (API v4).
 
 ANVÄNDNINGSFALL:
 - Hitta YH-utbildningar (Yrkeshögskola)
 - Sök SFI-kurser (Svenska för invandrare)
 - Hitta Komvux-kurser
-- Filtrera efter stad, distans, studietakt
+- Filtrera efter stad, distans, studietakt, språk
 - Planera vidareutbildning
 
 RETURNERAR: Utbildningstillfällen med:
@@ -985,12 +985,23 @@ RETURNERAR: Utbildningstillfällen med:
 - Starttider
 - Studietakt och omfattning
 
-FILTER:
+FILTER (v4):
 - searchTerm: Sökord (t.ex. "programmering")
-- town: Stad (t.ex. "Stockholm")
-- typeOfSchool: "yh", "sfi", "komvuxgycourses"
+- town: Städer (t.ex. "Solna,Göteborg")
+- executionCondition: Kursstart (0 = Ej fastställt, 1 = Datum satt, 2,3 = Löpande)
+- geographicalAreaCode: Områdeskod (kommun- eller länskod)
+- instructionLanguages: Undervisningsspråk
+- directionIds: Inriktningar
+- county: Län
+- municipality: Kommun(er)
+- typeOfSchool: "yh", "sfi", "vuxgy" (komvuxgycourses), "vuxgr", etc.
 - distance: "true"/"false"
-- paceOfStudy: "100" (heltid), "50" (halvtid)
+- paceOfStudy: "25,50,100" eller "0-25", "25-75", "0-100"
+- semesterStartFrom: "2020-01-01TO2020-05-31"
+- recommendedPriorKnowledge: "grundlaggande"
+- sort: "titleSv:asc, typeOfSchool:desc"
+- page: Sidnummer (0-999999999)
+- size: Träffar per sida (max 200)
 
 EXEMPEL: Hitta IT-utbildningar i Stockholm som är på heltid.`,
         inputSchema: {
