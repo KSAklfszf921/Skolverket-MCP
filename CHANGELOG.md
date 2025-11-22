@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2025-01-22
+
+### Added
+- **Meta-verktyg för konsolidering** - 6 nya meta-verktyg som konsoliderar 18 tidigare verktyg:
+  - `get_national_statistics` - Konsoliderar 5 verktyg (fsk, gr, gran, gy, gyan) → välj skoltyp som parameter
+  - `get_salsa_statistics` - Konsoliderar 2 verktyg (gr, gran) → välj skoltyp som parameter
+  - `get_program_statistics` - Konsoliderar 2 verktyg (gy, gyan) → välj skoltyp som parameter
+  - `get_school_unit_statistics` - Konsoliderar 5 verktyg (fsk, gr, gran, gy, gyan) → välj skoltyp som parameter
+  - `get_school_unit_survey` - Konsoliderar 2 verktyg (nested, flat) → välj format som parameter
+  - `search_education_events` - Konsoliderar 2 verktyg (full, compact) → välj format som parameter
+
+### Improved
+- **Reducerat antal verktyg** - Från 64 till 52 verktyg (18 konsoliderade till 6 meta-verktyg)
+- **Enklare användning för LLMs** - Välj skoltyp/format som parameter istället för att hitta rätt verktyg
+- **Mindre kognitiv belastning** - Färre verktyg att navigera mellan och förstå
+- **Bättre discoverability** - Meta-verktyg har tydliga beskrivningar om vilka verktyg de ersätter
+- **Fullständig bakåtkompabilitet** - Alla 18 ursprungliga verktyg fungerar fortfarande som tidigare
+
+### Technical
+- Nya meta-verktyg i:
+  - `/src/tools/planned-education/meta-statistics.ts` - Statistik meta-verktyg
+  - `/src/tools/school-units/meta-tools.ts` - Skolenhets meta-verktyg
+- Routing baserat på skoltyp/format parameter till befintliga implementationer
+- Inga breaking changes - alla gamla verktyg behålls för bakåtkompabilitet
+- Total reduktion: 64 verktyg → 52 verktyg (sparar 12 verktygsplatser)
+
 ## [2.4.0] - 2025-01-22
 
 ### Added

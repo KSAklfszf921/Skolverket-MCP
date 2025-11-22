@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.4.0
+ * Skolverket MCP Server v2.5.0
  *
  * Komplett MCP server för att ge LLMs tillgång till Skolverkets öppna API:er:
  * - Läroplan API (läroplaner, ämnen, kurser, program)
  * - Skolenhetsregistret API (skolenheter och deras status)
  * - Planned Educations API v4 (utbildningstillfällen, statistik, inspektionsrapporter, enkäter)
  *
- * Version 2.4.0 förbättringar:
- * - Kraftigt förbättrade verktygs beskrivningar med användningsfall, exempel och relaterade verktyg
- * - Intelligent validering av parametrar (skolenhetskod, läsår, koordinater, etc.)
- * - Smart caching av referensdata för bättre prestanda
- * - Förbättrade felmeddelanden med kontextuell information
+ * Version 2.5.0 förbättringar:
+ * - Meta-verktyg som konsoliderar 18 verktyg till 6 (64 → 52 verktyg totalt)
+ * - Enklare användning: välj skoltyp/format som parameter istället för att hitta rätt verktyg
+ * - Reducerad kognitiv belastning för LLMs
+ * - Alla tidigare verktyg fungerar fortfarande (bakåtkompatibelt)
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -201,6 +201,25 @@ import {
   getMunicipalitySchoolUnitsV4Schema
 } from './tools/planned-education/v4-support.js';
 
+// Meta-verktyg för konsolidering
+import {
+  getNationalStatistics,
+  getSALSAStatistics,
+  getProgramStatistics,
+  searchEducationEvents,
+  getNationalStatisticsSchema,
+  getSALSAStatisticsSchema,
+  getProgramStatisticsSchema,
+  searchEducationEventsSchema
+} from './tools/planned-education/meta-statistics.js';
+
+import {
+  getSchoolUnitStatistics,
+  getSchoolUnitSurvey,
+  getSchoolUnitStatisticsSchema,
+  getSchoolUnitSurveySchema
+} from './tools/school-units/meta-tools.js';
+
 // Health check verktyg
 import {
   healthCheck,
@@ -211,7 +230,7 @@ import {
 const server = new Server(
   {
     name: 'skolverket-mcp',
-    version: '2.4.0',
+    version: '2.5.0',
   },
   {
     capabilities: {
@@ -2252,6 +2271,209 @@ TIPS: Använd för att få en komplett bild av en kommuns skollandskap.`,
       },
 
       // ==============================================
+      // META-VERKTYG (Konsoliderade verktyg)
+      // ==============================================
+      {
+        name: 'get_national_statistics',
+        description: `Hämta nationell statistik för valfri skoltyp.
+
+META-VERKTYG som konsoliderar: get_national_statistics_fsk, get_national_statistics_gr,
+get_national_statistics_gran, get_national_statistics_gy, get_national_statistics_gyan.
+
+ANVÄNDNINGSFALL:
+- Jämföra nationella värden mellan olika skoltyper
+- Analysera trender över tid per skoltyp
+- Hämta indikatorer för alla skolformer på ett ställe
+- Förstå kvalitetsmått nationellt
+
+SKOLTYPER:
+- fsk: Förskoleklass
+- gr: Grundskola
+- gran: Grundsärskola
+- gy: Gymnasium
+- gyan: Gymnasiesärskola
+
+EXEMPEL:
+- schoolType: "gr", schoolYear: "2023/2024"
+- schoolType: "gy", indicator: "genomströmning"
+
+RETURNERAR:
+- Nationella statistikvärden
+- Indikatorer per skoltyp
+- Historiska data om läsår anges
+
+TIPS: Använd schoolType-parametern för att välja rätt skolform istället för att söka efter rätt verktyg.`,
+        inputSchema: { type: 'object', properties: getNationalStatisticsSchema, required: ['schoolType'] },
+      },
+      {
+        name: 'get_salsa_statistics',
+        description: `Hämta SALSA-statistik (ämnesvärden) för grundskola eller grundsärskola.
+
+META-VERKTYG som konsoliderar: get_salsa_statistics_gr, get_salsa_statistics_gran.
+
+ANVÄNDNINGSFALL:
+- Analysera ämnesprestationer i Matematik, Svenska, etc.
+- Jämföra resultat mellan årskurser
+- Följa resultatutveckling över tid
+- Få nationella ämnesnivåer
+
+SKOLTYPER:
+- gr: Grundskola
+- gran: Grundsärskola
+
+EXEMPEL:
+- schoolType: "gr", subject: "Matematik", grade: "9"
+- schoolType: "gran", schoolYear: "2023/2024"
+
+RETURNERAR:
+- Ämnesprestationer per årskurs
+- Medelvärden och fördelningar
+- SALSA-indikatorer
+
+TIPS: SALSA-statistik finns bara för grundskola (gr) och grundsärskola (gran).`,
+        inputSchema: { type: 'object', properties: getSALSAStatisticsSchema, required: ['schoolType'] },
+      },
+      {
+        name: 'get_program_statistics',
+        description: `Hämta programstatistik för gymnasium eller gymnasiesärskola.
+
+META-VERKTYG som konsoliderar: get_program_statistics_gy, get_program_statistics_gyan.
+
+ANVÄNDNINGSFALL:
+- Analysera genomströmning per program
+- Jämföra olika programinriktningar
+- Följa programspecifika resultat
+- Få statistik för NA, EK, SA, etc.
+
+SKOLTYPER:
+- gy: Gymnasium
+- gyan: Gymnasiesärskola
+
+EXEMPEL:
+- schoolType: "gy", programCode: "NA"
+- schoolType: "gy", programCode: "EK", orientation: "Ekonomi"
+
+RETURNERAR:
+- Programspecifik statistik
+- Genomströmning per program
+- Inriktningsstatistik
+
+TIPS: Använd get_programs_v4 för att se tillgängliga programkoder först.`,
+        inputSchema: { type: 'object', properties: getProgramStatisticsSchema, required: ['schoolType'] },
+      },
+      {
+        name: 'get_school_unit_statistics',
+        description: `Hämta statistik för en specifik skolenhet, för valfri skoltyp.
+
+META-VERKTYG som konsoliderar: get_school_unit_statistics_fsk, get_school_unit_statistics_gr,
+get_school_unit_statistics_gran, get_school_unit_statistics_gy, get_school_unit_statistics_gyan.
+
+ANVÄNDNINGSFALL:
+- Se statistik för en specifik skola
+- Jämföra skolenheter över tid
+- Analysera skolans kvalitetsindikatorer
+- Få skolspecifika värden per skoltyp
+
+SKOLTYPER:
+- fsk: Förskoleklass
+- gr: Grundskola
+- gran: Grundsärskola
+- gy: Gymnasium
+- gyan: Gymnasiesärskola
+
+EXEMPEL:
+- code: "29824923", schoolType: "gr", schoolYear: "2023/2024"
+- code: "12345678", schoolType: "gy"
+
+RETURNERAR:
+- Skolenhetsspecifik statistik
+- Kvalitetsindikatorer per skoltyp
+- Resultat över tid
+
+RELATERADE VERKTYG:
+- get_school_unit_statistics_links: Se tillgängliga statistiklänkar först
+- get_school_unit_details_v4: Hämta skolenhetsinformation
+
+TIPS: Använd get_school_unit_statistics_links först för att se vilka skoltyper som har statistik.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitStatisticsSchema, required: ['code', 'schoolType'] },
+      },
+      {
+        name: 'get_school_unit_survey',
+        description: `Hämta enkätresultat för en skolenhet i valfritt format.
+
+META-VERKTYG som konsoliderar: get_school_unit_survey_nested, get_school_unit_survey_flat.
+
+ANVÄNDNINGSFALL:
+- Hämta elevenkäter för en skola
+- Analysera enkätdata i hierarkisk eller platt struktur
+- Följa enkätresultat över tid
+- Jämföra enkätsvar mellan år
+
+FORMAT:
+- nested: Hierarkisk struktur med kategori → fråga → svar
+- flat: Platt struktur med "kategori.fråga" notation (lättare att processa)
+
+EXEMPEL:
+- code: "29824923", format: "nested", surveyYear: "2023"
+- code: "12345678", format: "flat"
+
+RETURNERAR:
+- Enkätresultat i valt format
+- Elevenkäter, lärarenkäter, vårdnadshavarenkäter
+- Historiska data om surveyYear anges
+
+RELATERADE VERKTYG:
+- get_school_unit_details_v4: Hämta skolenhetsinformation
+
+TIPS: Använd "flat" för enkel databearbetning, "nested" för att förstå enkätens struktur.`,
+        inputSchema: { type: 'object', properties: getSchoolUnitSurveySchema, required: ['code', 'format'] },
+      },
+      {
+        name: 'search_education_events',
+        description: `Sök utbildningstillfällen i valfritt format (full eller kompakt).
+
+META-VERKTYG som konsoliderar: search_education_events_v4, search_compact_education_events_v4.
+
+ANVÄNDNINGSFALL:
+- Hitta utbildningstillfällen för program, komvux, YH
+- Filtrera på kommun, län, språk, distans
+- Få kompakt översikt eller full information
+- Analysera utbildningsutbudet
+
+FORMAT:
+- full: Fullständig information om varje utbildningstillfälle
+- compact: Kompakt format med de viktigaste uppgifterna
+
+FILTER:
+- name: Utbildningens namn
+- schoolUnitCode: Skolenhetskod
+- municipality/municipalityCode: Kommun
+- county/countyCode: Län
+- programCode: Programkod
+- orientationCode: Inriktningskod
+- instructionLanguage: Undervisningsspråk
+- distanceStudyType: Distansstudietyp
+- adultTypeOfSchooling: Vuxenutbildningstyp
+
+EXEMPEL:
+- format: "compact", municipality: "Stockholm", programCode: "NA"
+- format: "full", county: "Uppsala", distanceStudyType: "Distance"
+
+RETURNERAR:
+- Lista över utbildningstillfällen
+- Paginerad data
+- Full eller kompakt information beroende på format
+
+RELATERADE VERKTYG:
+- count_education_events_v4: Räkna antal tillfällen
+- get_programs_v4: Se tillgängliga program
+- get_instruction_languages_v4: Se undervisningsspråk
+
+TIPS: Använd "compact" för översikter och "full" när du behöver all information.`,
+        inputSchema: { type: 'object', properties: searchEducationEventsSchema, required: ['format'] },
+      },
+
+      // ==============================================
       // DIAGNOSTIK OCH HEALTH CHECK
       // ==============================================
       {
@@ -2432,6 +2654,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'get_municipality_school_units_v4':
         return await getMunicipalitySchoolUnitsV4();
 
+      // Meta-verktyg
+      case 'get_national_statistics':
+        return await getNationalStatistics(args as any);
+      case 'get_salsa_statistics':
+        return await getSALSAStatistics(args as any);
+      case 'get_program_statistics':
+        return await getProgramStatistics(args as any);
+      case 'get_school_unit_statistics':
+        return await getSchoolUnitStatistics(args as any);
+      case 'get_school_unit_survey':
+        return await getSchoolUnitSurvey(args as any);
+      case 'search_education_events':
+        return await searchEducationEvents(args as any);
+
       // Diagnostik
       case 'health_check':
         return await healthCheck(args || {});
@@ -2462,7 +2698,7 @@ async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 
-  log.info('Skolverket MCP Server v2.4.0 startad', {
+  log.info('Skolverket MCP Server v2.5.0 startad', {
     capabilities: ['tools', 'resources', 'prompts', 'logging'],
     apis: ['Läroplan API', 'Skolenhetsregistret API', 'Planned Educations API']
   });
