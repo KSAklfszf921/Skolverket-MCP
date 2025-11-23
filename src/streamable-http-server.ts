@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.1.3 - HTTP/SSE Transport
+ * Skolverket MCP Server v2.6.0 - HTTP/SSE Transport
  *
  * HTTP server implementation using StreamableHTTPServerTransport
  * for compatibility with OpenAI ChatGPT and other HTTP-based MCP clients.
@@ -92,7 +92,7 @@ import {
 const mcpServer = new Server(
   {
     name: 'skolverket-mcp',
-    version: '2.1.3',
+    version: '2.6.0',
   },
   {
     capabilities: {
@@ -803,7 +803,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     server: 'skolverket-mcp',
-    version: '2.1.3',
+    version: '2.6.0',
     transport: 'streamable-http'
   });
 });
@@ -879,7 +879,7 @@ app.get('/', (req, res) => {
       "@type": "Person",
       "name": "Isak Skogstad"
     },
-    "softwareVersion": "2.1.3",
+    "softwareVersion": "2.6.0",
     "datePublished": "2025-01-20",
     "inLanguage": ["sv", "en"],
     "keywords": "skolverket, mcp, model context protocol, läroplan, curriculum, chatgpt, claude, ai, education, sweden, swedish",
@@ -1603,7 +1603,7 @@ app.get('/', (req, res) => {
       <div class="nav-left">
         <span style="font-size: 20px; font-weight: 500; letter-spacing: -0.3px;">Skolverket MCP Server</span>
         <span id="server-status" class="status-badge status-checking" style="margin-left: 16px;" title="Kollar serverstatus...">Kollar...</span>
-        <span class="status-badge" style="margin-left: 8px;">v2.1.3</span>
+        <span class="status-badge" style="margin-left: 8px;">v2.6.0</span>
       </div>
       <div class="nav-right">
         <button onclick="toggleSearch()" class="icon-btn" id="search-toggle" aria-label="Sök">
@@ -2244,7 +2244,7 @@ app.listen(PORT, () => {
   log.info('Skolverket MCP Server (HTTP/SSE) started', {
     port: PORT,
     endpoint: `/mcp`,
-    version: '2.1.3',
+    version: '2.6.0',
     capabilities: ['tools', 'resources', 'prompts', 'logging'],
     apis: ['Läroplan API', 'Skolenhetsregistret API', 'Planned Educations API']
   });

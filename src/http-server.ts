@@ -252,7 +252,7 @@ app.get('/', (req: Request, res: Response) => {
     <div class="header">
       <h1>🎓 Skolverket MCP Server</h1>
       <p>Model Context Protocol Server för Skolverkets öppna API:er</p>
-      <p style="margin-top: 10px;"><span class="badge">v2.1.3</span> <span class="badge" style="background: #3b82f6;">HTTP/SSE</span></p>
+      <p style="margin-top: 10px;"><span class="badge">v2.6.0</span> <span class="badge" style="background: #3b82f6;">HTTP/SSE</span></p>
     </div>
 
     <div class="content">
@@ -428,7 +428,7 @@ curl -X POST https://skolverket-mcp.onrender.com/execute \\
 
     <div class="footer">
       <p>
-        Skolverket MCP Server v2.1.3 • Byggd med Node.js, TypeScript, Express & MCP SDK
+        Skolverket MCP Server v2.6.0 • Byggd med Node.js, TypeScript, Express & MCP SDK
       </p>
       <p style="margin-top: 5px; font-size: 0.9em;">
         Deployad på Render • ${new Date().getFullYear()} • Open Source MIT License
@@ -453,7 +453,7 @@ app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'healthy',
     service: 'skolverket-mcp',
-    version: '2.1.3',
+    version: '2.6.0',
     timestamp: new Date().toISOString(),
     transport: 'http-sse',
     endpoints: {
@@ -503,7 +503,7 @@ app.get('/sse', async (req: Request, res: Response) => {
     requestId,
     timestamp: new Date().toISOString(),
     service: 'skolverket-mcp',
-    version: '2.1.3',
+    version: '2.6.0',
   })}\n\n`);
 
   // Keepalive ping
