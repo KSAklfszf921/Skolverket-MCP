@@ -1,7 +1,7 @@
 {
   "name": "skolverket-mcp",
   "mcpName": "io.github.KSAklfszf921/skolverket-mcp",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "MCP server för alla Skolverkets öppna API:er - Läroplan API, Skolenhetsregistret och Planned Educations API",
   "main": "dist/index.js",
   "type": "module",

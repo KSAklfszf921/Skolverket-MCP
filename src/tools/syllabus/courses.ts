@@ -10,7 +10,8 @@ export const searchCoursesSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
   date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta kurser som var giltiga vid det datumet'),
-  subjectCode: z.string().optional().describe('Ämneskod för att filtrera kurser')
+  subjectCode: z.string().optional().describe('Ämneskod för att filtrera kurser'),
+  limit: z.number().optional().default(50).describe('Max antal resultat att returnera (default: 50, max: 200)')
 };
 
 export const getCourseDetailsSchema = {
@@ -29,9 +30,15 @@ export async function searchCourses(params: {
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
   date?: string;
   subjectCode?: string;
+  limit?: number;
 }) {
   try {
     const result = await syllabusApi.searchCourses(params);
+
+    // Begränsa antal resultat för att undvika stora responses
+    const maxResults = Math.min(params.limit || 50, 200);
+    const limitedCourses = result.courses.slice(0, maxResults);
+    const hasMore = result.totalElements > maxResults;
 
     return {
       content: [
@@ -39,14 +46,17 @@ export async function searchCourses(params: {
           type: 'text' as const,
           text: JSON.stringify({
             totalElements: result.totalElements,
-            courses: result.courses.map(c => ({
+            returned: limitedCourses.length,
+            hasMore: hasMore,
+            message: hasMore ? `Visar ${limitedCourses.length} av ${result.totalElements} kurser. Använd subjectCode eller andra filter för att begränsa resultatet.` : undefined,
+            courses: limitedCourses.map(c => ({
               code: c.code,
               name: c.name,
               subjectCode: c.subjectCode,
               schoolType: c.schoolType,
               points: c.points,
               version: c.version,
-              description: c.description?.substring(0, 200) + (c.description && c.description.length > 200 ? '...' : '')
+              description: c.description?.substring(0, 150) + (c.description && c.description.length > 150 ? '...' : '')
             }))
           }, null, 2)
         }

@@ -48,10 +48,33 @@ npm install && npm run build
 ## 🛠️ Funktioner
 
 MCP-servern implementerar MCP-protokollet med stöd för:
-- **107 verktyg** – 17 för läroplaner, 23 för skolenheter, 66 för planned educations (inkl. vuxenutbildning, statistik, enkäter), 1 för diagnostik
+- **41 verktyg** – 17 Syllabus API, 4 School Units, 17 Planned Educations (inkl. gymnasieutbildningar, statistik, dokument), 3 Support Data, 1 diagnostik
 - **4 resurser** – API-info, skoltyper, läroplanstyper, kurs- och ämneskoder
 - **5 promptmallar** – Kursanalys, versionsjämförelser, vuxenutbildning, studievägledning, kursplanering
-- **~98% API-täckning** – Nästan komplett implementation av Skolverkets Planned Educations API v4
+
+### Nya verktyg i v2.7.0
+**Gymnasieutbildningar:**
+- `search_education_events` - Sök gymnasieutbildningar
+- `count_education_events` - Räkna gymnasieträffar
+- `get_school_unit_education_events` - Utbildningar per skola
+
+**Vuxenutbildning:**
+- `count_adult_education_events` - Räkna vuxenutbildningar
+- `get_adult_education_areas_v4` - Alla utbildningsområden
+
+**Skolenheter:**
+- `search_school_units_v4` - Utökad skolenhetssökning
+
+**Support Data:**
+- `get_school_types_v4` - Alla skoltyper
+- `get_geographical_areas_v4` - Län och kommuner
+- `get_programs_v4` - Gymnasieprogram
+
+**Statistik & Dokument:**
+- `get_school_unit_documents` - Inspektionsrapporter
+- `get_school_unit_statistics` - Skolenhetsstatistik
+- `get_national_statistics` - Nationell statistik
+- `get_program_statistics` - Programstatistik
 
 ### API-integration
 Servern kopplar till tre av Skolverkets öppna API:er:

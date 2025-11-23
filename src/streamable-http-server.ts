@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.6.0 - HTTP/SSE Transport
+ * Skolverket MCP Server v2.7.0 - HTTP/SSE Transport
  *
  * HTTP server implementation using StreamableHTTPServerTransport
  * for compatibility with OpenAI ChatGPT and other HTTP-based MCP clients.
@@ -83,6 +83,29 @@ import {
   getDirections,
 } from './tools/planned-education/support-data.js';
 
+// Importera NYA planned education verktyg (Fas 1, 2, 3)
+import {
+  searchEducationEvents,
+  countEducationEvents,
+  countAdultEducationEvents,
+  getAdultEducationAreasV4,
+  searchSchoolUnitsV4,
+  getSchoolUnitEducationEvents,
+} from './tools/planned-education/core-tools.js';
+
+import {
+  getSchoolTypesV4,
+  getGeographicalAreasV4,
+  getProgramsV4,
+} from './tools/planned-education/support-tools.js';
+
+import {
+  getSchoolUnitDocuments,
+  getSchoolUnitStatistics,
+  getNationalStatistics,
+  getProgramStatistics,
+} from './tools/planned-education/advanced-tools.js';
+
 // Health check verktyg
 import {
   healthCheck,
@@ -92,7 +115,7 @@ import {
 const mcpServer = new Server(
   {
     name: 'skolverket-mcp',
-    version: '2.6.0',
+    version: '2.7.0',
   },
   {
     capabilities: {
@@ -676,6 +699,168 @@ mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
         }
       },
 
+      // FAS 1: Core Expansion - Gymnasieutbildningar
+      {
+        name: 'search_education_events',
+        description: 'Sök gymnasieutbildningar och utbildningstillfällen med omfattande filter.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            schoolUnitCode: { type: 'string', description: 'Skolenhetskod' },
+            typeOfSchool: { type: 'string', description: 'Skoltyp (t.ex. gy)' },
+            municipality: { type: 'string', description: 'Kommun' },
+            county: { type: 'string', description: 'Län' },
+            distance: { type: 'boolean', description: 'Distansutbildning' },
+            programCode: { type: 'string', description: 'Programkod (t.ex. NA, TE)' },
+            searchTerm: { type: 'string', description: 'Fritextsökning' },
+            limit: { type: 'number', description: 'Max antal resultat (max 200)' }
+          }
+        }
+      },
+      {
+        name: 'count_education_events',
+        description: 'Räkna antal gymnasieutbildningar som matchar filter.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            typeOfSchool: { type: 'string', description: 'Skoltyp' },
+            municipality: { type: 'string', description: 'Kommun' },
+            county: { type: 'string', description: 'Län' },
+            programCode: { type: 'string', description: 'Programkod' },
+            distance: { type: 'boolean', description: 'Distansutbildning' }
+          }
+        }
+      },
+      {
+        name: 'count_adult_education_events',
+        description: 'Räkna antal vuxenutbildningar som matchar filter.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            typeOfSchool: { type: 'string', description: 'Typ (yh, sfi, komvuxgycourses)' },
+            municipality: { type: 'string', description: 'Kommun' },
+            county: { type: 'string', description: 'Län' },
+            distance: { type: 'string', description: 'true/false för distans' },
+            searchTerm: { type: 'string', description: 'Fritextsökning' }
+          }
+        }
+      },
+      {
+        name: 'get_adult_education_areas_v4',
+        description: 'Hämta alla utbildningsområden och inriktningar för vuxenutbildning (YH, SFI, Komvux).',
+        inputSchema: {
+          type: 'object',
+          properties: {}
+        }
+      },
+      {
+        name: 'search_school_units_v4',
+        description: 'Utökad sökning av skolenheter med fler filtreringsmöjligheter.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            name: { type: 'string', description: 'Skolnamn eller del av namn' },
+            municipality: { type: 'string', description: 'Kommun' },
+            county: { type: 'string', description: 'Län' },
+            typeOfSchool: { type: 'string', description: 'Skolform (gy, gr, fsk, etc.)' },
+            status: { type: 'string', description: 'Status (AKTIV, UPPHORT, VILANDE)' },
+            limit: { type: 'number', description: 'Max antal resultat (max 200)' }
+          }
+        }
+      },
+      {
+        name: 'get_school_unit_education_events',
+        description: 'Hämta alla utbildningstillfällen för en specifik skolenhet.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            code: { type: 'string', description: 'Skolenhetskod (8 siffror)' },
+            programCode: { type: 'string', description: 'Filtrera på programkod' },
+            limit: { type: 'number', description: 'Max antal resultat (max 200)' }
+          },
+          required: ['code']
+        }
+      },
+
+      // FAS 2: Support Data
+      {
+        name: 'get_school_types_v4',
+        description: 'Hämta alla skoltyper med beskrivningar.',
+        inputSchema: {
+          type: 'object',
+          properties: {}
+        }
+      },
+      {
+        name: 'get_geographical_areas_v4',
+        description: 'Hämta alla län och kommuner i Sverige.',
+        inputSchema: {
+          type: 'object',
+          properties: {}
+        }
+      },
+      {
+        name: 'get_programs_v4',
+        description: 'Hämta alla gymnasieprogram med inriktningar.',
+        inputSchema: {
+          type: 'object',
+          properties: {}
+        }
+      },
+
+      // FAS 3: Advanced - Statistics & Documents
+      {
+        name: 'get_school_unit_documents',
+        description: 'Hämta Skolinspektionens dokument och rapporter för en skolenhet.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            code: { type: 'string', description: 'Skolenhetskod (8 siffror)' },
+            typeOfSchooling: { type: 'string', description: 'Skolform (fsk, gr, gran, gy, gyan)' },
+            limit: { type: 'number', description: 'Max antal resultat (max 200)' }
+          },
+          required: ['code']
+        }
+      },
+      {
+        name: 'get_school_unit_statistics',
+        description: 'Hämta statistik för en skolenhet (välj skolform: fsk, gr, gran, gy, gyan).',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            code: { type: 'string', description: 'Skolenhetskod (8 siffror)' },
+            schoolType: { type: 'string', description: 'Skolform (fsk, gr, gran, gy, gyan)' },
+            year: { type: 'string', description: 'Läsår (t.ex. 2023/2024)' }
+          },
+          required: ['code', 'schoolType']
+        }
+      },
+      {
+        name: 'get_national_statistics',
+        description: 'Hämta nationell statistik för en skolform.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            schoolType: { type: 'string', description: 'Skolform (fsk, gr, gran, gy, gyan)' },
+            year: { type: 'string', description: 'Läsår' },
+            programCode: { type: 'string', description: 'Programkod (endast gy/gyan)' }
+          },
+          required: ['schoolType']
+        }
+      },
+      {
+        name: 'get_program_statistics',
+        description: 'Hämta programstatistik för gymnasium eller gymnasiesärskola.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            schoolType: { type: 'string', description: 'Skolform (gy eller gyan)' },
+            year: { type: 'string', description: 'Läsår' }
+          },
+          required: ['schoolType']
+        }
+      },
+
       // Health check
       {
         name: 'health_check',
@@ -761,6 +946,38 @@ mcpServer.setRequestHandler(CallToolRequestSchema, async (request) => {
         return await getEducationAreas();
       case 'get_directions':
         return await getDirections();
+
+      // FAS 1: Core Expansion - Gymnasieutbildningar
+      case 'search_education_events':
+        return await searchEducationEvents(args as any);
+      case 'count_education_events':
+        return await countEducationEvents(args as any);
+      case 'count_adult_education_events':
+        return await countAdultEducationEvents(args as any);
+      case 'get_adult_education_areas_v4':
+        return await getAdultEducationAreasV4();
+      case 'search_school_units_v4':
+        return await searchSchoolUnitsV4(args as any);
+      case 'get_school_unit_education_events':
+        return await getSchoolUnitEducationEvents(args as any);
+
+      // FAS 2: Support Data
+      case 'get_school_types_v4':
+        return await getSchoolTypesV4();
+      case 'get_geographical_areas_v4':
+        return await getGeographicalAreasV4();
+      case 'get_programs_v4':
+        return await getProgramsV4();
+
+      // FAS 3: Advanced - Statistics & Documents
+      case 'get_school_unit_documents':
+        return await getSchoolUnitDocuments(args as any);
+      case 'get_school_unit_statistics':
+        return await getSchoolUnitStatistics(args as any);
+      case 'get_national_statistics':
+        return await getNationalStatistics(args as any);
+      case 'get_program_statistics':
+        return await getProgramStatistics(args as any);
 
       // Diagnostik
       case 'health_check':

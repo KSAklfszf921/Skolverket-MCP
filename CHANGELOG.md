@@ -5,10 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0] - 2025-01-23
+
+### Added - Utökad Planned Educations funktionalitet (+13 verktyg)
+Implementerat kritiska verktyg från Planned Educations API för gymnasieutbildningar, statistik och dokument:
+
+**Fas 1: Core Expansion (6 verktyg)**
+- `search_education_events` - Sök gymnasieutbildningar med omfattande filter
+- `count_education_events` - Räkna matchande gymnasieutbildningar
+- `count_adult_education_events` - Räkna vuxenutbildningar
+- `get_adult_education_areas_v4` - Utbildningsområden och inriktningar
+- `search_school_units_v4` - Utökad skolenhetssökning med fler filter
+- `get_school_unit_education_events` - Alla utbildningar för en specifik skola
+
+**Fas 2: Support Data (3 verktyg)**
+- `get_school_types_v4` - Alla skoltyper med beskrivningar
+- `get_geographical_areas_v4` - Län och kommuner
+- `get_programs_v4` - Gymnasieprogram med inriktningar
+
+**Fas 3: Advanced (4 verktyg)**
+- `get_school_unit_documents` - Skolinspektionens rapporter och dokument
+- `get_school_unit_statistics` - Statistik per skolenhet (meta-tool för fsk/gr/gran/gy/gyan)
+- `get_national_statistics` - Nationell statistik (meta-tool)
+- `get_program_statistics` - Programstatistik (meta-tool)
+
+### Fixed - Response-storleksbegränsningar
+Åtgärdat problem med stora MCP-responses som kunde överbelasta context:
+- Lagt till `limit` parameter på `search_subjects` (default: 50, max: 200)
+- Lagt till `limit` parameter på `search_courses` (default: 50, max: 200)
+- Lagt till `limit` parameter på `search_programs` (default: 100, max: 200)
+- Alla nya verktyg har inbyggda response-begränsningar
+- Beskrivningar trunkerade till 150 tecken (från 200)
+
+### Changed
+- Uppdaterat antal verktyg från 28 till **41 verktyg**
+- Förbättrade felmeddelanden med användbara tips
+- Tydligare progress-information när resultat begränsas
+
 ## [2.6.0] - 2025-01-23
 
-### Added - Komplett API-täckning (19 nya verktyg)
-Implementation av ALLA saknade Planned Educations API v4 endpoints baserat på gap-analys:
+### Changed - Korrekt verktygsdokumentation
+Korrigerad dokumentation från felaktig siffra "107 verktyg" till faktiska **28 verktyg**:
+- 17 Syllabus API verktyg
+- 4 School Units verktyg
+- 6 Planned Educations verktyg
+- 1 Health check verktyg
+
+## [2.5.1] - 2025-01-23
+
+### Added - Ytterligare verktyg (arkiverat)
 
 **Nya kritiska endpoints:**
 - `get_adult_education_areas_v4` - Utbildningsområden och inriktningar för vuxenutbildning

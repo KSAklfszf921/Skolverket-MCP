@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
 /**
- * Skolverket MCP Server v2.6.0
+ * Skolverket MCP Server v2.7.0
  *
- * Komplett MCP server för att ge LLMs tillgång till Skolverkets öppna API:er:
+ * MCP server för att ge LLMs tillgång till Skolverkets öppna API:er:
  * - Läroplan API (läroplaner, ämnen, kurser, program)
  * - Skolenhetsregistret API (skolenheter och deras status)
- * - Planned Educations API v4 (utbildningstillfällen, statistik, inspektionsrapporter, enkäter)
+ * - Planned Educations API (vuxenutbildning, gymnasieutbildningar, statistik, dokument)
  *
- * Version 2.6.0 förbättringar:
- * - 19 nya verktyg för ALLA saknade Planned Educations API v4 endpoints
- * - SALSA-statistik för alla skolor och per skolenhet
- * - Komplett survey-support (11 specialiserade endpoints)
- * - Förbättrad filtrering (dokument per skolform, utbildningar per studieväg)
- * - API-täckning: 85% → 98% (107 verktyg totalt)
+ * 41 verktyg totalt:
+ * - 17 Syllabus API verktyg
+ * - 4 School Units verktyg
+ * - 17 Planned Educations verktyg
+ * - 3 Support Data verktyg
+ * - 1 Health check verktyg
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';

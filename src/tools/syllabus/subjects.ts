@@ -10,7 +10,8 @@ export const searchSubjectsSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GR" för grundskola, "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
   typeOfSyllabus: z.string().optional().describe('Typ av läroplan (t.ex. "SUBJECT_SYLLABUS", "COURSE_SYLLABUS")'),
-  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta ämnen som var giltiga vid det datumet')
+  date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta ämnen som var giltiga vid det datumet'),
+  limit: z.number().optional().default(50).describe('Max antal resultat att returnera (default: 50, max: 200)')
 };
 
 export const getSubjectDetailsSchema = {
@@ -29,9 +30,15 @@ export async function searchSubjects(params: {
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
   typeOfSyllabus?: string;
   date?: string;
+  limit?: number;
 }) {
   try {
     const result = await syllabusApi.searchSubjects(params);
+
+    // Begränsa antal resultat för att undvika stora responses
+    const maxResults = Math.min(params.limit || 50, 200);
+    const limitedSubjects = result.subjects.slice(0, maxResults);
+    const hasMore = result.totalElements > maxResults;
 
     return {
       content: [
@@ -39,13 +46,16 @@ export async function searchSubjects(params: {
           type: 'text' as const,
           text: JSON.stringify({
             totalElements: result.totalElements,
-            subjects: result.subjects.map(s => ({
+            returned: limitedSubjects.length,
+            hasMore: hasMore,
+            message: hasMore ? `Visar ${limitedSubjects.length} av ${result.totalElements} ämnen. Använd mer specifika filter för att begränsa resultatet.` : undefined,
+            subjects: limitedSubjects.map(s => ({
               code: s.code,
               name: s.name,
               schoolType: s.schoolType,
               typeOfSyllabus: s.typeOfSyllabus,
               version: s.version,
-              description: s.description?.substring(0, 200) + (s.description && s.description.length > 200 ? '...' : '')
+              description: s.description?.substring(0, 150) + (s.description && s.description.length > 150 ? '...' : '')
             }))
           }, null, 2)
         }

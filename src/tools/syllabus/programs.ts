@@ -10,7 +10,8 @@ export const searchProgramsSchema = {
   schooltype: z.string().optional().describe('Skoltyp (t.ex. "GY" för gymnasium)'),
   timespan: z.enum(['LATEST', 'FUTURE', 'EXPIRED', 'MODIFIED']).default('LATEST').describe('Tidsperiod: LATEST (gällande), FUTURE (framtida), EXPIRED (utgångna), MODIFIED (ändrade)'),
   date: z.string().optional().describe('Datum i formatet YYYY-MM-DD för att hämta program som var giltiga vid det datumet'),
-  typeOfStudyPath: z.string().optional().describe('Typ av studieväg (t.ex. "PROGRAM" för gymnasieprogram)')
+  typeOfStudyPath: z.string().optional().describe('Typ av studieväg (t.ex. "PROGRAM" för gymnasieprogram)'),
+  limit: z.number().optional().default(100).describe('Max antal resultat att returnera (default: 100, max: 200)')
 };
 
 export const getProgramDetailsSchema = {
@@ -29,9 +30,15 @@ export async function searchPrograms(params: {
   timespan?: 'LATEST' | 'FUTURE' | 'EXPIRED' | 'MODIFIED';
   date?: string;
   typeOfStudyPath?: string;
+  limit?: number;
 }) {
   try {
     const result = await syllabusApi.searchPrograms(params);
+
+    // Begränsa antal resultat för att undvika stora responses
+    const maxResults = Math.min(params.limit || 100, 200);
+    const limitedPrograms = result.programs.slice(0, maxResults);
+    const hasMore = result.totalElements > maxResults;
 
     return {
       content: [
@@ -39,7 +46,10 @@ export async function searchPrograms(params: {
           type: 'text' as const,
           text: JSON.stringify({
             totalElements: result.totalElements,
-            programs: result.programs.map(p => ({
+            returned: limitedPrograms.length,
+            hasMore: hasMore,
+            message: hasMore ? `Visar ${limitedPrograms.length} av ${result.totalElements} program. Öka limit-parametern för att se fler.` : undefined,
+            programs: limitedPrograms.map(p => ({
               code: p.code,
               name: p.name,
               schoolType: p.schoolType,
@@ -47,7 +57,7 @@ export async function searchPrograms(params: {
               version: p.version,
               orientations: p.orientations?.map(o => o.name),
               profiles: p.profiles?.map(pr => pr.name),
-              description: p.description?.substring(0, 200) + (p.description && p.description.length > 200 ? '...' : '')
+              description: p.description?.substring(0, 150) + (p.description && p.description.length > 150 ? '...' : '')
             }))
           }, null, 2)
         }
