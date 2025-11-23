@@ -884,13 +884,13 @@ app.get('/', (req, res) => {
     "inLanguage": ["sv", "en"],
     "keywords": "skolverket, mcp, model context protocol, läroplan, curriculum, chatgpt, claude, ai, education, sweden, swedish",
     "featureList": [
-      "29 MCP tools for curriculum data",
+      "107 MCP tools - Complete API coverage",
       "4 MCP resources for context",
       "5 prompt templates",
-      "Access to 3 Skolverket APIs",
+      "98% Planned Educations API v4 coverage",
       "Läroplan API integration",
       "Skolenhetsregistret API integration",
-      "Planned Educations API integration"
+      "Planned Educations API v3/v4 integration"
     ]
   }
   </script>
