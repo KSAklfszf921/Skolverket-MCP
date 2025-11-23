@@ -46,7 +46,17 @@ import type {
   InstructionLanguagesResponse,
   DistanceStudyTypesResponse,
   AdultTypeOfSchoolingResponse,
-  MunicipalitySchoolUnitsResponse
+  MunicipalitySchoolUnitsResponse,
+  // NYA V4 TYPES
+  AdultEducationAreasResponse,
+  ApiInfoV4Response,
+  CompactSchoolUnitsV4Response,
+  SecondarySchoolUnitsResponse,
+  AllSchoolsSALSAResponse,
+  SchoolUnitSALSAResponse,
+  DocumentsByTypeResponse,
+  EducationEventsByStudyPathResponse,
+  SurveyByCategoryResponse
 } from '../types/planned-education.js';
 
 export class PlannedEducationApiClient extends BaseApiClient {
@@ -355,7 +365,15 @@ export class PlannedEducationApiClient extends BaseApiClient {
   }
 
   async getNationalStatisticsGY(params: any = {}): Promise<NationalStatisticsResponse> {
-    return this.get<NationalStatisticsResponse>('/v4/statistics/national-values/gy', params, {
+    // Stöd för programCode parameter
+    const path = params.programCode
+      ? `/v4/statistics/national-values/gy/${params.programCode}`
+      : `/v4/statistics/national-values/gy`;
+
+    // Ta bort programCode från query params om den finns, den är nu i path
+    const { programCode, ...queryParams } = params;
+
+    return this.get<NationalStatisticsResponse>(path, queryParams, {
       headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
     });
   }
@@ -444,6 +462,148 @@ export class PlannedEducationApiClient extends BaseApiClient {
 
   async getMunicipalitySchoolUnitsV4(): Promise<MunicipalitySchoolUnitsResponse> {
     return this.get<MunicipalitySchoolUnitsResponse>('/v4/support/municipality-school-units', undefined, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  /**
+   * ===== NYA V4 ENDPOINTS =====
+   */
+
+  // Adult Education Areas
+  async getAdultEducationAreasV4(): Promise<AdultEducationAreasResponse> {
+    return this.get<AdultEducationAreasResponse>('/v4/adult-education-events/areas', undefined, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // API Info V4
+  async getApiInfoV4(): Promise<ApiInfoV4Response> {
+    return this.get<ApiInfoV4Response>('/v4/api-info', undefined, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Compact School Units V4
+  async searchCompactSchoolUnitsV4(params: SchoolUnitSearchParamsV4 = {}): Promise<CompactSchoolUnitsV4Response> {
+    const searchParams = {
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+      coordinateSystemType: 'WGS84', // Default enligt dokumentation
+      ...params
+    };
+
+    return this.get<CompactSchoolUnitsV4Response>('/v4/compact-school-units', searchParams, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Secondary School Units
+  async getSecondarySchoolUnitsV4(params: any = {}): Promise<SecondarySchoolUnitsResponse> {
+    const searchParams = {
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+      ...params
+    };
+
+    return this.get<SecondarySchoolUnitsResponse>('/v4/school-unit-secondary', searchParams, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // All Schools SALSA Statistics
+  async getAllSchoolsSALSAStatistics(params: any = {}): Promise<AllSchoolsSALSAResponse> {
+    return this.get<AllSchoolsSALSAResponse>('/v4/statistics/all-schools/salsa', params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  async getSchoolUnitSALSAStatistics(schoolUnitId: string, params: any = {}): Promise<SchoolUnitSALSAResponse> {
+    return this.get<SchoolUnitSALSAResponse>(`/v4/statistics/all-schools/salsa/${schoolUnitId}`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Document filtering by type of schooling
+  async getSchoolUnitDocumentsByType(code: string, typeOfSchooling: string, params: any = {}): Promise<DocumentsByTypeResponse> {
+    const searchParams = {
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+      ...params
+    };
+
+    return this.get<DocumentsByTypeResponse>(`/v4/school-units/${code}/documents/${typeOfSchooling}`, searchParams, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Education events by study path
+  async getSchoolUnitEducationEventsByStudyPath(code: string, studyPathCode: string, params: EducationEventSearchParamsV4 = {}): Promise<EducationEventsByStudyPathResponse> {
+    const searchParams = {
+      page: params.page ?? 0,
+      size: params.size ?? 20,
+      ...params
+    };
+
+    return this.get<EducationEventsByStudyPathResponse>(`/v4/school-units/${code}/education-events/${studyPathCode}`, searchParams, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Specialiserade survey-endpoints - Nested (vårdnadshavare)
+  async getSchoolUnitNestedSurveyCustodiansFSK(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/nestedsurveys/custodiansfsk`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  async getSchoolUnitNestedSurveyCustodiansGR(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/nestedsurveys/custodiansgr`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  async getSchoolUnitNestedSurveyCustodiansGRAN(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/nestedsurveys/custodiansgran`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Specialiserade survey-endpoints - Nested (elever)
+  async getSchoolUnitNestedSurveyPupilsGY(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/nestedsurveys/pupilsgy`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Specialiserade survey-endpoints - Flat (vårdnadshavare)
+  async getSchoolUnitFlatSurveyCustodiansFSK(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/surveys/custodiansfsk`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  async getSchoolUnitFlatSurveyCustodiansGR(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/surveys/custodiansgr`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  async getSchoolUnitFlatSurveyCustodiansGRAN(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/surveys/custodiansgran`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  // Specialiserade survey-endpoints - Flat (elever)
+  async getSchoolUnitFlatSurveyPupilsGR(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/surveys/pupilsgr`, params, {
+      headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
+    });
+  }
+
+  async getSchoolUnitFlatSurveyPupilsGY(code: string, params: any = {}): Promise<SurveyByCategoryResponse> {
+    return this.get<SurveyByCategoryResponse>(`/v4/school-units/${code}/surveys/pupilsgy`, params, {
       headers: { 'Accept': 'application/vnd.skolverket.plannededucations.api.v4.hal+json' }
     });
   }

@@ -48,9 +48,10 @@ npm install && npm run build
 ## 🛠️ Funktioner
 
 MCP-servern implementerar MCP-protokollet med stöd för:
-- **29 verktyg** – 17 för läroplaner, 4 för skolenheter, 7 för vuxenutbildning, 1 för diagnostik
+- **107 verktyg** – 17 för läroplaner, 23 för skolenheter, 66 för planned educations (inkl. vuxenutbildning, statistik, enkäter), 1 för diagnostik
 - **4 resurser** – API-info, skoltyper, läroplanstyper, kurs- och ämneskoder
 - **5 promptmallar** – Kursanalys, versionsjämförelser, vuxenutbildning, studievägledning, kursplanering
+- **~98% API-täckning** – Nästan komplett implementation av Skolverkets Planned Educations API v4
 
 ### API-integration
 Servern kopplar till tre av Skolverkets öppna API:er:

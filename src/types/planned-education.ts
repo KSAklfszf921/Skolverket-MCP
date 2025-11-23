@@ -575,3 +575,165 @@ export interface EducationEventSearchParamsV4 {
   size?: number;
   sort?: string;
 }
+
+// ===== NYA TYPES FÖR SAKNADE ENDPOINTS =====
+
+// Adult Education Areas
+export interface AdultEducationArea {
+  areaCode: string;
+  areaName: string;
+  directions?: AdultEducationDirection[];
+}
+
+export interface AdultEducationDirection {
+  directionId: string;
+  directionName: string;
+  areaCode: string;
+}
+
+export interface AdultEducationAreasResponse {
+  areas: AdultEducationArea[];
+  _links?: Record<string, any>;
+}
+
+// API Info V4
+export interface ApiInfoV4 {
+  version: string;
+  name: string;
+  description?: string;
+  contact?: {
+    name?: string;
+    email?: string;
+    url?: string;
+  };
+  endpoints?: {
+    path: string;
+    methods: string[];
+    description?: string;
+  }[];
+  supportedVersions?: string[];
+  deprecationNotice?: string;
+}
+
+export interface ApiInfoV4Response {
+  apiInfo: ApiInfoV4;
+}
+
+// Compact School Units V4
+export interface CompactSchoolUnitV4 {
+  schoolUnitCode: string;
+  schoolUnitName: string;
+  typeOfSchool?: string;
+  municipality?: string;
+  county?: string;
+  abroadSchool: boolean;
+  wgs84Latitude?: string;
+  wgs84Longitude?: string;
+  sweref99Latitude?: string;
+  sweref99Longitude?: string;
+  coordinateSystemType?: string;
+}
+
+export interface CompactSchoolUnitsV4Response {
+  _embedded: {
+    compactSchoolUnits: CompactSchoolUnitV4[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+// Secondary School Units
+export interface SecondarySchoolUnit {
+  schoolUnitCode: string;
+  schoolUnitName: string;
+  parentSchoolUnitCode: string;
+  parentSchoolUnitName: string;
+  relationshipType: string; // "filial", "annan_underenhet", etc.
+  municipality?: string;
+  county?: string;
+  status?: string;
+}
+
+export interface SecondarySchoolUnitsResponse {
+  _embedded: {
+    secondarySchoolUnits: SecondarySchoolUnit[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+// All Schools SALSA Statistics
+export interface AllSchoolsSALSAStatistics {
+  schoolYear: string;
+  typeOfSchooling: string;
+  nationalAverage?: number;
+  schools: SchoolSALSAData[];
+  metadata?: {
+    extractDate?: string;
+    description?: string;
+  };
+}
+
+export interface SchoolSALSAData {
+  schoolUnitCode: string;
+  schoolUnitName: string;
+  salsaScore?: number;
+  municipality?: string;
+  county?: string;
+  numberOfStudents?: number;
+}
+
+export interface AllSchoolsSALSAResponse {
+  data: AllSchoolsSALSAStatistics;
+  _links?: Record<string, any>;
+}
+
+export interface SchoolUnitSALSAResponse {
+  schoolUnitCode: string;
+  schoolUnitName: string;
+  salsaData: {
+    schoolYear: string;
+    typeOfSchooling: string;
+    salsaScore?: number;
+    nationalComparison?: {
+      nationalAverage: number;
+      percentile?: number;
+    };
+  }[];
+  _links?: Record<string, any>;
+}
+
+// Document filtering by type of schooling
+export interface DocumentsByTypeResponse {
+  typeOfSchooling: string;
+  _embedded: {
+    documents: DocumentV4[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+// Education events by study path
+export interface EducationEventsByStudyPathResponse {
+  studyPathCode: string;
+  studyPathName?: string;
+  _embedded: {
+    educationEvents: FullEducationEvent[];
+  };
+  _links?: Record<string, any>;
+  page?: PageInfo;
+}
+
+// Specialiserade survey-typer
+export interface SurveyByCategoryResponse {
+  schoolUnitCode: string;
+  category: 'custodians' | 'pupils';
+  typeOfSchooling: 'fsk' | 'gr' | 'gran' | 'gy' | 'gyan';
+  format: 'nested' | 'flat';
+  data: any; // Kan vara NestedSchoolSurvey eller FlatSurveyDataPoint[]
+  metadata?: {
+    surveyYear: string;
+    extractDate: string;
+    responseRate?: number;
+  };
+}
