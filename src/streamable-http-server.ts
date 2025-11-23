@@ -1020,7 +1020,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     server: 'skolverket-mcp',
-    version: '2.6.0',
+    version: '2.7.0',
     transport: 'streamable-http'
   });
 });
@@ -2461,7 +2461,7 @@ app.listen(PORT, () => {
   log.info('Skolverket MCP Server (HTTP/SSE) started', {
     port: PORT,
     endpoint: `/mcp`,
-    version: '2.6.0',
+    version: '2.7.0',
     capabilities: ['tools', 'resources', 'prompts', 'logging'],
     apis: ['Läroplan API', 'Skolenhetsregistret API', 'Planned Educations API']
   });
