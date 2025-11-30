@@ -45,3 +45,5 @@ coverage/
 
 # MCP Registry tokens
 .mcpregistry_*
+# Auto-generated API types
+src/types/generated/
