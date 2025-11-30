@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT
  * Source: https://api.skolverket.se/skolenhetsregistret/skolenhetsregistret_v2_openapi.yaml
- * Generated at: 2025-11-30T20:15:19.259Z
+ * Generated at: 2025-11-30T20:27:02.141Z
  */
 
 /**

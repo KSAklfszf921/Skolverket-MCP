@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT
  * Source: https://api.skolverket.se/planned-educations/v3/api-docs
- * Generated at: 2025-11-30T20:15:21.214Z
+ * Generated at: 2025-11-30T20:27:07.112Z
  */
 
 /**
