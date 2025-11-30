@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED FILE - DO NOT EDIT
  * Source: https://api.skolverket.se/syllabus/v3/api-docs
- * Generated at: 2025-11-30T20:12:09.744Z
+ * Generated at: 2025-11-30T20:15:17.800Z
  */
 
 /**

@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Konfiguration baserad på VERIFIERADE API-endpoints (Spring Boot v3/api-docs standard)
+// Konfiguration baserad på VERIFIERADE API-endpoints
 const APIS = [
   {
     name: 'Syllabus (Läroplaner)',
@@ -14,11 +14,15 @@ const APIS = [
     output: '../src/types/generated/syllabus-schema.ts'
   },
   {
+    name: 'School Units (Skolenhetsregistret) v2',
+    url: 'https://api.skolverket.se/skolenhetsregistret/skolenhetsregistret_v2_openapi.yaml',
+    output: '../src/types/generated/school-units-schema.ts'
+  },
+  {
     name: 'Planned Education (Utbildningsinfo)',
     url: 'https://api.skolverket.se/planned-educations/v3/api-docs',
     output: '../src/types/generated/planned-education-schema.ts'
   }
-  // NOTE: Skolenhetsregistret har ingen publik OpenAPI spec - skippad tills vidare
 ];
 
 async function generateTypes() {
