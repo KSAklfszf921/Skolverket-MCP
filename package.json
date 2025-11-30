@@ -22,7 +22,7 @@
     "start": "node dist/index.js",
     "start:http": "node dist/http-server.js",
     "start:streamable": "node dist/streamable-http-server.js",
-    "test": "echo \"Error: no test suite configured yet\" && exit 1",
+    "test": "vitest",
     "lint": "tsc --noEmit",
     "format": "prettier --check .",
     "format:fix": "prettier --write ."
@@ -80,7 +80,9 @@
     "@types/express": "^5.0.5",
     "@types/node": "^22.10.2",
     "@types/uuid": "^10.0.0",
-    "typescript": "^5.7.2"
+    "@vitest/expect": "^4.0.14",
+    "typescript": "^5.7.2",
+    "vitest": "^4.0.14"
   },
   "engines": {
     "node": ">=18.0.0"
