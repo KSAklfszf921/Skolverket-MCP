@@ -1,0 +1,72 @@
+name: Skolverket API Auto-Sync
+
+on:
+  schedule:
+    # Körs 04:00 CET varje natt
+    - cron: '0 4 * * *'
+  workflow_dispatch: # För manuell körning
+
+jobs:
+  sync-and-verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate API Types
+        id: generate
+        run: |
+          # Kör skriptet vi skapade ovan
+          npx tsx scripts/update-api-types.ts
+          
+          # Kontrollera om git ser några ändringar i generated-mappen
+          if [[ -n $(git status --porcelain src/types/generated/) ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Changes detected in API definitions"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No changes detected"
+          fi
+
+      - name: Safety Check (Gatekeeper)
+        if: steps.generate.outputs.changed == 'true'
+        run: |
+          echo "🛡️ Verifying compatibility with existing code..."
+          # Kör testerna. Om detta steg misslyckas avbryts jobbet och du får ett mail från GitHub.
+          npm test tests/contract/type-safety.test.ts
+          
+          # Säkerställ att projektet bygger korrekt med de nya filerna
+          npm run build
+
+      - name: Create Pull Request
+        if: steps.generate.outputs.changed == 'true' && success()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: skolverket-api-update
+          title: "🤖 API Update: Skolverket specs changed"
+          body: |
+            ### 🤖 Skolverket API Update Detected
+            
+            The nightly scan detected changes in one or more of Skolverket's APIs (Syllabus v1, School Units v2, or Planned Education v4).
+            
+            **Safety Report:**
+            - ✅ Generated types updated in `src/types/generated/`
+            - ✅ Contract Tests: Passed (Backward compatible)
+            - ✅ Build Check: Passed
+            
+            **Action:**
+            Merge this PR to keep the internal schema definitions up to date.
